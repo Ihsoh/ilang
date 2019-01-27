@@ -229,6 +229,8 @@ _RULE_FUNC_DECL(stat_goto);
 
 _RULE_FUNC_DECL(stat_label);
 
+_RULE_FUNC_DECL(stat_label_simple);
+
 _RULE_FUNC_DECL(stat_asm);
 _RULE_FUNC_DECL(stat_asm_option);
 
@@ -1221,6 +1223,21 @@ _RULE(stat_label)
 	}
 _RULE_END
 
+_RULE(stat_label_simple)
+	ParserASTNode *node_identifier = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_identifier != NULL) {
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != FE_TOKEN_PNCT_COLON) {
+			_RULE_NOT_MATCHED
+		}
+
+		_RULE_NODE(FE_NODE_STAT_LABEL, NULL)
+		_RULE_ADD_CHILD(node_identifier)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
 _RULE(stat_asm_option)
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != FE_TOKEN_PNCT_COMMA) {
@@ -1354,6 +1371,10 @@ _RULE(stat)
 
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(stat_label)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_label_simple)(_RULE_PARSER_CTX))
 	}
 
 	if (_RULE_CURRENT_NODE == NULL) {
