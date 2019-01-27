@@ -1,0 +1,3 @@
+struct Aa {
+	var a:int32;
+}

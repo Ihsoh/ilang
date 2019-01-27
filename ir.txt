@@ -1,0 +1,43 @@
+const dword @C_0 0;
+const dword @C_1 1;
+const dword @C_2 2;
+
+func dword add
+	var dword a;
+	var dword b;
+	var dword c;
+
+	pop a;
+	pop b;
+
+	push a;
+	push b;
+	add;
+	pop c;
+
+	push c;
+	return;
+end func
+
+func dword sum
+	var dword s;
+	var dword e;
+	var dword t;
+
+	
+
+end func
+
+func main
+	var dword argc;
+	var udword argv;
+
+	pop argc;
+	pop argv;
+
+	push @C_2;
+	push @C_1;
+	call add;
+
+	return;
+end func

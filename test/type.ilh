@@ -1,0 +1,33 @@
+#ifndef	__TYPE_ILH__
+#define	__TYPE_ILH__
+
+#define	byte	int8
+#define	ubyte	uint8
+#define	short	int16
+#define	ushort	uint16
+
+#if streq(__ARCH__, "32")
+	#define	size_t uint32
+	#define	ssize_t int32
+
+	#define	int int32
+	#define	uint uint32
+	#define	long int32
+	#define	ulong uint32
+#elif streq(__ARCH__, "64")
+	#define	size_t uint64
+	#define	ssize_t int64
+
+	#define	int int32
+	#define	uint uint32
+	#define	long int64
+	#define	ulong uint64
+#else
+	#error unsupported architecture!
+#endif
+
+#define	bool	int
+#define	true	(1)
+#define	false	(0)
+
+#endif

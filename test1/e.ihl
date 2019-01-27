@@ -1,0 +1,3 @@
+struct Ee {
+	var e:int32;
+}

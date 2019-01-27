@@ -1,0 +1,5 @@
+struct Dd {
+	var d:int32;
+}
+
+#include "../e.ihl"

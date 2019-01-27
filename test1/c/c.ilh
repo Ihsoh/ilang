@@ -1,0 +1,5 @@
+struct Cc {
+	var c:int32;
+}
+
+#include "d.ilh"

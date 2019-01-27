@@ -1,0 +1,6 @@
+#ifndef	__A4_ILH__
+#define __A4_ILH__
+
+#define	A4	"a4"
+
+#endif

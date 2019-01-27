@@ -1,0 +1,39 @@
+#ifndef	__TEST_ILH__
+#define	__TEST_ILH__
+
+#include <type.ilh>
+#include <arch.ilh>
+
+#define	NULL	(cast<*>(0))
+
+struct FILE {
+}
+
+function _get_stdin():*struct FILE dummy
+function _get_stdout():*struct FILE dummy
+function _get_stderr():*struct FILE dummy
+
+#define stdin	(_get_stdin())
+#define stdout	(_get_stdout())
+#define stderr	(_get_stderr())
+
+
+
+
+function fdopen(fd:int32, mode:*char):*struct FILE dummy
+
+function malloc(sz:uint64):* dummy
+function free(ptr:*) dummy
+function printf(fmt:*char, ...) dummy
+function fprintf(file:*struct FILE, fmt:*char, ...) dummy
+
+function strcmp(a:*char, b:*char):int32 dummy
+
+function exit(status:int) dummy
+
+
+
+
+#define	assert(val)	{ if (!(val)) { fprintf(stderr, "ASSERT FAILED(%s:%d)!\n", __FILE__, __LINE__); exit(1); } }
+
+#endif

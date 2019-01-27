@@ -1,0 +1,213 @@
+digit_bin -> '0' | '1'
+digit_oct -> '0' | '1' | ... | '7'
+digit_dec -> '0' | '1' | ... | '9'
+digit_hex -> '0' | '1' | ... | '9' | 'a' | ... | 'f' | 'A' | ... | 'F'
+
+uint_bin -> '0b' digit_bin (digit_bin | '_')+
+uint_oct -> '0o' digit_oct (digit_oct | '_')+
+uint_dec -> digit_dec+
+uint_hex -> '0x' digit_hex (digit_hex | '_')+
+
+uint -> uint_bin | uint_oct | uint_dec | uint_hex
+int -> uint | '+' uint | '-' uint
+real -> ('+' | '-')? uint_dec '.' uint_dec
+
+char -> "'" ([^'] | '\a' | '\b' | '\f' | '\n' | '\r' | '\t' | '\v' | '\\' | "\'") "'"
+string -> '"' ([^"] | '\a' | '\b' | '\f' | '\n' | '\r' | '\t' | '\v' | '\\' | '\"')* '"'
+
+alpha -> '_' | 'A' | 'B' | .. | 'Z' | 'a' | 'b' | ... | 'z'
+identifier -> alpha (alpha | digit_dec)+
+
+
+module ->
+	module_item+
+module_item ->
+	var_decl ';' | struct_decl | function_decl
+
+function_decl ->
+	'func' identifier function_params (':' type )? '{' statements '}'
+
+function_params ->
+	'(' ((identifier ':' type (',' identifier ':' type)* (',' '...')?) | '...')? ')'
+
+stats_block -> '{' (stat ';')* '}'
+stat ->
+	stat_var_decl
+	| stat_if
+	| stat_while
+	| stat_do
+	| stat_for
+	| stat_continue
+	| stat_break
+	| stat_return
+	| stat_goto
+	| stat_label
+	| stat_expr
+
+stat_var_decl ->
+	var_decl
+
+stat_if ->
+	'if' '(' expr ')' stats_block ('elif' stats_block)* ('else' stats_block)?
+
+stat_while ->
+	'while' '(' expr ')' stats_block
+
+stat_do ->
+	'do' stats_block 'while' '(' expr ')'
+
+stat_for ->
+	'for' '(' var_decl ';' expr ';' expr ')' stats_block
+
+stat_break ->
+	'break'
+
+stat_continue ->
+	'continue'
+
+stat_return ->
+	'return' expr?
+
+stat_goto ->
+	'goto' identifier
+
+stat_label ->
+	'label' identifier
+
+stat_expr ->
+	expr
+
+
+
+
+expr ->
+	expr_assign
+	| EMPTY
+
+expr_assign ->
+	expr_or '=' expr
+	| expr_or '+=' expr
+	| expr_or '-=' expr
+	| expr_or '*=' expr
+	| expr_or '/=' expr
+	| expr_or '%=' expr
+	| expr_or '&=' expr
+	| expr_or '|=' expr
+	| expr_or '^=' expr
+	| expr_or '<<=' expr
+	| expr_or '>>=' expr
+	| expr_or
+	| EMPTY
+
+expr_or ->
+	expr_and ('||' expr_and)+
+	| expr_and
+	| EMPTY
+
+expr_and ->
+	expr_bor ('&&' expr_bor)+
+	| expr_bor
+	| EMPTY
+
+expr_bor ->
+	expr_bxor ('|' expr_bxor)+
+	| expr_bxor
+	| EMPTY
+
+expr_bxor ->
+	expr_band ('^' expr_band)+
+	| expr_band
+	| EMPTY
+
+expr_band ->
+	expr_eq ('&' expr_eq)+
+	| expr_eq
+	| EMPTY
+
+expr_eq ->
+	expr_lt ('==' expr_lt)+
+	| expr_lt ('!=' expr_lt)+
+	| expr_lt
+	| EMPTY
+
+expr_lt ->
+	expr_shift ('<' expr_shift)+
+	| expr_shift ('<=' expr_shift)+
+	| expr_shift ('>' expr_shift)+
+	| expr_shift ('>=' expr_shift)+
+	| expr_shift
+	| EMPTY
+
+expr_shift ->
+	expr_add ('<<' expr_add)+
+	| expr_add ('>>' expr_add)+
+	| expr_add
+	| EMPTY
+
+expr_add ->
+	expr_mul ('+' expr_mul)+
+	| expr_mul ('-' expr_mul)+
+	| expr_mul
+	| EMPTY
+
+expr_mul ->
+	expr_unary ('*' expr_unary)+
+	| expr_unary ('/' expr_unary)+
+	| expr_unary ('%' expr_unary)+
+	| expr_unary
+	| EMPTY
+
+expr_unary ->
+	'!' expr
+	| '+' expr
+	| '-' expr
+	| '~' expr
+	| '++' expr
+	| '--' expr
+	| 'sizeof' '(' expr ')'
+	| 'cast' '<' type '>' '(' expr ')'
+	| '&' expr
+	| '*' expr
+	| expr_member_arridx_fncall
+	| EMPTY
+
+expr_member_arridx_fncall ->
+	expr_parenthesis ('.' identifier)+
+	| expr_parenthesis ('->' identifier)+
+	| expr_parenthesis ('[' expr ']')+
+	| expr_parenthesis ('(' (expr (',' expr)*)? ')')+
+	| expr_parenthesis
+	| EMPTY
+
+expr_parenthesis -> '(' expr ')' | expr_atom | EMPTY
+
+expr_atom -> uint | real | char | string | identifier | EMPTY
+
+
+
+
+simple_type ->
+	'char'
+	| 'int8' | 'int16' | 'int32' | 'int64'
+	| 'uint8' | 'uint16' | 'uint32' | 'uint64'
+	| 'float' | 'double'
+
+struct_type ->
+	'struct' identifier
+
+array_type ->
+	('[' uint ']')+ type
+
+function_type ->
+	'function' function_params (':' type)?
+
+pointer_type ->
+	'*' type
+
+type -> simple_type | struct_type | array_type | function_type | pointer_type
+
+struct_decl ->
+	'struct' identifier '{' (var_decl ';')* '}'
+
+var_decl ->
+	'var' identifier ':' type (',' identifier ':' type)+

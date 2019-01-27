@@ -1,0 +1,12 @@
+#ifndef	__ARCH_ILH__
+#define	__ARCH_ILH__
+
+#if streq(__ARCH__, "32")
+	#define	ARCH_WORD_SIZE	4
+#elif streq(__ARCH__, "64")
+	#define	ARCH_WORD_SIZE	8
+#else
+	#error unsupported architecture!
+#endif
+
+#endif

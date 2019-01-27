@@ -1,0 +1,6 @@
+#ifndef	__A2_ILH__
+#define __A2_ILH__
+
+#define	A2	"a2"
+
+#endif

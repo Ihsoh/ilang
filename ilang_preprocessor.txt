@@ -1,0 +1,44 @@
+digit_dec -> '0' | '1' | ... | '9'
+
+char -> "'" ([^'] | '\a' | '\b' | '\f' | '\n' | '\r' | '\t' | '\v' | '\\' | "\'") "'"
+string -> '"' ([^"] | '\a' | '\b' | '\f' | '\n' | '\r' | '\t' | '\v' | '\\' | '\"')* '"'
+
+alpha -> '_' | 'A' | 'B' | .. | 'Z' | 'a' | 'b' | ... | 'z'
+identifier -> alpha (alpha | digit_dec)+
+
+space -> ' '
+
+carriage-return -> '\r'
+
+line-feed -> '\n'
+
+directive_include -> ^'#include' (('"' [^"]+ '"') | ('<' [^<>]+ '>'))$
+directive_define -> ^'#define' identifier .*$
+
+
+
+
+#include <a.h>
+#include "b.h"
+
+#define	A	a
+
+#ifdef A
+	...
+#endif
+
+#ifdef A
+	...
+#else
+	...
+#endif
+
+#ifndef
+	...
+#endif
+
+#ifndef
+	...
+#else
+...
+#endif

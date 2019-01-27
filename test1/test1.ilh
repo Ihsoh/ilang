@@ -1,0 +1,9 @@
+#ifndef	__TEST1_ILH__
+#define	__TEST1_ILH__
+
+struct Data {
+	var a:int32;
+	var b:*char;
+}
+
+#endif
