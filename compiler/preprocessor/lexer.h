@@ -1,5 +1,5 @@
-#ifndef	__PREPROCESSOR_LEXER_H__
-#define	__PREPROCESSOR_LEXER_H__
+#ifndef	__COMPILER_PREPROCESSOR_LEXER_H__
+#define	__COMPILER_PREPROCESSOR_LEXER_H__
 
 #include <inttypes.h>
 

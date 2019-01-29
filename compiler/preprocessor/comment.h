@@ -1,5 +1,5 @@
-#ifndef	__PREPROCESSOR_COMMENT_H__
-#define	__PREPROCESSOR_COMMENT_H__
+#ifndef	__COMPILER_PREPROCESSOR_COMMENT_H__
+#define	__COMPILER_PREPROCESSOR_COMMENT_H__
 
 #include "../../string.h"
 

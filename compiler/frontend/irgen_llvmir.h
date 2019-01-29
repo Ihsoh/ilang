@@ -1,5 +1,5 @@
-#ifndef	__FRONTEND_IRGEN_LLVMIR_H__
-#define	__FRONTEND_IRGEN_LLVMIR_H__
+#ifndef	__COMPILER_FRONTEND_IRGEN_LLVMIR_H__
+#define	__COMPILER_FRONTEND_IRGEN_LLVMIR_H__
 
 #include <stdio.h>
 #include <stddef.h>

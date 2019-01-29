@@ -782,6 +782,17 @@ static bool _is_compatible_type_for_assign(
 	return false;
 }
 
+static bool _is_int8_ptr_type_node(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	return _get_type_by_type_node(ctx, node) == FE_TYPE_POINTER
+			&& _get_type_by_type_node(ctx, node->childs[0]) == FE_TYPE_INT8;
+}
+
 static void __type(
 	ParserContext *ctx,
 	ParserASTNode *node,
@@ -1038,14 +1049,14 @@ static void _var_with_parent(
 				ParserASTNode *expr_node = align_node->childs[0];
 				_expr(ctx, expr_node);
 				if (!FE_EXPR_AST_NODE_GET_CONSTANT(expr_node)) {
-					_SYNERR_NODE(ctx, expr_node, "align argument must be constant expression.");
+					_SYNERR_NODE(ctx, expr_node, "align parameter must be constant expression.");
 				}
 				align = _get_constexpr_int(ctx, expr_node);
 				if (align <= 0) {
-					_SYNERR_NODE(ctx, expr_node, "align argument must be greater than 0.");
+					_SYNERR_NODE(ctx, expr_node, "align parameter must be greater than 0.");
 				}
 				if (align != 1 && align % 2 != 0) {
-					_SYNERR_NODE(ctx, expr_node, "align argument is not a power of 2.");
+					_SYNERR_NODE(ctx, expr_node, "align parameter is not a power of 2.");
 				}
 				FE_VAR_AST_NODE_SET_ALIGN(node, align);
 				break;
@@ -1505,6 +1516,96 @@ static void _stat_dummy(
 	assert(node->type == FE_NODE_STAT_DUMMY);
 
 	// 什么也不干。
+}
+
+static void _check_va(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	const char *name
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_START
+			|| node->type == FE_NODE_STAT_VA_END
+			|| node->type == FE_NODE_STAT_VA_COPY
+			|| node->type == FE_NODE_EXPR_VA_ARG);
+	assert(name);
+
+	ParserASTNode *parent = node->parent;
+	while (parent != NULL) {
+		if (parent->type == FE_NODE_FUNC) {
+			
+			return;
+		}
+		parent = parent->parent;
+	}
+
+	assert(0);
+}
+
+static void _stat_va_start(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_START);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_expr = node->childs[0];
+	_expr_wrapper(ctx, node_expr);
+	
+
+
+	if (!_is_int8_ptr_type_node(
+		ctx,
+		FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr)
+	)) {
+		_SYNERR_NODE(ctx, node, "__va_start parameter type must be '*int8'.");
+	}
+}
+
+static void _stat_va_end(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_END);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_expr = node->childs[0];
+	_expr_wrapper(ctx, node_expr);
+
+	if (!_is_int8_ptr_type_node(
+		ctx,
+		FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr)
+	)) {
+		_SYNERR_NODE(ctx, node, "__va_end parameter type must be '*int8'.");
+	}
+}
+
+static void _stat_va_copy(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_COPY);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_expr_target = node->childs[0];
+	_expr_wrapper(ctx, node_expr_target);
+	ParserASTNode *node_expr_target_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr_target);
+
+	ParserASTNode *node_expr_source = node->childs[1];
+	_expr_wrapper(ctx, node_expr_source);
+	ParserASTNode *node_expr_source_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr_source);
+
+	if (!_is_int8_ptr_type_node(ctx, node_expr_target_type)
+			|| !_is_int8_ptr_type_node(ctx, node_expr_source_type)) {
+		_SYNERR_NODE(ctx, node, "__va_end first parameter type and second parameter type must be '*int8'.");
+	}
 }
 
 static int _expr_is_lvalue(
@@ -4827,6 +4928,18 @@ static void _stat(
 		}
 		case FE_NODE_STAT_DUMMY: {
 			_stat_dummy(ctx, node);
+			break;
+		}
+		case FE_NODE_STAT_VA_START: {
+			_stat_va_start(ctx, node);
+			break;
+		}
+		case FE_NODE_STAT_VA_END: {
+			_stat_va_end(ctx, node);
+			break;
+		}
+		case FE_NODE_STAT_VA_COPY: {
+			_stat_va_copy(ctx, node);
 			break;
 		}
 		case FE_NODE_STATS_BLOCK: {

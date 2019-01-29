@@ -126,6 +126,8 @@ extern void lexer_change_file_by_token(
 
 #define	LEXER_MATCHER(name) 		static LexerToken * name##_matcher(LexerContext *ctx, int *abandon) {	\
 										assert(ctx); assert(abandon); {
+#define	LEXER_ABANDON_TOKEN			{ *abandon = 1; }
+#define	LEXER_NO_ABANDON_TOKEN		{ *abandon = 0; }
 #define	LEXER_SET_LINE(ln)			{ ctx->line = ln; }
 #define	LEXER_MATCHER_END			} assert(0); }
 

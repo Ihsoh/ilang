@@ -1,5 +1,5 @@
-#ifndef	__PREPROCESSOR_GEN_H__
-#define	__PREPROCESSOR_GEN_H__
+#ifndef	__COMPILER_PREPROCESSOR_GEN_H__
+#define	__COMPILER_PREPROCESSOR_GEN_H__
 
 #include <inttypes.h>
 #include <stdio.h>

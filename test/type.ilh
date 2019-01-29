@@ -14,6 +14,10 @@
 	#define	uint uint32
 	#define	long int32
 	#define	ulong uint32
+
+	struct __VaList {
+		var a:*int8;
+	}
 #elif streq(__ARCH__, "64")
 	#define	size_t uint64
 	#define	ssize_t int64
@@ -22,9 +26,18 @@
 	#define	uint uint32
 	#define	long int64
 	#define	ulong uint64
+
+	struct __VaList {
+		var a:int32;
+		bar b:int32;
+		var c:*int8;
+		var d:*int8;
+	}
 #else
 	#error unsupported architecture!
 #endif
+
+#define	va_list struct __VaList
 
 #define	bool	int
 #define	true	(1)

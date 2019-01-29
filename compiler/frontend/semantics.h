@@ -1,5 +1,5 @@
-#ifndef	__FRONTEND_SEMANTICS_H__
-#define	__FRONTEND_SEMANTICS_H__
+#ifndef	__COMPILER_FRONTEND_SEMANTICS_H__
+#define	__COMPILER_FRONTEND_SEMANTICS_H__
 
 #include "../../parser.h"
 

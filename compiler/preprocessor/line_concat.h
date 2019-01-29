@@ -1,5 +1,5 @@
-#ifndef	__PREPROCESSOR_LINE_CONCAT_H__
-#define	__PREPROCESSOR_LINE_CONCAT_H__
+#ifndef	__COMPILER_PREPROCESSOR_LINE_CONCAT_H__
+#define	__COMPILER_PREPROCESSOR_LINE_CONCAT_H__
 
 #include "../../string.h"
 

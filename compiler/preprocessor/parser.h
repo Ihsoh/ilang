@@ -1,5 +1,5 @@
-#ifndef	__PREPROCESSOR_PARSER_H__
-#define	__PREPROCESSOR_PARSER_H__
+#ifndef	__COMPILER_PREPROCESSOR_PARSER_H__
+#define	__COMPILER_PREPROCESSOR_PARSER_H__
 
 #include <stdio.h>
 #include <inttypes.h>

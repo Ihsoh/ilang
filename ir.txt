@@ -1,43 +1,75 @@
-const dword @C_0 0;
-const dword @C_1 1;
-const dword @C_2 2;
+function malloc(sz:uint64):* dummy
+function free(ptr:*) dummy
+function printf(fmt:*char, ...) dummy
 
-func dword add
-	var dword a;
-	var dword b;
-	var dword c;
+function test_1() {
+	var sum:int32 = 0;
+	var i:int32 = 0;
+label _loop;
+	i = i + 1;
+	sum = sum + i;
+	@_is_end = i >= 100;
+	br _is_end, _end, _loop;
+label _end;
+	call printf("sum = %d\n", sum);
+}
 
-	pop a;
-	pop b;
+function test_2() {
+	var a:int32 = 123;
+	var b:*int32 = 0;
+	var c:int32 = 0;
+	b = &a;
+	store b, 456
+	c = load b;
+}
 
-	push a;
-	push b;
-	add;
-	pop c;
+function test_3() {
+	var a:[2][3]int32;
 
-	push c;
-	return;
-end func
+	@_tmp_1 = &a;			// *[2][3]int32
+	@_tmp_2 = @_tmp_1[0];	// *[3]int32
+	@_tmp_3 = @_tmp_2[1];	// *int32
+	store @_tmp_3, 123;
+}
 
-func dword sum
-	var dword s;
-	var dword e;
-	var dword t;
+struct A {
+	var a:int32;
+	var b:int32;
+}
 
+function test_4() {
+	var sa:struct A;
 	
+	@_tmp_1 = &sa;					// *struct A
+	@_tmp_2 = @_tmp_1->a;			// *int32
+	store @_tmp_2, 123;
+	@_tmp_3 = @_tmp_1->b;			// *int32
+	store @_tmp_3, 456;
+}
 
-end func
+struct B {
+	var a:int32;
+	var b:struct A;
+}
 
-func main
-	var dword argc;
-	var udword argv;
+function test_5() {
+	var sb:struct B;
 
-	pop argc;
-	pop argv;
+	@_tmp_1 = &sb;					// *struct B
+	@_tmp_2 = @_tmp_1->a;			// *int32
+	store @_tmp_2, 123;
+	@_tmp_3 = @_tmp_1->b;			// *struct A
+	@_tmp_4 = @_tmp_3->a;			// *int32
+	store @_tmp_4, 456;
+	@_tmp_5 = @_tmp_3->b;			// *int32
+	store @_tmp_5, 789;
+}
 
-	push @C_2;
-	push @C_1;
-	call add;
+function main(argc:int32, argv:**char):int32 {
+	call test_1();
+	call test_2();
+	call test_3();
+	call test_4();
 
-	return;
-end func
+	return 0;
+}

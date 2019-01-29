@@ -1,5 +1,5 @@
-#ifndef	__FRONTEND_PARSER_H__
-#define	__FRONTEND_PARSER_H__
+#ifndef	__COMPILER_FRONTEND_PARSER_H__
+#define	__COMPILER_FRONTEND_PARSER_H__
 
 #include <stdio.h>
 #include <inttypes.h>
@@ -83,6 +83,10 @@
 
 #define	FE_NODE_STAT_DUMMY					0x0bc0
 
+#define	FE_NODE_STAT_VA_START				0x0bd0
+#define	FE_NODE_STAT_VA_END					0x0bd1
+#define	FE_NODE_STAT_VA_COPY				0x0bd2
+
 
 
 
@@ -154,6 +158,7 @@
 #define	FE_NODE_EXPR_INC_RIGHT				0x0ecb
 #define	FE_NODE_EXPR_DEC_RIGHT				0x0ecc
 #define	FE_NODE_EXPR_COND					0x0ecd
+#define	FE_NODE_EXPR_VA_ARG					0x0ece
 
 #define	FE_NODE_EXPR_MEMBER					0x0ed0
 #define	FE_NODE_EXPR_PMEMBER				0x0ed1

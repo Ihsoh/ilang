@@ -1561,6 +1561,25 @@ static void _ir_stat_expr(
 	_OUT_CSTR(ctx, ";\n");
 }
 
+static void _ir_stat_va_start(
+	IRGeneratorCContext *ctx,
+	int indentLevel,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_START);
+	assert(node->nchilds == 1);
+
+	
+
+	_OUT_INDENT(ctx, indentLevel);
+
+	_OUT_CSTR(ctx, "va_start(");
+
+	_OUT_CSTR(ctx, ");\n");
+}
+
 static void _ir_stat(
 	IRGeneratorCContext *ctx,
 	int indentLevel,
@@ -1751,6 +1770,7 @@ static void _ir_module(IRGeneratorCContext *ctx, ParserASTNode *node) {
 	assert(node->type == FE_NODE_MODULE);
 
 	_OUT_CSTR(ctx, "#include <inttypes.h>\n");
+	_OUT_CSTR(ctx, "#include <stdarg.h>\n");
 	_OUT_CSTR(ctx, "\n");
 
 	_OUT_STR(ctx, ctx->global.buffer, ctx->global.len);

@@ -1,5 +1,5 @@
-#ifndef	__FRONTEND_IRGEN__
-#define	__FRONTEND_IRGEN__
+#ifndef	__COMPILER_FRONTEND_IRGEN__
+#define	__COMPILER_FRONTEND_IRGEN__
 
 #include <stdio.h>
 

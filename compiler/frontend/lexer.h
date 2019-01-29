@@ -1,5 +1,5 @@
-#ifndef __FRONTEND_LEXER_H__
-#define __FRONTEND_LEXER_H__
+#ifndef __COMPILER_FRONTEND_LEXER_H__
+#define __COMPILER_FRONTEND_LEXER_H__
 
 #include <inttypes.h>
 #include <stddef.h>
@@ -44,6 +44,11 @@
 #define	FE_TOKEN_KEYWORD_ALIGNOF		0x3014	// alignof
 #define	FE_TOKEN_KEYWORD_ALIGN			0x3015	// align
 #define	FE_TOKEN_KEYWORD_PACKED			0x3016	// packed
+
+#define	FE_TOKEN_KEYWORD_VA_START		0x3017	// __va_start
+#define	FE_TOKEN_KEYWORD_VA_ARG			0x3018	// __va_arg
+#define	FE_TOKEN_KEYWORD_VA_END			0x3019	// __va_end
+#define	FE_TOKEN_KEYWORD_VA_COPY		0x301a	// __va_copy
 
 #define	FE_TOKEN_KEYWORD_CHAR			0x3100	// char
 #define	FE_TOKEN_KEYWORD_INT8			0x3101	// int8

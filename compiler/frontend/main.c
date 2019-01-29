@@ -35,6 +35,7 @@
 #define	_OPT_TARGET				"-target"
 #define	_OPT_TARGET_C			"c"
 #define	_OPT_TARGET_LLVMIR		"llvmir"
+#define	_OPT_TARGET_ILIR		"ilir"
 
 #define	_OPT_DEF				"-def"
 
@@ -82,7 +83,7 @@ static void _help(void) {
 	"  -arch (32|64)                            Specify size of machine word.\n"
 	"  -incpath <include path>                  Specify include path, separated by ';'.\n"
 	"  -action (compile|printast|preprocess)    Output ir code or abstract syntax tree that represented by text.\n"
-	"  -target (llvmir|c)                       Output LLVM IR or C when option '-action' is specified to 'compile'.\n"
+	"  -target (llvmir|c|ilir)                  Output LLVM IR or C or ILIR when option '-action' is specified to 'compile'.\n"
 	"  -def <name> <value>                      Define a object-like macro.\n"
 	"  -output <target file>                    Specify a target file. write target code to standard output if target file not be specified.\n"
 	"  -help                                    Display available options.\n";
@@ -120,7 +121,7 @@ int main(int argc, char *argv[]) {
 	);
 
 	for (int i = 1; i < argc; i++) {
-		#define	_NEXT_ARG(opt_name) { if (i + 1 < argc) { opt = argv[++i]; } else { _error("the option '%s' expects a argument.", opt_name); } }
+		#define	_NEXT_ARG(opt_name) { if (i + 1 < argc) { opt = argv[++i]; } else { _error("the option '%s' expects a parameter.", opt_name); } }
 
 		char *opt = argv[i];
 
@@ -165,9 +166,10 @@ int main(int argc, char *argv[]) {
 				_NEXT_ARG(_OPT_TARGET)
 				opt_target = opt;
 				if (strcmp(opt_target, _OPT_TARGET_C) != 0
-						&& strcmp(opt_target, _OPT_TARGET_LLVMIR) != 0) {
+						&& strcmp(opt_target, _OPT_TARGET_LLVMIR) != 0
+						&& strcmp(opt_target, _OPT_TARGET_ILIR) != 0) {
 					_error(
-						"the option '-target' is specified a invalid value '%s', maybe specify a 'c' or 'llvmir'.",
+						"the option '-target' is specified a invalid value '%s', maybe specify a 'c' or 'llvmir' or 'ilir'.",
 						opt_target
 					);
 				}
@@ -308,6 +310,11 @@ int main(int argc, char *argv[]) {
 			IRGeneratorCContext *irgen_ctx = fe_irgen_c_new_context(ctx, output);
 			fe_irgen_c_generate(irgen_ctx);
 			fe_irgen_c_free_context(irgen_ctx);
+		} else if (strcmp(opt_target, _OPT_TARGET_ILIR) == 0) {
+			// 输出到ILIR。
+			IRGeneratorContext *irgen_ctx = fe_irgen_new_context(ctx, output);
+			fe_irgen_generate(irgen_ctx);
+			fe_irgen_free_context(irgen_ctx);
 		} else {
 			assert(0);
 		}

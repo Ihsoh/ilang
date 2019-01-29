@@ -94,11 +94,14 @@ stat_return = ("return", [ws], ";") | ("return", [ws], expr, [ws], ";");
 stat_goto = "goto", ws, identifier, [ws], ";";
 
 stat_label = "label", ws, identifier, [ws], ";";
+stat_label_simple = identifier, [ws], ":";
 
 stat_asm_option = string, [ws], "(", [ws], expr, [ws], ")";
 stat_asm = "asm", [ws], "(", [ws], string, {[ws], ",", [ws], stat_asm_option}, [ws], ")", [ws], ";";
 
 stat_expr = expr, [ws], ";";
+
+stat_dummy = ';';
 
 statement = stat_var
 		| stat_if
@@ -110,8 +113,10 @@ statement = stat_var
 		| stat_return
 		| stat_goto
 		| stat_label
+		| stat_label_simple
 		| stat_asm
 		| stat_expr
+		| stat_dummy
 		| ws;
 
 statement_block = "{", {statement}, "}"
@@ -132,7 +137,8 @@ expr_unary = expr_member_arridx_fncall
 		| ("~", [ws], expr_unary)
 		| ("++", [ws], expr_unary)
 		| ("--", [ws], expr_unary)
-		| ("sizeof", [ws], "(", [ws], type, [ws], ")")
+		| ("sizeof", [ws], "(", [ws], (type | expr), [ws], ")")
+		| ("alignof", [ws], "(", [ws], (type | expr), [ws], ")")
 		| ("cast", [ws], "<", [ws], type, [ws], ">", [ws], "(", [ws], expr, [ws], ")")
 		| ("&", [ws], expr)
 		| ("*", [ws], expr);
