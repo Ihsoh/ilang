@@ -6,7 +6,7 @@ base_path=$(cd `dirname $0`; pwd)
 ilcfe=$base_path/../bin/ilcfe
 
 build_32_llc=0
-build_64_llc=0
+build_64_llc=1
 build_32_clang=0
 build_64_clang=1
 

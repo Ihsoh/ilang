@@ -663,6 +663,10 @@ static void _ir_type(
 			rstr_append_with_cstr(rstr, "double");
 			break;
 		}
+		case FE_NODE_TYPE_VA_LIST: {
+			rstr_append_with_cstr(rstr, "%struct.va_list");
+			break;
+		}
 		case FE_NODE_TYPE_STRUCT: {
 			assert(node_type->nchilds == 1);
 
@@ -2800,6 +2804,51 @@ static bool _ir_expr_unary(
 
 			return true;
 		}
+		case FE_NODE_EXPR_VA_ARG: {
+			assert(node->nchilds == 2);
+
+			ParserSymbol *func_symbol = ctx->func_symbol;
+			assert(func_symbol);
+
+			ParserASTNode *node_expr = node->childs[0];
+			ParserASTNode *node_type = node->childs[1];
+
+			_ExprResult result_expr;
+			_expr_result_init(&result_expr);
+
+			_ir_expr(ctx, rstr, &result_expr, node_expr);
+			rstr_append_with_rstr(rstr, &(result_expr.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_expr.rstr_for_result));
+
+			ResizableString rstr_type;
+			rstr_init(&rstr_type);
+			_ir_type(ctx, &rstr_type, node_type);
+
+			ResizableString rstr_tmp_label_val;
+			rstr_init(&rstr_tmp_label_val);
+			_generate_func_tmp(ctx, func_symbol, &rstr_tmp_label_val);
+
+			rstr_appendf(
+				&(expr_result->rstr_for_result),
+				"%s = va_arg %s, %s\n",
+				RSTR_CSTR(&rstr_tmp_label_val),
+				RSTR_CSTR(&(result_expr.rstr_result_ptr)),
+				RSTR_CSTR(&rstr_type)
+			);
+
+			_expr_result_set_result(
+				expr_result,
+				RSTR_CSTR(&rstr_type),
+				RSTR_CSTR(&rstr_tmp_label_val)
+			);
+
+			_expr_result_free(&result_expr);
+
+			rstr_free(&rstr_type);
+			rstr_free(&rstr_tmp_label_val);
+
+			return true;
+		}
 		default: {
 			return false;
 		}
@@ -4741,6 +4790,124 @@ static void _ir_stat_expr(
 	rstr_free(&rstr);
 }
 
+static void _ir_stat_va_start(
+	IRGeneratorLlvmirContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_START);
+
+	ParserASTNode *node_expr = node->childs[0];
+
+	_ExprResult result_expr;
+	_expr_result_init(&result_expr);
+
+	_ir_expr_wrapper_ptr(ctx, ctx->body, &result_expr, node_expr);
+
+	_TMP_LABEL_DEF(ctx, tmp)
+
+	rstr_appendf(
+		ctx->body,
+		"%s = bitcast %s to i8*\n",
+		_TMP_LABEL_CSTR(tmp),
+		RSTR_CSTR(&(result_expr.rstr_result_ptr))
+	);
+	rstr_appendf(
+		ctx->body,
+		"call void @llvm.va_start(i8* %s)\n",
+		_TMP_LABEL_CSTR(tmp)
+	);
+
+	_expr_result_free(&result_expr);
+
+	_TMP_LABEL_FREE(tmp)
+}
+
+static void _ir_stat_va_end(
+	IRGeneratorLlvmirContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_END);
+
+	ParserASTNode *node_expr = node->childs[0];
+
+	_ExprResult result_expr;
+	_expr_result_init(&result_expr);
+
+	_ir_expr_wrapper_ptr(ctx, ctx->body, &result_expr, node_expr);
+
+	_TMP_LABEL_DEF(ctx, tmp)
+
+	rstr_appendf(
+		ctx->body,
+		"%s = bitcast %s to i8*\n",
+		_TMP_LABEL_CSTR(tmp),
+		RSTR_CSTR(&(result_expr.rstr_result_ptr))
+	);
+	rstr_appendf(
+		ctx->body,
+		"call void @llvm.va_end(i8* %s)\n",
+		_TMP_LABEL_CSTR(tmp)
+	);
+
+	_expr_result_free(&result_expr);
+
+	_TMP_LABEL_FREE(tmp)
+}
+
+static void _ir_stat_va_copy(
+	IRGeneratorLlvmirContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_COPY);
+
+	ParserASTNode *node_expr_target = node->childs[0];
+	ParserASTNode *node_expr_source = node->childs[1];
+
+	_ExprResult result_expr_target;
+	_expr_result_init(&result_expr_target);
+
+	_ir_expr_wrapper_ptr(ctx, ctx->body, &result_expr_target, node_expr_target);
+
+	_ExprResult result_expr_source;
+	_expr_result_init(&result_expr_source);
+
+	_ir_expr_wrapper_ptr(ctx, ctx->body, &result_expr_source, node_expr_source);
+
+	_TMP_LABEL_DEF(ctx, tmp_target)
+	_TMP_LABEL_DEF(ctx, tmp_source)
+
+	rstr_appendf(
+		ctx->body,
+		"%s = bitcast %s to i8*\n",
+		_TMP_LABEL_CSTR(tmp_target),
+		RSTR_CSTR(&(result_expr_target.rstr_result_ptr))
+	);
+	rstr_appendf(
+		ctx->body,
+		"%s = bitcast %s to i8*\n",
+		_TMP_LABEL_CSTR(tmp_source),
+		RSTR_CSTR(&(result_expr_source.rstr_result_ptr))
+	);
+	rstr_appendf(
+		ctx->body,
+		"call void @llvm.va_copy(i8* %s, i8* %s)\n",
+		_TMP_LABEL_CSTR(tmp_target),
+		_TMP_LABEL_CSTR(tmp_source)
+	);
+
+	_expr_result_free(&result_expr_target);
+	_expr_result_free(&result_expr_source);
+
+	_TMP_LABEL_FREE(tmp_target)
+	_TMP_LABEL_FREE(tmp_source)
+}
+
 static void _ir_stat(
 	IRGeneratorLlvmirContext *ctx,
 	ParserASTNode *node_stat
@@ -4799,6 +4966,18 @@ static void _ir_stat(
 		}
 		case FE_NODE_STAT_DUMMY: {
 			
+			break;
+		}
+		case FE_NODE_STAT_VA_START: {
+			_ir_stat_va_start(ctx, node_stat);
+			break;
+		}
+		case FE_NODE_STAT_VA_END: {
+			_ir_stat_va_end(ctx, node_stat);
+			break;
+		}
+		case FE_NODE_STAT_VA_COPY: {
+			_ir_stat_va_copy(ctx, node_stat);
 			break;
 		}
 		case FE_NODE_STATS_BLOCK: {
@@ -5066,6 +5245,18 @@ void fe_irgen_llvmir_generate(IRGeneratorLlvmirContext *ctx) {
 	assert(ctx->out);
 
 	_OUT_CSTR(ctx, RSTR_CSTR(ctx->global));
+
+	if (ctx->psrctx->arch == FE_ARCH_32) {
+		_OUT_CSTR(ctx, "%struct.va_list = type { i8* }\n");
+	} else if (ctx->psrctx->arch == FE_ARCH_64) {
+		_OUT_CSTR(ctx, "%struct.va_list = type { i32, i32, i8*, i8* }\n");
+	} else {
+		assert(0);
+	}
+
+	_OUT_CSTR(ctx, "declare void @llvm.va_start(i8*)\n");
+	_OUT_CSTR(ctx, "declare void @llvm.va_copy(i8*, i8*)\n");
+	_OUT_CSTR(ctx, "declare void @llvm.va_end(i8*)\n");
 
 	_ir_module(ctx, ctx->psrctx->ast);
 
