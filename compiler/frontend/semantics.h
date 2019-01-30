@@ -85,4 +85,9 @@ extern ParserASTNode * fe_sem_search_node_along_parent(
 	...
 );
 
+extern ParserSymbol * fe_sem_get_func_symbol_by_node(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+
 #endif

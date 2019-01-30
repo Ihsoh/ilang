@@ -34,6 +34,8 @@
 #define	FE_NODE_TYPE_FLOAT			0x0409
 #define	FE_NODE_TYPE_DOUBLE			0x040a
 
+#define	FE_NODE_TYPE_VA_LIST		0x040b
+
 #define	FE_NODE_TYPE_STRUCT			0x0410
 
 #define	FE_NODE_TYPE_ARRAY			0x0420
@@ -194,10 +196,17 @@
 #define	FE_TYPE_UINT64				0x09
 #define	FE_TYPE_FLOAT				0x0a
 #define	FE_TYPE_DOUBLE				0x0b
-#define	FE_TYPE_STRUCT				0x0c
-#define	FE_TYPE_ARRAY				0x0d
-#define	FE_TYPE_FUNC				0x0e
-#define	FE_TYPE_POINTER				0x0f
+
+#define	FE_TYPE_VA_LIST				0x0c
+
+#define	FE_TYPE_STRUCT				0x0d
+
+#define	FE_TYPE_ARRAY				0x0e
+
+#define	FE_TYPE_FUNC				0x0f
+
+#define	FE_TYPE_POINTER				0x10
+
 #define	FE_TYPE_VOID				0xff
 
 

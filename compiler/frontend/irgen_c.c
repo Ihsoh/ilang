@@ -5,6 +5,7 @@
 #include "../../util.h"
 #include "../../string.h"
 
+#include "semantics.h"
 #include "parser.h"
 #include "lexer.h"
 
@@ -82,6 +83,10 @@ static void _ir_type(
 		}
 		case FE_NODE_TYPE_DOUBLE: {
 			rstr_prepend_with_cstr(rstr, "double ");
+			break;
+		}
+		case FE_NODE_TYPE_VA_LIST: {
+			rstr_prepend_with_cstr(rstr, "va_list ");
 			break;
 		}
 		case FE_NODE_TYPE_STRUCT: {
@@ -650,6 +655,25 @@ static bool _ir_expr_unary(
 		}
 		case FE_NODE_EXPR_DEREF: {
 			_IR_EXPR_UNARY("*")
+			return true;
+		}
+		case FE_NODE_EXPR_VA_ARG: {
+			assert(node_expr->nchilds == 2);
+
+			rstr_append_with_cstr(rstr, "(va_arg(");
+
+			_ir_expr(ctx, rstr, node_expr->childs[0]);
+
+			rstr_append_with_cstr(rstr, ", ");
+
+			ResizableString rstr_type;
+			rstr_init(&rstr_type);
+			_ir_type(ctx, &rstr_type, node_expr->childs[1]);
+			rstr_append_with_rstr(rstr, &rstr_type);
+			rstr_free(&rstr_type);
+
+			rstr_append_with_cstr(rstr, "))");
+
 			return true;
 		}
 		default: {
@@ -1571,11 +1595,89 @@ static void _ir_stat_va_start(
 	assert(node->type == FE_NODE_STAT_VA_START);
 	assert(node->nchilds == 1);
 
-	
+	ParserASTNode *node_expr = node->childs[0];
 
 	_OUT_INDENT(ctx, indentLevel);
 
 	_OUT_CSTR(ctx, "va_start(");
+
+	ResizableString rstr_expr;
+	rstr_init(&rstr_expr);
+	_ir_expr_wrapper(ctx, &rstr_expr, node_expr);
+	_OUT_STR(ctx, rstr_expr.buffer, rstr_expr.len);
+	rstr_free(&rstr_expr);
+
+	_OUT_CSTR(ctx, ", ");
+
+	ParserSymbol *func_symbol = fe_sem_get_func_symbol_by_node(ctx->psrctx, node);
+	ParserASTNode *params_node = FE_FUNC_SYMBOL_GET_PARAMS_NODE(func_symbol);
+	assert(params_node->nchilds >= 2);
+
+	ParserASTNode *penult_param_node = params_node->childs[params_node->nchilds - 2];
+	_OUT_STR(
+		ctx,
+		penult_param_node->childs[0]->token->content,
+		penult_param_node->childs[0]->token->len
+	);
+
+	_OUT_CSTR(ctx, ");\n");
+}
+
+static void _ir_stat_va_end(
+	IRGeneratorCContext *ctx,
+	int indentLevel,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_END);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_expr = node->childs[0];
+
+	_OUT_INDENT(ctx, indentLevel);
+
+	_OUT_CSTR(ctx, "va_end(");
+
+	ResizableString rstr_expr;
+	rstr_init(&rstr_expr);
+	_ir_expr_wrapper(ctx, &rstr_expr, node_expr);
+	_OUT_STR(ctx, rstr_expr.buffer, rstr_expr.len);
+	rstr_free(&rstr_expr);
+
+	_OUT_CSTR(ctx, ");\n");
+}
+
+static void _ir_stat_va_copy(
+	IRGeneratorCContext *ctx,
+	int indentLevel,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_COPY);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_expr_target = node->childs[0];
+	ParserASTNode *node_expr_source = node->childs[1];
+
+	_OUT_INDENT(ctx, indentLevel);
+
+	_OUT_CSTR(ctx, "va_copy(");
+
+	ResizableString rstr_expr_target;
+	rstr_init(&rstr_expr_target);
+	_ir_expr_wrapper(ctx, &rstr_expr_target, node_expr_target);
+	_OUT_STR(ctx, rstr_expr_target.buffer, rstr_expr_target.len);
+	rstr_free(&rstr_expr_target);
+
+	_OUT_CSTR(ctx, ", ");
+
+	ResizableString rstr_expr_source;
+	rstr_init(&rstr_expr_source);
+	_ir_expr_wrapper(ctx, &rstr_expr_source, node_expr_source);
+	_OUT_STR(ctx, rstr_expr_source.buffer, rstr_expr_source.len);
+	rstr_free(&rstr_expr_source);
 
 	_OUT_CSTR(ctx, ");\n");
 }
@@ -1639,6 +1741,18 @@ static void _ir_stat(
 		}
 		case FE_NODE_STAT_DUMMY: {
 			
+			break;
+		}
+		case FE_NODE_STAT_VA_START: {
+			_ir_stat_va_start(ctx, indentLevel, node_stat);
+			break;
+		}
+		case FE_NODE_STAT_VA_END: {
+			_ir_stat_va_end(ctx, indentLevel, node_stat);
+			break;
+		}
+		case FE_NODE_STAT_VA_COPY: {
+			_ir_stat_va_copy(ctx, indentLevel, node_stat);
 			break;
 		}
 		case FE_NODE_STATS_BLOCK: {

@@ -62,6 +62,8 @@
 #define	FE_TOKEN_KEYWORD_FLOAT			0x3109	// float
 #define	FE_TOKEN_KEYWORD_DOUBLE			0x310a	// double
 
+#define	FE_TOKEN_KEYWORD_VA_LIST		0x310b	// __va_list
+
 #define	FE_TOKEN_PNCT_SEMICOLON				0x4000	// ;
 #define	FE_TOKEN_PNCT_PARENTHESES_LEFT		0x4001	// (
 #define	FE_TOKEN_PNCT_PARENTHESES_RIGHT		0x4002	// )

@@ -392,6 +392,10 @@ _RULE(type_simple)
 			_RULE_NODE(FE_NODE_TYPE_DOUBLE, NULL)
 			break;
 		}
+		case FE_TOKEN_KEYWORD_VA_LIST: {
+			_RULE_NODE(FE_NODE_TYPE_VA_LIST, NULL)
+			break;
+		}
 		default: {
 			_RULE_NOT_MATCHED
 		}
@@ -646,12 +650,16 @@ _RULE(func_params)
 	_RULE_NODE(FE_NODE_FUNC_PARAMS, NULL)
 
 	ParserASTNode * node_param = _RULE_NAME(func_params_item)(_RULE_PARSER_CTX);
-	if (node_param == NULL) {
-		node_param = _RULE_NAME(func_params_ellipsis_item)(_RULE_PARSER_CTX);
-		if (node_param != NULL) {
-			matched_ellipsis = 1;
-		}
-	}
+	
+	// 函数的第一个参数不允许为“...”。
+	//
+	// if (node_param == NULL) {
+	// 	node_param = _RULE_NAME(func_params_ellipsis_item)(_RULE_PARSER_CTX);
+	// 	if (node_param != NULL) {
+	// 		matched_ellipsis = 1;
+	// 	}
+	// }
+
 	if (node_param != NULL) {
 		_RULE_ADD_CHILD(node_param)
 
@@ -1495,6 +1503,18 @@ _RULE(stat)
 
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(stat_dummy)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_va_start)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_va_end)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_va_copy)(_RULE_PARSER_CTX))
 	}
 
 	if (_RULE_CURRENT_NODE == NULL) {

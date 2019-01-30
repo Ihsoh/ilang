@@ -860,6 +860,11 @@ static void __type(
 			_SET_TYPE(FE_TYPE_DOUBLE)
 			break;
 		}
+		case FE_NODE_TYPE_VA_LIST: {
+			assert(node->nchilds == 0);
+			_SET_TYPE(FE_TYPE_VA_LIST)
+			break;
+		}
 		case FE_NODE_TYPE_STRUCT: {
 			assert(node->nchilds == 1);
 
@@ -1518,10 +1523,29 @@ static void _stat_dummy(
 	// 什么也不干。
 }
 
+static ParserSymbol * _get_func_symbol_by_node(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	ParserASTNode *parent = node->parent;
+	while (parent != NULL) {
+		if (parent->type == FE_NODE_FUNC) {
+			ParserSymbol *symbol = FE_FUNC_AST_NODE_GET_SYMBOL(parent);
+			assert(symbol);
+			return symbol;
+		}
+		parent = parent->parent;
+	}
+
+	assert(0);
+}
+
 static void _check_va(
 	ParserContext *ctx,
-	ParserASTNode *node,
-	const char *name
+	ParserASTNode *node
 ) {
 	assert(ctx);
 	assert(node);
@@ -1529,18 +1553,36 @@ static void _check_va(
 			|| node->type == FE_NODE_STAT_VA_END
 			|| node->type == FE_NODE_STAT_VA_COPY
 			|| node->type == FE_NODE_EXPR_VA_ARG);
-	assert(name);
 
-	ParserASTNode *parent = node->parent;
-	while (parent != NULL) {
-		if (parent->type == FE_NODE_FUNC) {
-			
-			return;
-		}
-		parent = parent->parent;
+	ParserSymbol *func_symbol = _get_func_symbol_by_node(ctx, node);
+	ParserASTNode *params_node = FE_FUNC_SYMBOL_GET_PARAMS_NODE(func_symbol);
+
+	// __va_*类语句或操作符应当在包含有“...”参数的函数内使用。
+	if (params_node->nchilds == 0
+			|| params_node->childs[params_node->nchilds - 1]->type != FE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM) {
+		_SYNERR_NODE(
+			ctx,
+			node,
+			"function parameters does not have '...'."
+		);
 	}
 
-	assert(0);
+	// 如果函数包含“...”，那么参数个数至少大于等于2个，因为“...”不能作为函数的第一个参数。
+	assert(params_node->nchilds >= 2);
+
+	// “...”的前一个参数必须是基本类型或者指针类型。
+	ParserASTNode *penult_param_node = params_node->childs[params_node->nchilds - 2];
+	ParserASTNode *penult_param_type_node = penult_param_node->childs[1];
+	uint8_t penult_param_type = _get_type_by_type_node(ctx, penult_param_type_node);
+	if (!_is_primitive_type(penult_param_type)
+			&& !_is_pointer_type(penult_param_type)) {
+		_SYNERR_NODE(
+			ctx,
+			node,
+			"function penult parameter type must be primitive type or pointer type "
+			"when use va_* statement or expression operator."
+		);
+	}
 }
 
 static void _stat_va_start(
@@ -1555,13 +1597,10 @@ static void _stat_va_start(
 	ParserASTNode *node_expr = node->childs[0];
 	_expr_wrapper(ctx, node_expr);
 	
+	_check_va(ctx, node);
 
-
-	if (!_is_int8_ptr_type_node(
-		ctx,
-		FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr)
-	)) {
-		_SYNERR_NODE(ctx, node, "__va_start parameter type must be '*int8'.");
+	if (FE_EXPR_AST_NODE_GET_TYPE(node_expr) != FE_TYPE_VA_LIST) {
+		_SYNERR_NODE(ctx, node, "__va_start parameter type must be '__va_list'.");
 	}
 }
 
@@ -1577,11 +1616,8 @@ static void _stat_va_end(
 	ParserASTNode *node_expr = node->childs[0];
 	_expr_wrapper(ctx, node_expr);
 
-	if (!_is_int8_ptr_type_node(
-		ctx,
-		FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr)
-	)) {
-		_SYNERR_NODE(ctx, node, "__va_end parameter type must be '*int8'.");
+	if (FE_EXPR_AST_NODE_GET_TYPE(node_expr) != FE_TYPE_VA_LIST) {
+		_SYNERR_NODE(ctx, node, "__va_end parameter type must be '__va_list'.");
 	}
 }
 
@@ -1596,15 +1632,13 @@ static void _stat_va_copy(
 
 	ParserASTNode *node_expr_target = node->childs[0];
 	_expr_wrapper(ctx, node_expr_target);
-	ParserASTNode *node_expr_target_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr_target);
 
 	ParserASTNode *node_expr_source = node->childs[1];
 	_expr_wrapper(ctx, node_expr_source);
-	ParserASTNode *node_expr_source_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr_source);
 
-	if (!_is_int8_ptr_type_node(ctx, node_expr_target_type)
-			|| !_is_int8_ptr_type_node(ctx, node_expr_source_type)) {
-		_SYNERR_NODE(ctx, node, "__va_end first parameter type and second parameter type must be '*int8'.");
+	if (FE_EXPR_AST_NODE_GET_TYPE(node_expr_target) != FE_TYPE_VA_LIST
+			|| FE_EXPR_AST_NODE_GET_TYPE(node_expr_source) != FE_TYPE_VA_LIST) {
+		_SYNERR_NODE(ctx, node, "__va_end first parameter type and second parameter type must be '__va_list'.");
 	}
 }
 
@@ -1747,6 +1781,9 @@ static size_t _calc_type_align(
 		}
 		case FE_NODE_TYPE_DOUBLE: {
 			return 8;
+		}
+		case FE_NODE_TYPE_VA_LIST: {
+			return 1;
 		}
 		case FE_NODE_TYPE_STRUCT: {
 			return _calc_struct_type_align(ctx, node, node_type);
@@ -1898,6 +1935,9 @@ static size_t _calc_type_size(
 		}
 		case FE_NODE_TYPE_DOUBLE: {
 			return 8;
+		}
+		case FE_NODE_TYPE_VA_LIST: {
+			return 0;
 		}
 		case FE_NODE_TYPE_STRUCT: {
 			return _calc_struct_type_size(ctx, node, node_type);
@@ -3703,6 +3743,37 @@ static void _expr_unary(
 			}
 			break;
 		}
+		case FE_NODE_EXPR_VA_ARG: {
+			assert(node->nchilds == 2);
+
+			ParserASTNode *node_expr = node->childs[0];
+			ParserASTNode *node_type = node->childs[1];
+
+			_expr(ctx, node_expr);
+
+			uint8_t type = FE_TYPE_UNKNOWN;
+			_type(ctx, node_type, &type);
+
+			if (FE_EXPR_AST_NODE_GET_TYPE(node_expr) != FE_TYPE_VA_LIST) {
+				_SYNERR_NODE(
+					ctx, node, "operator __va_arg first parameter type must be '__va_list'."
+				);
+			}
+
+			if (!_is_primitive_type(type)
+					&& !_is_pointer_type(type)) {
+				_SYNERR_NODE(
+					ctx, node, "operator __va_arg first parameter must be primitive type or pointer type."
+				);
+			}
+
+			FE_EXPR_AST_NODE_SET_TYPE(node, type);
+			FE_EXPR_AST_NODE_SET_TYPE_NODE(node, node_type);
+
+			FE_EXPR_AST_NODE_SET_CONSTANT(node, false);
+
+			break;
+		}
 		default: {
 			_expr_unary_postfix(ctx, node);
 			break;
@@ -5149,11 +5220,12 @@ static void _func(
 			uint8_t param_type = 0;
 			_type(ctx, node_func_param_type, &param_type);
 			if (!_is_primitive_type(param_type)
-					&& !_is_pointer_type(param_type)) {
+					&& !_is_pointer_type(param_type)
+					&& param_type != FE_TYPE_VA_LIST) {
 				_SYNERR_NODE(
 					ctx,
 					node_func_param_type,
-					"function parameter type must be primitive type or pointer type."
+					"function parameter type must be primitive type or pointer type or __va_list type."
 				);
 			}
 
@@ -5388,6 +5460,13 @@ ParserASTNode * fe_sem_search_node_along_parent(
 	va_start(arg_ptr, node);
 	
 	return __search_node_along_parent(node, arg_ptr);
+}
+
+ParserSymbol * fe_sem_get_func_symbol_by_node(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	return _get_func_symbol_by_node(ctx, node);
 }
 
 
