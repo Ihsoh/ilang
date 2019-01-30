@@ -255,7 +255,9 @@ int main(int argc, char *argv[]) {
 	const char *source = NULL;
 	int len = 0;
 	source = (const char *)util_get_file_content(opt_file, &len);
-	assert(source);
+	if (source == NULL) {
+		_error("cannot open source file.");
+	}
 
 	// 打开输出文件。
 	FILE *output = stdout;
