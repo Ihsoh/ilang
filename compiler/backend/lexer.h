@@ -32,6 +32,8 @@
 #define	BE_TOKEN_KEYWORD_DUMMY			0x3008	// dummy
 #define	BE_TOKEN_KEYWORD_ALIGN			0x3009	// align
 #define	BE_TOKEN_KEYWORD_PACKED			0x300a	// packed
+#define	BE_TOKEN_KEYWORD_STORE			0x300b	// store
+#define	BE_TOKEN_KEYWORD_LOAD			0x300c	// load
 
 #define	BE_TOKEN_KEYWORD_CHAR			0x3100	// char
 #define	BE_TOKEN_KEYWORD_INT8			0x3101	// int8
@@ -44,6 +46,8 @@
 #define	BE_TOKEN_KEYWORD_UINT64			0x3108	// uint64
 #define	BE_TOKEN_KEYWORD_FLOAT			0x3109	// float
 #define	BE_TOKEN_KEYWORD_DOUBLE			0x310a	// double
+
+#define	BE_TOKEN_KEYWORD_VA_LIST		0x310b	// __va_list
 
 #define	BE_TOKEN_PNCT_SEMICOLON				0x4000	// ;
 #define	BE_TOKEN_PNCT_PARENTHESES_LEFT		0x4001	// (

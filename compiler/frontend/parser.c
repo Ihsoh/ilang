@@ -191,7 +191,12 @@ _RULE_FUNC_DECL(type_struct);
 _RULE_FUNC_DECL(type_array);
 _RULE_FUNC_DECL(type_func);
 _RULE_FUNC_DECL(type_pointer);
-static ParserASTNode * _RULE_NAME(type)(ParserContext *ctx);
+_RULE_FUNC_DECL(type);
+
+_RULE_FUNC_DECL(attr_align);
+_RULE_FUNC_DECL(attr_packed);
+_RULE_FUNC_DECL(attr);
+_RULE_FUNC_DECL(attrs);
 
 _RULE_FUNC_DECL(func_params_item);
 _RULE_FUNC_DECL(func_params_ellipsis_item);

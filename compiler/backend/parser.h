@@ -34,6 +34,8 @@
 #define	BE_NODE_TYPE_FLOAT			0x0409
 #define	BE_NODE_TYPE_DOUBLE			0x040a
 
+#define	BE_NODE_TYPE_VA_LIST		0x040b
+
 #define	BE_NODE_TYPE_STRUCT			0x0410
 
 #define	BE_NODE_TYPE_ARRAY			0x0420
@@ -47,6 +49,9 @@
 
 
 #define	BE_NODE_DUMMY				0x0900
+
+
+
 
 #define	BE_NODE_FUNC						0x0a00
 #define	BE_NODE_FUNC_PARAMS					0x0a01
@@ -72,6 +77,12 @@
 
 #define	BE_NODE_STAT_DUMMY					0x0b60
 
+#define	FE_NODE_STAT_VA_START				0x0b70
+#define	FE_NODE_STAT_VA_END					0x0b71
+#define	FE_NODE_STAT_VA_COPY				0x0b72
+
+#define	BE_NODE_STAT_STORE					0x0b80
+
 
 
 
@@ -88,6 +99,8 @@
 
 
 #define	FE_NODE_EXPR						0x0e00
+
+#define	FE_NODE_EXPR_ASSIGN					0x0e10
 
 
 
