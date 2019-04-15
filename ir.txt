@@ -6,10 +6,10 @@ function test_1() {
 	var sum:int32 = 0;
 	var i:int32 = 0;
 label _loop;
-	i = i + 1;
-	sum = sum + i;
-	@_is_end = i >= 100;
-	br _is_end, _end, _loop;
+	i = add i, 1;
+	sum = add sum, i;
+	@_is_end = ge i, 100;
+	cbr @_is_end, _end, _loop;
 label _end;
 	call printf("sum = %d\n", sum);
 }
@@ -18,7 +18,7 @@ function test_2() {
 	var a:int32 = 123;
 	var b:*int32 = 0;
 	var c:int32 = 0;
-	b = &a;
+	b = ref a;
 	store b, 456
 	c = load b;
 }
@@ -26,9 +26,9 @@ function test_2() {
 function test_3() {
 	var a:[2][3]int32;
 
-	@_tmp_1 = &a;			// *[2][3]int32
-	@_tmp_2 = @_tmp_1[0];	// *[3]int32
-	@_tmp_3 = @_tmp_2[1];	// *int32
+	@_tmp_1 = ref a;			// *[2][3]int32
+	@_tmp_2 = idx @_tmp_1, 0;	// *[3]int32
+	@_tmp_3 = idx @_tmp_2, 1;	// *int32
 	store @_tmp_3, 123;
 }
 
@@ -40,10 +40,10 @@ struct A {
 function test_4() {
 	var sa:struct A;
 	
-	@_tmp_1 = &sa;					// *struct A
-	@_tmp_2 = @_tmp_1->a;			// *int32
+	@_tmp_1 = ref sa;					// *struct A
+	@_tmp_2 = mbr @_tmp_1, a;			// *int32
 	store @_tmp_2, 123;
-	@_tmp_3 = @_tmp_1->b;			// *int32
+	@_tmp_3 = mbr @_tmp_1, b;			// *int32
 	store @_tmp_3, 456;
 }
 
@@ -55,13 +55,13 @@ struct B {
 function test_5() {
 	var sb:struct B;
 
-	@_tmp_1 = &sb;					// *struct B
-	@_tmp_2 = @_tmp_1->a;			// *int32
+	@_tmp_1 = ref sb;				// *struct B
+	@_tmp_2 = mbr @_tmp_1, a;		// *int32
 	store @_tmp_2, 123;
-	@_tmp_3 = @_tmp_1->b;			// *struct A
-	@_tmp_4 = @_tmp_3->a;			// *int32
+	@_tmp_3 = mbr @_tmp_1, b;		// *struct A
+	@_tmp_4 = mbr @_tmp_3, a;		// *int32
 	store @_tmp_4, 456;
-	@_tmp_5 = @_tmp_3->b;			// *int32
+	@_tmp_5 = mbr @_tmp_3, b;		// *int32
 	store @_tmp_5, 789;
 }
 
