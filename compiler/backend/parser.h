@@ -77,9 +77,9 @@
 
 #define	BE_NODE_STAT_DUMMY					0x0b60
 
-#define	FE_NODE_STAT_VA_START				0x0b70
-#define	FE_NODE_STAT_VA_END					0x0b71
-#define	FE_NODE_STAT_VA_COPY				0x0b72
+#define	BE_NODE_STAT_VA_START				0x0b70
+#define	BE_NODE_STAT_VA_END					0x0b71
+#define	BE_NODE_STAT_VA_COPY				0x0b72
 
 #define	BE_NODE_STAT_STORE					0x0b80
 
@@ -98,12 +98,495 @@
 
 
 
-#define	FE_NODE_EXPR						0x0e00
+#define	BE_NODE_EXPR						0x0e00
 
-#define	FE_NODE_EXPR_ASSIGN					0x0e10
+#define	BE_NODE_EXPR_ATOM					0x0ee0
 
 
 
+
+
+
+
+
+#define	BE_NODE_ATTR_ALIGN					0x0f00
+#define	BE_NODE_ATTR_PACKED					0x0f01
+
+
+
+
+#define BE_SYM_VAR					0x01
+#define	BE_SYM_STRUCT				0x02
+#define	BE_SYM_FUNC					0x03
+#define	BE_SYM_LABEL				0x04
+#define	BE_SYM_STRUCT_MEMBER_VAR	0x05
+
+
+
+
+#define	BE_TYPE_UNKNOWN				0x00
+#define	BE_TYPE_CHAR				0x01
+#define	BE_TYPE_INT8				0x02
+#define	BE_TYPE_INT16				0x03
+#define	BE_TYPE_INT32				0x04
+#define	BE_TYPE_INT64				0x05
+#define	BE_TYPE_UINT8				0x06
+#define	BE_TYPE_UINT16				0x07
+#define	BE_TYPE_UINT32				0x08
+#define	BE_TYPE_UINT64				0x09
+#define	BE_TYPE_FLOAT				0x0a
+#define	BE_TYPE_DOUBLE				0x0b
+
+#define	BE_TYPE_VA_LIST				0x0c
+
+#define	BE_TYPE_STRUCT				0x0d
+
+#define	BE_TYPE_ARRAY				0x0e
+
+#define	BE_TYPE_FUNC				0x0f
+
+#define	BE_TYPE_POINTER				0x10
+
+#define	BE_TYPE_VOID				0xff
+
+
+
+
+#define	BE_IS_TYPE_NODE(type)		(((type) & 0xff00) == BE_NODE_TYPE)
+#define	BE_IS_EXPR_NODE(type)		(((type) & 0xff00) == BE_NODE_EXPR)
+
+
+
+
+
+#define	BE_ARCH_32		1
+#define	BE_ARCH_64		2
+
+
+
+
+typedef struct {
+	ParserASTNode		*align_node;
+	ParserASTNode		*packed_node;
+} BeParserContextData;
+
+#define	BE_PARSER_CONTEXT_DATA_SET_ALIGN_NODE(ctx, n)	\
+	(((BeParserContextData *)&((ctx)->data[0]))->align_node = (n))
+#define	BE_PARSER_CONTEXT_DATA_SET_PACKED_NODE(ctx, n)	\
+	(((BeParserContextData *)&((ctx)->data[0]))->packed_node = (n))
+
+#define	BE_PARSER_CONTEXT_DATA_GET_ALIGN_NODE(ctx)	\
+	(((BeParserContextData *)&((ctx)->data[0]))->align_node)
+#define	BE_PARSER_CONTEXT_DATA_GET_PACKED_NODE(ctx)	\
+	(((BeParserContextData *)&((ctx)->data[0]))->packed_node)
+
+
+
+
+typedef struct {
+	const char 	*str;
+	size_t		len;
+} BeParserConstexprString;
+
+typedef struct {
+	uint8_t							type;
+	ParserASTNode					*type_node;
+
+	bool							constant;
+	uint8_t							constant_type;
+
+	bool							has_conststr;
+	BeParserConstexprString			conststr;
+
+	union {
+		char						char_val;
+
+		int8_t						int8_val;
+		int16_t						int16_val;
+		int32_t						int32_val;
+		int64_t						int64_val;
+
+		uint8_t						uint8_val;
+		uint16_t					uint16_val;
+		uint32_t					uint32_val;
+		uint64_t					uint64_val;
+		
+		float						float_val;
+		double						double_val;
+
+		uint64_t					ptr_val;
+	} constexpr_result;	
+} BeParserExprASTNodeData;
+
+#define	BE_EXPR_AST_NODE_GET_TYPE(node)				(((BeParserExprASTNodeData *)&((node)->data[0]))->type)
+#define	BE_EXPR_AST_NODE_GET_TYPE_NODE(node)		(((BeParserExprASTNodeData *)&((node)->data[0]))->type_node)
+#define	BE_EXPR_AST_NODE_GET_CONSTANT(node)			(((BeParserExprASTNodeData *)&((node)->data[0]))->constant)
+#define	BE_EXPR_AST_NODE_GET_CONSTANT_TYPE(node)	(((BeParserExprASTNodeData *)&((node)->data[0]))->constant_type)
+
+
+#define	BE_EXPR_AST_NODE_GET_HAS_CONSTSTR(node)		(((BeParserExprASTNodeData *)&((node)->data[0]))->has_conststr)
+#define	BE_EXPR_AST_NODE_GET_CONSTSTR(node)			(&(((BeParserExprASTNodeData *)&((node)->data[0]))->conststr))
+
+
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_CHAR_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.char_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT8_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.int8_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT16_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.int16_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT32_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.int32_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT64_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.int64_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT8_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.uint8_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT16_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.uint16_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT32_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.uint32_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT64_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.uint64_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_FLOAT_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.float_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_DOUBLE_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.double_val)
+#define BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node)	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.ptr_val)
+
+
+#define	BE_EXPR_AST_NODE_SET_TYPE(node, t)				(((BeParserExprASTNodeData *)&((node)->data[0]))->type = (t))
+#define	BE_EXPR_AST_NODE_SET_TYPE_NODE(node, tnode)		(((BeParserExprASTNodeData *)&((node)->data[0]))->type_node = (tnode))
+#define	BE_EXPR_AST_NODE_SET_CONSTANT(node, c)			(((BeParserExprASTNodeData *)&((node)->data[0]))->constant = (c))
+#define	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE(node, ct)	(((BeParserExprASTNodeData *)&((node)->data[0]))->constant_type = (ct))
+
+
+#define	BE_EXPR_AST_NODE_SET_HAS_CONSTSTR(node, hc)	(((BeParserExprASTNodeData *)&((node)->data[0]))->has_conststr = (hc))
+
+
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_CHAR_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.char_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_CHAR);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT8_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.int8_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_INT8);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT16_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.int16_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_INT16);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT32_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.int32_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_INT32);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT64_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.int64_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_INT64);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT8_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.uint8_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_UINT8);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT16_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.uint16_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_UINT16);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT32_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.uint32_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_UINT32);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT64_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.uint64_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_UINT64);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_FLOAT_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.float_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_FLOAT);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_DOUBLE_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.double_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_DOUBLE);	\
+}
+#define	BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_POINTER_VAL(node, v) {	\
+	(((BeParserExprASTNodeData *)&((node)->data[0]))->constexpr_result.ptr_val = (v));	\
+	BE_EXPR_AST_NODE_SET_CONSTANT_TYPE((node), BE_TYPE_POINTER);	\
+}
+
+
+#define	BE_EXPR_AST_NODE_COPY_CONSTANT(target, source)	(BE_EXPR_AST_NODE_SET_CONSTANT((target), BE_EXPR_AST_NODE_GET_CONSTANT((source))))
+
+#define	BE_EXPR_AST_NODE_COPY_CONSTANT2(target, source1, source2)	\
+	(BE_EXPR_AST_NODE_SET_CONSTANT(	\
+		(target),	\
+		BE_EXPR_AST_NODE_GET_CONSTANT((source1)) && BE_EXPR_AST_NODE_GET_CONSTANT((source2))	\
+	))
+
+#define	BE_EXPR_AST_NODE_COPY_CONSTANT3(target, source1, source2, source3)	\
+	(BE_EXPR_AST_NODE_SET_CONSTANT(	\
+		(target),	\
+		BE_EXPR_AST_NODE_GET_CONSTANT((source1)) && BE_EXPR_AST_NODE_GET_CONSTANT((source2)) && BE_EXPR_AST_NODE_GET_CONSTANT((source3))	\
+	))
+
+#define	BE_EXPR_AST_NODE_COPY(target, source)		(memcpy(&((target)->data), &((source)->data), sizeof(BeParserExprASTNodeData)))
+
+
+
+
+#define	BE_VAR_TYPE_UNKNOWN				0
+#define	BE_VAR_TYPE_GLOBAL				1
+#define	BE_VAR_TYPE_LOCAL				2
+#define	BE_VAR_TYPE_STRUCT_MEMBER		3
+
+typedef struct {
+	/*
+		标识变量的作用域。
+
+		BE_VAR_TYPE_GLOBAL：全局变量
+		BE_VAR_TYPE_LOCAL：局部变量
+		BE_VAR_TYPE_STRUCT_MEMBER：结构体成员变量
+	*/
+	uint8_t			type;
+
+	ParserASTNode	*align_node;
+	int				align;
+} BeParserVarASTNodeData;
+
+#define	BE_VAR_AST_NODE_GET_TYPE(node)					(((BeParserVarASTNodeData *)&((node)->data[0]))->type)
+#define	BE_VAR_AST_NODE_GET_ALIGN_NODE(node)			(((BeParserVarASTNodeData *)&((node)->data[0]))->align_node)
+#define	BE_VAR_AST_NODE_GET_ALIGN(node)					(((BeParserVarASTNodeData *)&((node)->data[0]))->align)
+
+#define	BE_VAR_AST_NODE_SET_TYPE(node, t)				(((BeParserVarASTNodeData *)&((node)->data[0]))->type = (t))
+#define	BE_VAR_AST_NODE_SET_ALIGN_NODE(node, n)			(((BeParserVarASTNodeData *)&((node)->data[0]))->align_node = (n))
+#define	BE_VAR_AST_NODE_SET_ALIGN(node, a)				(((BeParserVarASTNodeData *)&((node)->data[0]))->align = (a))
+
+
+
+
+typedef struct {
+	ParserSymbol	*symbol;
+} BeParserVarItemASTNodeData;
+
+#define	BE_VAR_ITEM_AST_NODE_GET_SYMBOL(node)			(((BeParserVarItemASTNodeData *)&((node)->data[0]))->symbol)
+
+#define	BE_VAR_ITEM_AST_NODE_SET_SYMBOL(node, s)		(((BeParserVarItemASTNodeData *)&((node)->data[0]))->symbol = (s))
+
+
+
+
+typedef struct {
+	ParserSymbol	*symbol;
+} BeParserFuncASTNodeData;
+
+#define	BE_FUNC_AST_NODE_GET_SYMBOL(node)		(((BeParserFuncASTNodeData *)&((node)->data[0]))->symbol)
+
+#define	BE_FUNC_AST_NODE_SET_SYMBOL(node, s)	(((BeParserFuncASTNodeData *)&((node)->data[0]))->symbol = (s))
+
+
+
+
+typedef struct {
+	ParserSymbol	*symbol;
+} BeParserFuncParamASTNodeData;
+
+#define	BE_FUNC_PARAM_AST_NODE_GET_SYMBOL(node)		(((BeParserFuncParamASTNodeData *)&((node)->data[0]))->symbol)
+
+#define	BE_FUNC_PARAM_AST_NODE_SET_SYMBOL(node, s)	(((BeParserFuncParamASTNodeData *)&((node)->data[0]))->symbol = (s))
+
+
+
+
+typedef struct {
+	ResizableString label_repeat;
+	ResizableString label_end;
+} BeParserLoopASTNodeData;
+
+#define	BE_LOOP_AST_NODE_GET_LABEL_REPEAT(node)		(&(((BeParserLoopASTNodeData *)&((node)->data[0]))->label_repeat))
+#define	BE_LOOP_AST_NODE_GET_LABEL_END(node)		(&(((BeParserLoopASTNodeData *)&((node)->data[0]))->label_end))
+
+
+
+
+typedef struct {
+	ParserASTNode		*packed_node;
+	bool				packed;
+} BeParserStructASTNodeData;
+
+#define	BE_STRUCT_AST_NODE_GET_PACKED_NODE(node)		(((BeParserStructASTNodeData *)&((node)->data[0]))->packed_node)
+#define	BE_STRUCT_AST_NODE_GET_PACKED(node)				(((BeParserStructASTNodeData *)&((node)->data[0]))->packed)
+
+#define	BE_STRUCT_AST_NODE_SET_PACKED_NODE(node, v)		(((BeParserStructASTNodeData *)&((node)->data[0]))->packed_node = (v))
+#define	BE_STRUCT_AST_NODE_SET_PACKED(node, v)			(((BeParserStructASTNodeData *)&((node)->data[0]))->packed = (v))
+
+
+
+
+extern ParserASTNode * be_parser_new_node(
+	ParserContext *ctx,
+	int32_t type,
+	char *type_name,
+	LexerToken *token
+);
+
+extern ParserContext * be_parser_new_context(
+	const char *file,
+	const char *source,
+	int len,
+	int arch
+);
+
+extern void be_parser_free_context(ParserContext * ctx);
+
+extern void be_parser_parse(ParserContext * ctx);
+
+extern void be_parser_print_ast(ParserContext * ctx, FILE *file);
+
+extern uint32_t be_parser_get_uint32_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern uint64_t be_parser_get_uint64_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern uint64_t be_parser_get_uint_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+
+extern float be_parser_get_float_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern double be_parser_get_double_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+
+extern char be_parser_get_char_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+
+
+
+
+typedef struct {
+	uint8_t				type;
+	ParserASTNode		*type_node;
+
+	ParserSymbol		*func_symbol;
+
+	// 只有当has_code_gen_name为true时，code_gen_name才有意义。
+	bool				has_code_gen_name;
+	ResizableString		code_gen_name;
+
+	int					align;
+} BeParserVarSymbolData;
+
+#define	BE_VAR_SYMBOL_GET_TYPE(symbol)					(((BeParserVarSymbolData *)&((symbol)->data[0]))->type)
+#define	BE_VAR_SYMBOL_GET_TYPE_NODE(symbol)				(((BeParserVarSymbolData *)&((symbol)->data[0]))->type_node)
+#define	BE_VAR_SYMBOL_GET_FUNC_SYMBOL(symbol)			(((BeParserVarSymbolData *)&((symbol)->data[0]))->func_symbol)
+#define	BE_VAR_SYMBOL_GET_HAS_CODE_GEN_NAME(symbol)		(((BeParserVarSymbolData *)&((symbol)->data[0]))->has_code_gen_name)
+#define	BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol)			(&(((BeParserVarSymbolData *)&((symbol)->data[0]))->code_gen_name))
+#define	BE_VAR_SYMBOL_GET_ALIGN(symbol)					(((BeParserVarSymbolData *)&((symbol)->data[0]))->align)
+
+#define	BE_VAR_SYMBOL_SET_FUNC_SYMBOL(symbol, v)		(((BeParserVarSymbolData *)&((symbol)->data[0]))->func_symbol = (v))
+#define	BE_VAR_SYMBOL_SET_HAS_CODE_GEN_NAME(symbol, v)	(((BeParserVarSymbolData *)&((symbol)->data[0]))->has_code_gen_name = (v))
+#define	BE_VAR_SYMBOL_SET_ALIGN(symbol, v)				(((BeParserVarSymbolData *)&((symbol)->data[0]))->align = (v))
+
+
+
+
+extern ParserSymbol * be_parser_add_var_symbol_to_node(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	LexerToken *token,
+	uint8_t var_type,
+	ParserASTNode *var_type_node
+);
+
+
+
+
+typedef struct {
+	uint8_t			type;
+	ParserASTNode	*type_node;
+} BeParserStructMemberVarSymbolData;
+
+#define	BE_STRUCT_MEMBER_VAR_SYMBOL_GET_TYPE(symbol)		(((BeParserStructMemberVarSymbolData *)&((symbol)->data[0]))->type)
+#define	BE_STRUCT_MEMBER_VAR_SYMBOL_GET_TYPE_NODE(symbol)	(((BeParserStructMemberVarSymbolData *)&((symbol)->data[0]))->type_node)
+
+extern ParserSymbol * be_parser_add_struct_member_var_symbol_to_symbol(
+	ParserContext *ctx,
+	ParserSymbol *symbol,
+	LexerToken *token,
+	uint8_t var_type,
+	ParserASTNode *var_type_node
+);
+
+
+
+
+typedef struct {
+	ParserASTNode	*struct_node;
+	ParserASTNode	*body_node;
+	bool			dummy;
+} BeParserStructSymbolData;
+
+#define	BE_STRUCT_SYMBOL_GET_STRUCT_NODE(symbol)		(((BeParserStructSymbolData *)&((symbol)->data[0]))->struct_node)
+#define	BE_STRUCT_SYMBOL_SET_STRUCT_NODE(symbol, v)		(((BeParserStructSymbolData *)&((symbol)->data[0]))->struct_node = (v))
+#define	BE_STRUCT_SYMBOL_GET_BODY_NODE(symbol)			(((BeParserStructSymbolData *)&((symbol)->data[0]))->body_node)
+#define	BE_STRUCT_SYMBOL_SET_BODY_NODE(symbol, bn)		(((BeParserStructSymbolData *)&((symbol)->data[0]))->body_node = (bn))
+#define	BE_STRUCT_SYMBOL_GET_DUMMY(symbol)				(((BeParserStructSymbolData *)&((symbol)->data[0]))->dummy)
+#define	BE_STRUCT_SYMBOL_SET_DUMMY(symbol, d)			(((BeParserStructSymbolData *)&((symbol)->data[0]))->dummy = (d))
+
+extern ParserSymbol * be_parser_new_struct_symbol(
+	ParserContext *ctx,
+	LexerToken *token,
+	ParserASTNode *struct_node,
+	ParserASTNode *body_node,
+	bool dummy
+);
+
+extern ParserSymbol * be_parser_add_struct_symbol_to_node(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	LexerToken *token,
+	ParserASTNode *body_node,
+	bool dummy
+);
+
+
+
+
+typedef struct {
+	ParserASTNode 	*params_node;
+	ParserASTNode 	*return_type_node;
+	ParserASTNode	*func_type_node;
+	ParserASTNode 	*func_pointer_type_node;
+	bool			dummy;
+
+	unsigned int	counter;
+} BeParserFuncSymbolData;
+
+#define	BE_FUNC_SYMBOL_GET_PARAMS_NODE(symbol)				(((BeParserFuncSymbolData *)&((symbol)->data[0]))->params_node)
+#define	BE_FUNC_SYMBOL_GET_RETURN_TYPE_NODE(symbol)			(((BeParserFuncSymbolData *)&((symbol)->data[0]))->return_type_node)
+#define	BE_FUNC_SYMBOL_GET_FUNC_TYPE_NODE(symbol)			(((BeParserFuncSymbolData *)&((symbol)->data[0]))->func_type_node)
+#define	BE_FUNC_SYMBOL_GET_FUNC_POINTER_TYPE_NODE(symbol)	(((BeParserFuncSymbolData *)&((symbol)->data[0]))->func_pointer_type_node)
+#define	BE_FUNC_SYMBOL_GET_DUMMY(symbol)					(((BeParserFuncSymbolData *)&((symbol)->data[0]))->dummy)
+
+#define	BE_FUNC_SYMBOL_SET_DUMMY(symbol, d)					(((BeParserFuncSymbolData *)&((symbol)->data[0]))->dummy = (d))
+
+#define	BE_FUNC_SYMBOL_NEXT_NO(symbol)						(((BeParserFuncSymbolData *)&((symbol)->data[0]))->counter++)
+
+extern ParserSymbol * be_parser_add_func_symbol_to_node(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	LexerToken *token,
+	ParserASTNode *params_node,
+	ParserASTNode *return_type_node,
+	bool dummy
+);
 
 
 

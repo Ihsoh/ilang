@@ -1,0 +1,7 @@
+#ifndef	__COMPILER_BACKEND_VERSION_H__
+#define	__COMPILER_BACKEND_VERSION_H__
+
+#define	BE_VERSION_MAJOR	"0"
+#define BE_VERSION_MINOR	"1"
+
+#endif
