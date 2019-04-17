@@ -375,14 +375,106 @@ struct Point3D {
 ```
 
 ### 数组类型
+数组类型用于分配一段固定大小的连续的储存空间。数组类型的格式形如`[N]type`、`[N1][N2]type`、`[N1][N2][N3]type`等。一维数组类型形如`[2]int32`，该数组类型具有2个int32大小的连续的储存空间。二维数组类型形如`[2][3]int32`，其中`[2]`是第一维，`[3]`是第二维，该数组类型具有2 x 3个int32大小的连续的储存空间。
 
+```
+// 定义一个一维数组全局变量。
+var a:[2]int32;
 
+// 定义一个二维数组全局变量。
+var b:[2][3]int32;
+
+function main(argc:int32, argv:**char):int32 {
+	// 定义一个三维数组局部变量。
+	var c:[2][3][4]int32;
+
+	// 给一维数组的各个元素赋值。
+	a[0] = 1;
+	a[1] = 2;
+
+	// 给二维数组的各个元素赋值。
+	for (var i:int32 = 0; i < 2; i++) {
+		for (var j:int32 = 0; j < 3; j++) {
+			b[i][j] = (i + 1) * 10 + (j + 1);
+		}
+	}
+
+	// 给三维数组的各个元素赋值。
+	for (var i:int32 = 0; i < 2; i++) {
+		for (var j:int32 = 0; j < 3; j++) {
+			for (var k:int32 = 0; k < 4; k++) {
+				c[i][j][k] = (i + 1) * 100 + (j + 1) * 10 + (k + 1);
+			}
+		}
+	}
+
+	return 0;
+}
+```
 
 ### 函数类型
+函数类型类似于函数的签名，但是缺少函数名。函数类型总是伴随着指针类型，不能定义函数类型的变量或者将函数的返回值定义为函数类型，只能定义函数指针类型的变量或者将函数的返回值定义为函数指针类型。
 
+```
+function add(a:int32, b:int32):int32 {
+	return a + b;
+}
+
+function main(argc:int32, argv:**char):int32 {
+	var ptrFunc:*function(a:int32, b:int32):int32 = add;
+	var result:int32 = ptrFunc(1, 2);
+
+	return 0;
+}
+```
 
 ### 指针类型
+指针类型形如`*type`，其中`type`本身也可以是指针类型。如果`type`不指定，只有`*`的话，则类似于C语言的`void*`。例如：`*`、`*char`、`**char`、`*[2]int32`、`*[2][3]int32`、`*function(a:int32, b:int32):int32`
 
+```
+function add(a:int32, b:int32):int32 {
+	return a + b;
+}
+
+function sum(arr:*int32, n:int32):int32 {
+	var total:int32 = 0;
+	for (var i:int32; i < n; i++) {
+		total += arr[i];
+	}
+	return total;
+}
+
+function main(argc:int32, argv:**char):int32 {
+	// *int32
+	var a:int32 = 1;
+	var ptrA:*int32 = &a;
+	*ptrA = 2;
+
+	// *[2]int32
+	var b:[2]int32;
+	b[0] = 1;
+	b[1] = 2;
+	var ptrB:*[2]int32 = &b;
+	(*ptrB)[0] = 3;
+	(*ptrB)[1] = 4;
+
+	// *function(a:int32, b:int32):int32
+	var c:*function(a:int32, b:int32):int32 = add;
+	var resultC:int32 = c(1, 2);
+
+	// 传递数组的地址
+	var d:[3]int32;
+	d[0] = 1;
+	d[1] = 2;
+	d[2] = 3;
+	var resultD:int32 = sum(
+		cast<*int32>(&d),
+		sizeof(d) / sizeof(int32)
+	);
+
+	return 0;
+}
+```
 
 ## 表达式
 
