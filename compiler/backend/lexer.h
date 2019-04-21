@@ -34,6 +34,8 @@
 #define	BE_TOKEN_KEYWORD_PACKED			0x300a	// packed
 #define	BE_TOKEN_KEYWORD_STORE			0x300b	// store
 #define	BE_TOKEN_KEYWORD_LOAD			0x300c	// load
+#define	BE_TOKEN_KEYWORD_SIZEOF			0x300d	// sizeof
+#define	BE_TOKEN_KEYWORD_ALIGNOF		0x300e	// alignof
 
 #define	BE_TOKEN_KEYWORD_CHAR			0x3100	// char
 #define	BE_TOKEN_KEYWORD_INT8			0x3101	// int8
@@ -79,6 +81,9 @@
 #define	BE_TOKEN_PNCT_RIGHT_ARROW			0x401b	// ->
 #define	BE_TOKEN_PNCT_BRACKETS_LEFT			0x401c	// [
 #define	BE_TOKEN_PNCT_BRACKETS_RIGHT		0x401d	// ]
+#define	BE_TOKEN_PNCT_OR					0x401e	// ||
+#define	BE_TOKEN_PNCT_AND					0x401f	// &&
+#define	BE_TOKEN_PNCT_QUESTION_MARK			0x4020	// ?
 
 #define	BE_TOKEN_PREPROCESS					0xd000	// #...\n
 

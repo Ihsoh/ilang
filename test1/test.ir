@@ -2,8 +2,13 @@ struct A {
 	var aa:int32, ab:int32;
 }
 
-var a:int32, b:int32;
+var a:int32 = 1, b:int32 = 2;
+
+function add(n1:int32, n2:int32):int32 {
+
+}
 
 function main(argc:int32, argv:**char):int32 {
+	var c:int32 = 3, d:int32 = (4);
 
 }

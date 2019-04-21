@@ -156,6 +156,19 @@ _RULE_FUNC_DECL(literal_char);
 _RULE_FUNC_DECL(literal_string);
 
 _RULE_FUNC_DECL(expr_atom);
+_RULE_FUNC_DECL(expr_parenthesis);
+_RULE_FUNC_DECL(expr_unary);
+_RULE_FUNC_DECL(expr_mul);
+_RULE_FUNC_DECL(expr_add);
+_RULE_FUNC_DECL(expr_shift);
+_RULE_FUNC_DECL(expr_lt);
+_RULE_FUNC_DECL(expr_eq);
+_RULE_FUNC_DECL(expr_band);
+_RULE_FUNC_DECL(expr_bxor);
+_RULE_FUNC_DECL(expr_bor);
+_RULE_FUNC_DECL(expr_and);
+_RULE_FUNC_DECL(expr_or);
+_RULE_FUNC_DECL(expr_cond);
 _RULE_FUNC_DECL(expr);
 _RULE_FUNC_DECL(expr_wrapper);
 
@@ -172,6 +185,7 @@ _RULE_FUNC_DECL(func_params);
 _RULE_FUNC_DECL(func);
 
 _RULE_FUNC_DECL(stat_var);
+
 _RULE_FUNC_DECL(stat_dummy);
 
 _RULE_FUNC_DECL(stat);
@@ -248,10 +262,6 @@ _RULE(expr_atom)
 		node = _RULE_NAME(literal_string)(_RULE_PARSER_CTX);
 	}
 
-	if (node == NULL) {
-		node = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
-	}
-
 	if (node != NULL) {
 		_RULE_NODE(BE_NODE_EXPR_ATOM, NULL);
 
@@ -262,8 +272,373 @@ _RULE(expr_atom)
 
 _RULE_END
 
+_RULE(expr_parenthesis)
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_PARENTHESES_LEFT) {
+		_RULE_RETURNED_NODE(_RULE_NAME(expr)(_RULE_PARSER_CTX))
+		if (_RULE_CURRENT_NODE != NULL) {
+			_RULE_NEXT_TOKEN
+			if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_PARENTHESES_RIGHT) {
+				_RULE_ABANDON_LEXCTX
+			} else {
+				_RULE_POP_LEXCTX
+				_RULE_NOT_MATCHED
+			}
+		} else {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+	} else {
+		_RULE_POP_LEXCTX
+		_RULE_RETURNED_NODE(_RULE_NAME(expr_atom)(_RULE_PARSER_CTX));
+	}
+_RULE_END
+
+_RULE(expr_unary)
+
+	#define	_EXPR_UNARY_ITEM(type)	\
+		{	\
+			ParserASTNode *expr_unary = _RULE_NAME(expr_unary)(_RULE_PARSER_CTX);	\
+			if (expr_unary != NULL) {	\
+				__node = _new_node(__ctx, type, #type, NULL);	\
+				_RULE_ADD_CHILD(expr_unary)	\
+				_RULE_ABANDON_LEXCTX	\
+			} else {	\
+				_RULE_POP_LEXCTX	\
+				_RULE_NOT_MATCHED	\
+			}	\
+		}
+
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_NOT) {
+		_EXPR_UNARY_ITEM(BE_NODE_EXPR_NOT)
+	} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_ADD) {
+		_EXPR_UNARY_ITEM(BE_NODE_EXPR_POSITIVE)
+	} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_SUB) {
+		_EXPR_UNARY_ITEM(BE_NODE_EXPR_NEGATIVE)
+	} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_BNOT) {
+		_EXPR_UNARY_ITEM(BE_NODE_EXPR_BNOT)
+	} else if (_RULE_TOKEN_TYPE == BE_TOKEN_KEYWORD_SIZEOF) {
+		LexerToken *tk = _RULE_TOKEN;
+
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_PARENTHESES_LEFT) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+
+		ParserASTNode *type_or_expr = _RULE_NAME(expr)(_RULE_PARSER_CTX);
+		if (type_or_expr == NULL) {
+			type_or_expr = _RULE_NAME(type)(_RULE_PARSER_CTX);
+		}
+		if (type_or_expr == NULL) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_PARENTHESES_RIGHT) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+
+		_RULE_NODE(BE_NODE_EXPR_SIZEOF, tk)
+		_RULE_ADD_CHILD(type_or_expr)
+		_RULE_ABANDON_LEXCTX
+	} else if (_RULE_TOKEN_TYPE == BE_TOKEN_KEYWORD_ALIGNOF) {
+		LexerToken *tk = _RULE_TOKEN;
+
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_PARENTHESES_LEFT) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+
+		ParserASTNode *type_or_expr = _RULE_NAME(expr)(_RULE_PARSER_CTX);
+		if (type_or_expr == NULL) {
+			type_or_expr = _RULE_NAME(type)(_RULE_PARSER_CTX);
+		}
+		if (type_or_expr == NULL) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_PARENTHESES_RIGHT) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+
+		_RULE_NODE(BE_NODE_EXPR_ALIGNOF, tk)
+		_RULE_ADD_CHILD(type_or_expr)
+		_RULE_ABANDON_LEXCTX
+	} else if (_RULE_TOKEN_TYPE == BE_TOKEN_KEYWORD_CAST) {
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_LT) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+		ParserASTNode *node_type = _RULE_NAME(type)(_RULE_PARSER_CTX);
+		if (node_type == NULL) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_GT) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_PARENTHESES_LEFT) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+		ParserASTNode *node_expr = _RULE_NAME(expr)(_RULE_PARSER_CTX);
+		if (node_expr == NULL) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_PARENTHESES_RIGHT) {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+
+		_RULE_NODE(BE_NODE_EXPR_CAST, NULL)
+		_RULE_ADD_CHILD(node_type)
+		_RULE_ADD_CHILD(node_expr)
+		_RULE_ABANDON_LEXCTX
+	} else {
+		_RULE_POP_LEXCTX
+		_RULE_RETURNED_NODE(_RULE_NAME(expr_parenthesis)(_RULE_PARSER_CTX))
+	}
+
+	#undef	_EXPR_UNARY_ITEM
+_RULE_END
+
+#define	_EXPR_BINARY_ITEM(type, expr_right_name)	\
+	{	\
+		ParserASTNode *node_left = _RULE_CURRENT_NODE;	\
+		ParserASTNode *node_right = _RULE_NAME(expr_right_name)(_RULE_PARSER_CTX);	\
+		if (node_right != NULL) {	\
+			__node = _new_node(__ctx, type, #type, NULL);	\
+			_RULE_ADD_CHILD(node_left)	\
+			_RULE_ADD_CHILD(node_right)	\
+		} else {	\
+			_RULE_POP_LEXCTX	\
+			break;	\
+		}	\
+	}
+
+_RULE(expr_mul)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_unary)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_MUL) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_MUL, expr_unary)
+		} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_DIV) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_DIV, expr_unary)
+		} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_MOD) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_MOD, expr_unary)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_add)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_mul)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_ADD) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_ADD, expr_mul)
+		} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_SUB) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_SUB, expr_mul)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_shift)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_add)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_SHIFT_LEFT) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_SHIFT_LEFT, expr_add)
+		} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_SHIFT_RIGHT) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_SHIFT_RIGHT, expr_add)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_lt)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_shift)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_LT) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_LT, expr_shift)
+		} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_LE) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_LE, expr_shift)
+		} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_GT) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_GT, expr_shift)
+		} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_GE) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_GE, expr_shift)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_eq)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_lt)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_EQUAL) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_EQ, expr_lt)
+		} else if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_NOT_EQUAL) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_NEQ, expr_lt)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_band)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_eq)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_BAND) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_BAND, expr_eq)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_bxor)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_band)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_BXOR) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_BXOR, expr_band)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_bor)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_bxor)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_BOR) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_BOR, expr_bxor)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_and)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_bor)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_AND) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_AND, expr_bor)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+_RULE(expr_or)
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_and)(_RULE_PARSER_CTX))
+
+	for (;_RULE_CURRENT_NODE != NULL;) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_OR) {
+			_EXPR_BINARY_ITEM(BE_NODE_EXPR_OR, expr_and)
+		} else {
+			_RULE_POP_LEXCTX
+			break;
+		}
+		_RULE_ABANDON_LEXCTX
+	}
+_RULE_END
+
+#undef	_EXPR_BINARY_ITEM
+
+_RULE(expr_cond)
+	ParserASTNode *expr = _RULE_NAME(expr_or)(_RULE_PARSER_CTX);
+
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == BE_TOKEN_PNCT_QUESTION_MARK) {
+		ParserASTNode *expr_true = _RULE_NAME(expr)(_RULE_PARSER_CTX);
+		
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COLON) {
+			_RULE_PARSER_CTX->syntax_error(_RULE_PARSER_CTX);
+		}
+
+		ParserASTNode *expr_false = _RULE_NAME(expr)(_RULE_PARSER_CTX);
+
+		_RULE_NODE(BE_NODE_EXPR_COND, NULL)
+		_RULE_ADD_CHILD(expr)
+		_RULE_ADD_CHILD(expr_true)
+		_RULE_ADD_CHILD(expr_false)
+		_RULE_ABANDON_LEXCTX
+	} else {
+		_RULE_POP_LEXCTX
+		_RULE_RETURNED_NODE(expr)
+	}
+_RULE_END
+
 _RULE(expr)
-	_RULE_RETURNED_NODE(_RULE_NAME(expr_atom)(_RULE_PARSER_CTX))
+	_RULE_RETURNED_NODE(_RULE_NAME(expr_cond)(_RULE_PARSER_CTX))
 _RULE_END
 
 _RULE(expr_wrapper)
@@ -275,6 +650,9 @@ _RULE(expr_wrapper)
 		_RULE_NOT_MATCHED
 	}
 _RULE_END
+
+
+
 
 _RULE(type_simple)
 	_RULE_NEXT_TOKEN
@@ -844,6 +1222,14 @@ _RULE_END
 _RULE(stat)
 
 	_RULE_NAME(attrs)(_RULE_PARSER_CTX);
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_var)(_RULE_PARSER_CTX))
+	}
+
+
+
+
 
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(stat_dummy)(_RULE_PARSER_CTX))

@@ -156,6 +156,8 @@ LEXER_MATCHER(keyword)
 		_KEYWORD("double", BE_TOKEN_KEYWORD_DOUBLE),
 		_KEYWORD("store", BE_TOKEN_KEYWORD_STORE),
 		_KEYWORD("load", BE_TOKEN_KEYWORD_LOAD),
+		_KEYWORD("sizeof", BE_TOKEN_KEYWORD_SIZEOF),
+		_KEYWORD("alignof", BE_TOKEN_KEYWORD_ALIGNOF),
 
 		{NULL, 0, BE_TOKEN_INVALID}
 	};
@@ -223,6 +225,9 @@ LEXER_TEXT_MATCHER(pnct_bnot, "~", BE_TOKEN_PNCT_BNOT, 0)
 LEXER_TEXT_MATCHER(pnct_right_arrow, "->", BE_TOKEN_PNCT_RIGHT_ARROW, 0)
 LEXER_TEXT_MATCHER(pnct_brackets_left, "[", BE_TOKEN_PNCT_BRACKETS_LEFT, 0)
 LEXER_TEXT_MATCHER(pnct_brackets_right, "]", BE_TOKEN_PNCT_BRACKETS_RIGHT, 0)
+LEXER_TEXT_MATCHER(pnct_or, "||", BE_TOKEN_PNCT_OR, 0)
+LEXER_TEXT_MATCHER(pnct_and, "&&", BE_TOKEN_PNCT_AND, 0)
+LEXER_TEXT_MATCHER(pnct_question_mark, "?", BE_TOKEN_PNCT_QUESTION_MARK, 0)
 
 
 
@@ -277,6 +282,9 @@ static LexerTokenMatcher _matchers[] = {
 	_MATCHER_LIST_ITEM(pnct_right_arrow),
 	_MATCHER_LIST_ITEM(pnct_brackets_left),
 	_MATCHER_LIST_ITEM(pnct_brackets_right),
+	_MATCHER_LIST_ITEM(pnct_or),
+	_MATCHER_LIST_ITEM(pnct_and),
+	_MATCHER_LIST_ITEM(pnct_question_mark),
 
 	{NULL, NULL}
 };

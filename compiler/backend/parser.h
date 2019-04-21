@@ -100,6 +100,43 @@
 
 #define	BE_NODE_EXPR						0x0e00
 
+#define	BE_NODE_EXPR_OR						0x0e20
+
+#define	BE_NODE_EXPR_AND					0x0e30
+
+#define	BE_NODE_EXPR_BOR					0x0e40
+
+#define	BE_NODE_EXPR_BXOR					0x0e50
+
+#define	BE_NODE_EXPR_BAND					0x0e60
+
+#define	BE_NODE_EXPR_EQ						0x0e70
+#define	BE_NODE_EXPR_NEQ					0x0e71
+
+#define	BE_NODE_EXPR_LT						0x0e80
+#define	BE_NODE_EXPR_LE						0x0e81
+#define	BE_NODE_EXPR_GT						0x0e82
+#define	BE_NODE_EXPR_GE						0x0e83
+
+#define	BE_NODE_EXPR_SHIFT_LEFT				0x0e90
+#define	BE_NODE_EXPR_SHIFT_RIGHT			0x0e91
+
+#define	BE_NODE_EXPR_ADD					0x0ea0
+#define	BE_NODE_EXPR_SUB					0x0ea1
+
+#define	BE_NODE_EXPR_MUL					0x0eb0
+#define	BE_NODE_EXPR_DIV					0x0eb1
+#define	BE_NODE_EXPR_MOD					0x0eb2
+
+#define	BE_NODE_EXPR_NOT					0x0ec0
+#define	BE_NODE_EXPR_POSITIVE				0x0ec1
+#define	BE_NODE_EXPR_NEGATIVE				0x0ec2
+#define	BE_NODE_EXPR_BNOT					0x0ec3
+#define	BE_NODE_EXPR_SIZEOF					0x0ec6
+#define	BE_NODE_EXPR_ALIGNOF				0x0ec7
+#define	BE_NODE_EXPR_CAST					0x0ec8
+#define	BE_NODE_EXPR_COND					0x0ecd
+
 #define	BE_NODE_EXPR_ATOM					0x0ee0
 
 
