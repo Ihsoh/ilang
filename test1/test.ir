@@ -10,5 +10,6 @@ function add(n1:int32, n2:int32):int32 {
 
 function main(argc:int32, argv:**char):int32 {
 	var c:int32 = 3, d:int32 = 4;
+	;
 
 }

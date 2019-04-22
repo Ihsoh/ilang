@@ -3679,13 +3679,340 @@ static void _var(
 	return _var_with_parent(ctx, node, node_parent);
 }
 
+static void _process_struct_member(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_struct_body,
+	ParserSymbol *symbol_struct
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STRUCT);
+	assert(node->nchilds == 2);
+	assert(node_struct_body);
+	assert(node_struct_body->type == BE_NODE_STRUCT_BODY);
+	assert(symbol_struct);
+
+	for (int i = 0; i < node_struct_body->nchilds; i++) {
+		ParserASTNode *child = node_struct_body->childs[i];
+		assert(child);
+		if (child->type == BE_NODE_VAR) {
+			for (int j = 0; j < child->nchilds; j++) {
+				ParserASTNode *node_var_item = child->childs[j];
+				assert(node_var_item->type == BE_NODE_VAR_ITEM);
+				
+				if (node_var_item->nchilds == 2) {
+					ParserASTNode *node_var_id = node_var_item->childs[0];
+					assert(node_var_id->type == BE_NODE_IDENTIFIER);
+
+					ParserASTNode *node_var_type = node_var_item->childs[1];
+					uint8_t var_type = 0;
+					_type(ctx, node_var_type, &var_type);
+
+					be_parser_add_struct_member_var_symbol_to_symbol(
+						ctx,
+						symbol_struct,
+						node_var_id->token,
+						var_type,
+						node_var_type
+					);
+				} else if (node_var_item->nchilds == 3) {
+					_SYNERR_NODE(
+						ctx,
+						node,
+						"struct variable cannot contain initial expression."
+					);
+				} else {
+					assert(0);
+				}
+			}
+		} else {
+			assert(0);
+		}
+	}
+}
+
+static void _struct(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STRUCT);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_identifier = node->childs[0];
+	assert(node_identifier->type == BE_NODE_IDENTIFIER);
+
+	ParserASTNode *node_struct_body = node->childs[1];
+	assert(node_struct_body->type == BE_NODE_STRUCT_BODY
+			|| node_struct_body->type == BE_NODE_DUMMY);
+
+	ParserASTNode *node_parent = node->parent;
+	assert(node_parent);
+
+	if (node_struct_body->type == BE_NODE_DUMMY) {
+		be_parser_add_struct_symbol_to_node(
+			ctx, node_parent, node_identifier->token, node_struct_body, true
+		);
+	} else {
+		ParserSymbol *symbol = parser_get_symbol_from_node(
+			ctx, node_parent, BE_SYM_STRUCT, node_identifier->token
+		);
+
+		if (symbol != NULL
+				&& BE_STRUCT_SYMBOL_GET_DUMMY(symbol)) {
+			_process_struct_member(ctx, node, node_struct_body, symbol);
+
+			BE_STRUCT_SYMBOL_SET_DUMMY(symbol, false);
+			BE_STRUCT_SYMBOL_SET_BODY_NODE(symbol, node_struct_body);
+		} else {
+			ParserSymbol *symbol_struct = be_parser_new_struct_symbol(
+				ctx, node_identifier->token, node, node_struct_body, false
+			);
+
+			_process_struct_member(ctx, node, node_struct_body, symbol_struct);
+
+			parser_add_symptr_to_node(ctx, node_parent, symbol_struct);
+		}
+	}
+}
 
 
 
 
+static void _stat_var(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_VAR);
 
+	_var(ctx, node);
+}
 
+static void _stat_dummy(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_DUMMY);
 
+	// 什么也不干。
+}
+
+static void _stat(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	switch (node->type) {
+		case BE_NODE_VAR: {
+			_stat_var(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_DUMMY: {
+			_stat_dummy(ctx, node);
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+}
+
+static void _stats_block(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STATS_BLOCK);
+
+	for (int i = 0; i < node->nchilds; i++) {
+		ParserASTNode *child = node->childs[i];
+
+		_stat(ctx, child);
+	}
+}
+
+static void __func_process_label(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *current
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STATS_BLOCK);
+	assert(current);
+
+	if (current->type == BE_NODE_STAT_LABEL) {
+		parser_add_symbol_to_node(
+			ctx,
+			node,
+			BE_SYM_LABEL,
+			current->childs[0]->token,
+			0,
+			NULL
+		);
+	}
+
+	for (int i = 0; i < current->nchilds; i++) {
+		ParserASTNode *child = current->childs[i];
+		__func_process_label(ctx, node, child);
+	}
+}
+
+static void _func_process_label(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STATS_BLOCK);
+
+	__func_process_label(ctx, node, node);
+}
+
+static void _func(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_FUNC);
+
+	ParserASTNode *node_identifier = NULL;
+	ParserASTNode *node_func_params = NULL;
+	ParserASTNode *node_type = NULL;
+	ParserASTNode *node_body = NULL;
+
+	if (node->nchilds == 3) {
+		node_identifier = node->childs[0];
+		node_func_params = node->childs[1];
+		node_body = node->childs[2];
+	} else if (node->nchilds == 4) {
+		node_identifier = node->childs[0];
+		node_func_params = node->childs[1];
+		node_type = node->childs[2];
+		node_body = node->childs[3];
+	} else {
+		assert(0);
+	}
+
+	if (node_func_params->nchilds >= 1
+			&& node_func_params->childs[0]->type == BE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM) {
+		_SYNERR_NODE(
+			ctx,
+			node_func_params->childs[0],
+			"first function parameter cannot be '...'."
+		);
+	}
+
+	for (int i = 0; i < node_func_params->nchilds; i++) {
+		ParserASTNode *node_func_param = node_func_params->childs[i];
+		if (node_func_param->type == BE_NODE_FUNC_PARAMS_ITEM) {
+			ParserASTNode *node_func_param_id = node_func_param->childs[0];
+			ParserASTNode *node_func_param_type = node_func_param->childs[1];
+
+			uint8_t param_type = 0;
+			_type(ctx, node_func_param_type, &param_type);
+			if (!_is_primitive_type(param_type)
+					&& !_is_pointer_type(param_type)
+					&& param_type != BE_TYPE_VA_LIST) {
+				_SYNERR_NODE(
+					ctx,
+					node_func_param_type,
+					"function parameter type must be primitive type or pointer type or __va_list type."
+				);
+			}
+
+			ParserSymbol *symbol = be_parser_add_var_symbol_to_node(
+				ctx,
+				node,
+				node_func_param_id->token,
+				param_type,
+				node_func_param_type
+			);
+
+			BE_FUNC_PARAM_AST_NODE_SET_SYMBOL(node_func_param, symbol);
+		}
+	}
+
+	if (node_type != NULL) {
+		uint8_t return_type = 0;
+		_type(ctx, node_type, &return_type);
+		if (!_is_primitive_type(return_type)
+				&& !_is_pointer_type(return_type)) {
+			_SYNERR_NODE(
+				ctx,
+				node_type,
+				"function return type must be primitive type or pointer type."
+			);
+		}
+	}
+
+	ParserASTNode *node_parent = node->parent;
+	assert(node_parent);
+
+	ParserSymbol *symbol = NULL;
+	if (node_body->type == BE_NODE_DUMMY) {
+		symbol = be_parser_add_func_symbol_to_node(
+			ctx, node_parent, node_identifier->token, node_func_params, node_type, true
+		);
+
+		BE_FUNC_AST_NODE_SET_SYMBOL(node, symbol);
+	} else {
+		symbol = parser_get_symbol_from_node(
+			ctx, node_parent, BE_SYM_FUNC, node_identifier->token
+		);
+
+		if (symbol != NULL
+				&& BE_FUNC_SYMBOL_GET_DUMMY(symbol)) {
+			ParserASTNode *func_type_node = _NEW_NODE(ctx, BE_NODE_TYPE_FUNC, NULL);
+			parser_add_child(ctx, func_type_node, node_func_params);
+			if (node_type != NULL) {
+				parser_add_child(ctx, func_type_node, node_type);
+			}
+
+			if (!_is_compatible_func_type(ctx, func_type_node, BE_FUNC_SYMBOL_GET_FUNC_TYPE_NODE(symbol), true)) {
+				_SYNERR_TOKEN(
+					ctx,
+					node_identifier->token,
+					"function declaration signature and function implementation signature are not matched."
+				);
+			}
+
+			BE_FUNC_SYMBOL_SET_DUMMY(symbol, false);
+		} else {
+			symbol = be_parser_add_func_symbol_to_node(
+				ctx, node_parent, node_identifier->token, node_func_params, node_type, false
+			);
+		}
+
+		assert(symbol);
+		BE_FUNC_AST_NODE_SET_SYMBOL(node, symbol);
+
+		for (int i = 0; i < node_func_params->nchilds; i++) {
+			ParserASTNode *node_func_param = node_func_params->childs[i];
+			if (node_func_param->type == BE_NODE_FUNC_PARAMS_ITEM) {
+				BE_VAR_SYMBOL_SET_FUNC_SYMBOL(
+					BE_FUNC_PARAM_AST_NODE_GET_SYMBOL(node_func_param),
+					symbol
+				);
+			}
+		}
+
+		_func_process_label(ctx, node_body);
+
+		_stats_block(ctx, node_body);
+	}
+}
 
 
 
@@ -3704,11 +4031,11 @@ static void _module_item(
 			break;
 		}
 		case BE_NODE_STRUCT: {
-			// _struct(ctx, node);
+			_struct(ctx, node);
 			break;
 		}
 		case BE_NODE_FUNC: {
-			// _func(ctx, node);
+			_func(ctx, node);
 			break;
 		}
 		default: {
@@ -3740,4 +4067,238 @@ void be_sem_process(
 
 	ParserASTNode *node_module = ctx->ast;
 	_module(ctx, node_module);
+}
+
+
+
+
+static void _print_type_node(ParserASTNode *node, FILE *file);
+
+static void _print_func_params(ParserASTNode *node, FILE *file) {
+	assert(node);
+	assert(file);
+
+	if (node->nchilds > 0) {
+		ParserASTNode *node_param = node->childs[0];
+		assert(node_param->type == BE_NODE_FUNC_PARAMS_ITEM);
+
+		#define _NODE_PARAM	\
+			switch (node_param->type) {	\
+				case BE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM: {	\
+					fputs("...", file);	\
+					break;	\
+				}	\
+				case BE_NODE_FUNC_PARAMS_ITEM: {	\
+					assert(node_param->nchilds == 2);	\
+					ParserASTNode *node_id = node_param->childs[0];	\
+					assert(node_id->type == BE_NODE_IDENTIFIER);	\
+					ParserASTNode *node_t = node_param->childs[1];	\
+						\
+					cmn_print_token(node_id->token, file);	\
+						\
+					fputs(":", file);	\
+						\
+					_print_type_node(node_t, file);	\
+					break;	\
+				}	\
+				default: {	\
+					assert(0);	\
+					break;	\
+				}	\
+			}
+
+		_NODE_PARAM
+
+		for (int i = 1; i < node->nchilds; i++) {
+			node_param = node->childs[i];
+			assert(node_param->type == BE_NODE_FUNC_PARAMS_ITEM
+					|| node_param->type == BE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM);
+
+			fputs(", ", file);
+
+			_NODE_PARAM
+		}
+
+		#undef	_NODE_PARAM
+	}
+}
+
+static void _print_type_node(ParserASTNode *node, FILE *file) {
+	assert(node);
+	assert(file);
+
+	switch (node->type) {
+		case BE_NODE_TYPE_CHAR: {
+			assert(node->nchilds == 0);
+			fputs("char", file);
+			break;
+		}
+		case BE_NODE_TYPE_INT8: {
+			assert(node->nchilds == 0);
+			fputs("int8", file);
+			break;
+		}
+		case BE_NODE_TYPE_UINT8: {
+			assert(node->nchilds == 0);
+			fputs("uint8", file);
+			break;
+		}
+		case BE_NODE_TYPE_INT16: {
+			assert(node->nchilds == 0);
+			fputs("int16", file);
+			break;
+		}
+		case BE_NODE_TYPE_UINT16: {
+			assert(node->nchilds == 0);
+			fputs("uint16", file);
+			break;
+		}
+		case BE_NODE_TYPE_INT32: {
+			assert(node->nchilds == 0);
+			fputs("int32", file);
+			break;
+		}
+		case BE_NODE_TYPE_UINT32: {
+			assert(node->nchilds == 0);
+			fputs("uint32", file);
+			break;
+		}
+		case BE_NODE_TYPE_INT64: {
+			assert(node->nchilds == 0);
+			fputs("int64", file);
+			break;
+		}
+		case BE_NODE_TYPE_UINT64: {
+			assert(node->nchilds == 0);
+			fputs("uint64", file);
+			break;
+		}
+		case BE_NODE_TYPE_FLOAT: {
+			assert(node->nchilds == 0);
+			fputs("float", file);
+			break;
+		}
+		case BE_NODE_TYPE_DOUBLE: {
+			assert(node->nchilds == 0);
+			fputs("double", file);
+			break;
+		}
+		case BE_NODE_TYPE_STRUCT: {
+			assert(node->nchilds == 1);
+
+			fputs("struct ", file);
+
+			ParserASTNode *node_id = node->childs[0];
+			assert(node_id->type == BE_NODE_IDENTIFIER);
+
+			cmn_print_token(node_id->token, file);
+			break;
+		}
+		case BE_NODE_TYPE_ARRAY: {
+			assert(node->nchilds == 2);
+			ParserASTNode *node_array_dims = node->childs[0];
+			assert(node_array_dims->type == BE_NODE_TYPE_ARRAY_DIMS);
+			ParserASTNode *node_t = node->childs[1];
+
+			for (int i = 0; i < node_array_dims->nchilds; i++) {
+				ParserASTNode *node_array_dim = node_array_dims->childs[i];
+				assert(node_array_dim->type == BE_NODE_LITERAL_UINT);
+				fputc('[', file);
+				cmn_print_token(node_array_dim->token, file);
+				fputc(']', file);
+			}
+
+			_print_type_node(node_t, file);
+
+			break;
+		}
+		case BE_NODE_TYPE_FUNC: {
+			assert(node->nchilds == 1 || node->nchilds == 2);
+			ParserASTNode *node_params = NULL;
+			ParserASTNode *node_t = NULL;
+
+			node_params = node->childs[0];
+			if (node->nchilds == 2) {
+				node_t = node->childs[1];
+			}
+
+			_print_func_params(node_params, file);
+
+			if (node_t != NULL) {
+				fputc(':', file);
+				_print_type_node(node_t, file);
+			}
+			break;
+		}
+		case BE_NODE_TYPE_POINTER: {
+			assert(node->nchilds == 1);
+			ParserASTNode *node_t = node->childs[0];
+
+			fputc('*', file);
+
+			_print_type_node(node_t, file);
+			break;
+		}
+		case BE_NODE_TYPE_VOID: {
+			assert(node->nchilds == 0);
+			fputs("void", file);
+			break;
+		}
+		default: {
+			assert(0);
+		}
+	}
+}
+
+static void _print_ast(ParserASTNode *node, FILE *file, int level, char padchr) {
+	assert(node);
+	assert(file);
+	assert(level >= 0);
+
+	for (int i = 0; i < level; i++) {
+		fputc(padchr, file);
+	}
+	fprintf(
+		file,
+		"@%s#%x#%p#%p",
+		node->type_name != NULL ? node->type_name : "N/A",
+		node->type,
+		node->parent,
+		node
+	);
+	if (node->token != NULL) {
+		fputc('(', file);
+		for (int i = 0; i < node->token->len; i++) {
+			fputc(*(node->token->content + i), file);
+		}
+		fprintf(file, "#%x)", node->token->type);
+	}
+	fputc('\n', file);
+
+	if (BE_IS_EXPR_NODE(node->type)) {
+		for (int i = 0; i < level; i++) {
+			fputc(padchr, file);
+		}
+		fputs("|ExprNodeType: ", file);
+		ParserASTNode *node_t = BE_EXPR_AST_NODE_GET_TYPE_NODE(node);
+		if (node_t != NULL) {
+			_print_type_node(node_t, file);
+		}
+		fputc('\n', file);
+	}
+
+	for (int i = 0; i < node->nchilds; i++) {
+		_print_ast(node->childs[i], file, level + 1, padchr);
+	}
+}
+
+void be_sem_parser_print_ast(
+	ParserContext * ctx,
+	FILE *file
+) {
+	assert(ctx);
+	assert(ctx->ast);
+	assert(file);
+
+	_print_ast(ctx->ast, file, 0, '\t');
 }

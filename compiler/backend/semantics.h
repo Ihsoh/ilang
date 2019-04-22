@@ -13,6 +13,11 @@ extern void be_sem_process(
 	ParserContext *ctx
 );
 
+extern void be_sem_parser_print_ast(
+	ParserContext * ctx,
+	FILE *file
+);
+
 
 
 #endif
