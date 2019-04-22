@@ -81,6 +81,15 @@ static ParserASTNode * _new_node(
 	}
 }
 
+ParserASTNode * be_parser_new_node(
+	ParserContext *ctx,
+	int32_t type,
+	char *type_name,
+	LexerToken *token
+) {
+	return _new_node(ctx, type, type_name, token);
+}
+
 #define	_NEW_NODE(ctx, type, token)	(_new_node((ctx), type, #type, (token)))
 
 static void _check_not_used_attrs(

@@ -757,6 +757,31 @@ static bool _is_compatible_type(
 	return false;
 }
 
+static bool _is_compatible_type_for_assign(
+	ParserContext *ctx,
+	ParserASTNode *target,
+	ParserASTNode *source,
+	bool same
+) {
+	assert(ctx);
+	assert(target);
+	assert(source);
+
+	if (_is_compatible_primitive_type(ctx, target, source, same)) {
+		return true;
+	}
+	if (_is_compatible_struct_type(ctx, target, source, same)) {
+		return true;
+	}
+	if (_is_compatible_func_type(ctx, target, source, same)) {
+		return true;
+	}
+	if (_is_compatible_pointer_type(ctx, target, source, same)) {
+		return true;
+	}
+	return false;
+}
+
 static void __type(
 	ParserContext *ctx,
 	ParserASTNode *node,
@@ -2830,21 +2855,623 @@ static void _expr_add(
 	#undef	_CHECK
 }
 
+static void _check_expr_shift_operands(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_oprd1,
+	ParserASTNode *node_oprd2,
+	const char *operator,
+	bool set_type
+) {
+	assert(ctx);
+	assert(node);
+	assert(node_oprd1);
+	assert(node_oprd2);
+	assert(operator);
 
+	if (_is_integer_type_node(ctx, node_oprd1) && _is_integer_type_node(ctx, node_oprd2)) {
+		if (set_type) {
+			BE_EXPR_AST_NODE_COPY(node, node_oprd1);
+		}
+	} else {
+		_SYNERR_NODE(
+			ctx,
+			node,
+			"binary operator '%s' do not support this operand combination.",
+			operator
+		);
+	}
+}
 
+static void _expr_shift(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
 
+	#define	_CHECK	\
+	{	\
+		assert(node->nchilds == 2);	\
+	}
 
+	uint32_t node_type = node->type;
 
+	switch (node_type) {
+		case BE_NODE_EXPR_SHIFT_LEFT:
+		case BE_NODE_EXPR_SHIFT_RIGHT: {
+			_CHECK
+			ParserASTNode *node_oprd1 = node->childs[0];
+			ParserASTNode *node_oprd2 = node->childs[1];
+			_expr_add(ctx, node_oprd1);
+			_expr_add(ctx, node_oprd2);
 
+			const char *operator = NULL;
+			if (node_type == BE_NODE_EXPR_SHIFT_LEFT) {
+				operator = "<<";
+			} else if (node_type == BE_NODE_EXPR_SHIFT_RIGHT) {
+				operator = ">>";
+			} else {
+				assert(0);
+			}
 
+			_check_expr_shift_operands(
+				ctx, node, node_oprd1, node_oprd2, operator, true
+			);
 
+			BE_EXPR_AST_NODE_COPY_CONSTANT2(node, node_oprd1, node_oprd2);
+			if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+				_calc_shift_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+			}
+			break;
+		}
+		default: {
+			_expr_add(ctx, node);
+			break;
+		}
+	}
 
+	#undef	_CHECK
+}
 
+static void _expr_lt(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
 
+	#define	_CHECK	\
+	{	\
+		assert(node->nchilds == 2);	\
+	}
 
+	uint32_t node_type = node->type;
 
+	switch (node_type) {
+		case BE_NODE_EXPR_LT:
+		case BE_NODE_EXPR_LE:
+		case BE_NODE_EXPR_GT:
+		case BE_NODE_EXPR_GE: {
+			_CHECK
+			ParserASTNode *node_oprd1 = node->childs[0];
+			ParserASTNode *node_oprd2 = node->childs[1];
+			_expr_shift(ctx, node_oprd1);
+			_expr_shift(ctx, node_oprd2);
 
+			BE_EXPR_AST_NODE_COPY_CONSTANT2(node, node_oprd1, node_oprd2);
 
+			if (_is_primitive_type_node(ctx, node_oprd1) && _is_primitive_type_node(ctx, node_oprd2)) {
+				if (ctx->arch == BE_ARCH_32) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT32);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+
+					if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+						_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+					}
+				} else if (ctx->arch == BE_ARCH_64) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT64);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+
+					if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+						_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+					}
+				} else {
+					assert(0);
+				}
+			} else {
+				_SYNERR_NODE(ctx, node, "binary operator '<' and '<=' and '>' and '>=' do not support this operand combination.");
+			}
+
+			break;
+		}
+		default: {
+			_expr_shift(ctx, node);
+			break;
+		}
+	}
+
+	#undef	_CHECK
+}
+
+static void _expr_eq(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	#define	_CHECK	\
+	{	\
+		assert(node->nchilds == 2);	\
+	}
+
+	uint32_t node_type = node->type;
+
+	switch (node_type) {
+		case BE_NODE_EXPR_EQ:
+		case BE_NODE_EXPR_NEQ: {
+			_CHECK
+			ParserASTNode *node_oprd1 = node->childs[0];
+			ParserASTNode *node_oprd2 = node->childs[1];
+			_expr_lt(ctx, node_oprd1);
+			_expr_lt(ctx, node_oprd2);
+
+			BE_EXPR_AST_NODE_COPY_CONSTANT2(node, node_oprd1, node_oprd2);
+
+			if ((_is_primitive_type_node(ctx, node_oprd1) && _is_primitive_type_node(ctx, node_oprd2))
+					|| (_is_pointer_type_node(ctx, node_oprd1) && _is_pointer_type_node(ctx, node_oprd2))) {
+				if (ctx->arch == BE_ARCH_32) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT32);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+
+					if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+						_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+					}
+				} else if (ctx->arch == BE_ARCH_64) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT64);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+
+					if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+						_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+					}
+				} else {
+					assert(0);
+				}
+			} else {
+				_SYNERR_NODE(ctx, node, "binary operator '==' and '!=' do not support this operand combination.");
+			}
+
+			break;
+		}
+		default: {
+			_expr_lt(ctx, node);
+			break;
+		}
+	}
+
+	#undef	_CHECK
+}
+
+static void _check_expr_band_operands(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_oprd1,
+	ParserASTNode *node_oprd2,
+	const char *operator,
+	bool set_type
+) {
+	assert(ctx);
+	assert(node);
+	assert(node_oprd1);
+	assert(node_oprd2);
+	assert(operator);
+
+	if (_is_integer_type_node(ctx, node_oprd1) && _is_integer_type_node(ctx, node_oprd2)) {
+		if (set_type) {
+			int32_t weight_oprd1_type = _get_primitive_type_weight_by_expr_node(ctx, node_oprd1);
+			int32_t weight_oprd2_type = _get_primitive_type_weight_by_expr_node(ctx, node_oprd2);
+			if (weight_oprd1_type > weight_oprd2_type) {
+				BE_EXPR_AST_NODE_COPY(node, node_oprd1);
+			} else {
+				BE_EXPR_AST_NODE_COPY(node, node_oprd2);
+			}
+		}
+	} else {
+		_SYNERR_NODE(
+			ctx,
+			node,
+			"binary operator '%s' do not support this operand combination.",
+			operator
+		);
+	}
+}
+
+static void _expr_band(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	#define	_CHECK	\
+	{	\
+		assert(node->nchilds == 2);	\
+	}
+
+	uint32_t node_type = node->type;
+
+	switch (node_type) {
+		case BE_NODE_EXPR_BAND: {
+			_CHECK
+			ParserASTNode *node_oprd1 = node->childs[0];
+			ParserASTNode *node_oprd2 = node->childs[1];
+			_expr_eq(ctx, node_oprd1);
+			_expr_eq(ctx, node_oprd2);
+
+			const char *operator = "&";
+
+			_check_expr_band_operands(
+				ctx, node, node_oprd1, node_oprd2, operator, true
+			);
+
+			BE_EXPR_AST_NODE_COPY_CONSTANT2(node, node_oprd1, node_oprd2);
+
+			if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+				_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+			}
+			break;
+		}
+		default: {
+			_expr_eq(ctx, node);
+			break;
+		}
+	}
+
+	#undef	_CHECK
+}
+
+static void _check_expr_bxor_operands(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_oprd1,
+	ParserASTNode *node_oprd2,
+	const char *operator,
+	bool set_type
+) {
+	assert(ctx);
+	assert(node);
+	assert(node_oprd1);
+	assert(node_oprd2);
+	assert(operator);
+
+	if (_is_integer_type_node(ctx, node_oprd1) && _is_integer_type_node(ctx, node_oprd2)) {
+		if (set_type) {
+			int32_t weight_oprd1_type = _get_primitive_type_weight_by_expr_node(ctx, node_oprd1);
+			int32_t weight_oprd2_type = _get_primitive_type_weight_by_expr_node(ctx, node_oprd2);
+			if (weight_oprd1_type > weight_oprd2_type) {
+				BE_EXPR_AST_NODE_COPY(node, node_oprd1);
+			} else {
+				BE_EXPR_AST_NODE_COPY(node, node_oprd2);
+			}
+		}
+	} else {
+		_SYNERR_NODE(
+			ctx,
+			node,
+			"binary operator '%s' do not support this operand combination.",
+			operator
+		);
+	}
+}
+
+static void _expr_bxor(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	#define	_CHECK	\
+	{	\
+		assert(node->nchilds == 2);	\
+	}
+
+	uint32_t node_type = node->type;
+
+	switch (node_type) {
+		case BE_NODE_EXPR_BXOR: {
+			_CHECK
+			ParserASTNode *node_oprd1 = node->childs[0];
+			ParserASTNode *node_oprd2 = node->childs[1];
+			_expr_band(ctx, node_oprd1);
+			_expr_band(ctx, node_oprd2);
+
+			const char *operator = "^";
+
+			_check_expr_bxor_operands(
+				ctx, node, node_oprd1, node_oprd2, operator, true
+			);
+
+			BE_EXPR_AST_NODE_COPY_CONSTANT2(node, node_oprd1, node_oprd2);
+
+			if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+				_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+			}
+			break;
+		}
+		default: {
+			_expr_band(ctx, node);
+			break;
+		}
+	}
+
+	#undef	_CHECK
+}
+
+static void _check_expr_bor_operands(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_oprd1,
+	ParserASTNode *node_oprd2,
+	const char *operator,
+	bool set_type
+) {
+	assert(ctx);
+	assert(node);
+	assert(node_oprd1);
+	assert(node_oprd2);
+	assert(operator);
+
+	if (_is_integer_type_node(ctx, node_oprd1) && _is_integer_type_node(ctx, node_oprd2)) {
+		if (set_type) {
+			int32_t weight_oprd1_type = _get_primitive_type_weight_by_expr_node(ctx, node_oprd1);
+			int32_t weight_oprd2_type = _get_primitive_type_weight_by_expr_node(ctx, node_oprd2);
+			if (weight_oprd1_type > weight_oprd2_type) {
+				BE_EXPR_AST_NODE_COPY(node, node_oprd1);
+			} else {
+				BE_EXPR_AST_NODE_COPY(node, node_oprd2);
+			}
+		}
+	} else {
+		_SYNERR_NODE(
+			ctx,
+			node,
+			"binary operator '%s' do not support this operand combination.",
+			operator
+		);
+	}
+}
+
+static void _expr_bor(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	#define	_CHECK	\
+	{	\
+		assert(node->nchilds == 2);	\
+	}
+
+	uint32_t node_type = node->type;
+
+	switch (node_type) {
+		case BE_NODE_EXPR_BOR: {
+			_CHECK
+			ParserASTNode *node_oprd1 = node->childs[0];
+			ParserASTNode *node_oprd2 = node->childs[1];
+			_expr_bxor(ctx, node_oprd1);
+			_expr_bxor(ctx, node_oprd2);
+
+			const char *operator = "|";
+
+			_check_expr_bor_operands(
+				ctx, node, node_oprd1, node_oprd2, operator, true
+			);
+
+			BE_EXPR_AST_NODE_COPY_CONSTANT2(node, node_oprd1, node_oprd2);
+
+			if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+				_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+			}
+			break;
+		}
+		default: {
+			_expr_bxor(ctx, node);
+			break;
+		}
+	}
+
+	#undef	_CHECK
+}
+
+static void _expr_and(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	#define	_CHECK	\
+	{	\
+		assert(node->nchilds == 2);	\
+	}
+
+	uint32_t node_type = node->type;
+
+	switch (node_type) {
+		case BE_NODE_EXPR_AND: {
+			_CHECK
+			ParserASTNode *node_oprd1 = node->childs[0];
+			ParserASTNode *node_oprd2 = node->childs[1];
+			_expr_bor(ctx, node_oprd1);
+			_expr_bor(ctx, node_oprd2);
+
+			BE_EXPR_AST_NODE_COPY_CONSTANT2(node, node_oprd1, node_oprd2);
+
+			if (_is_primitive_type_node(ctx, node_oprd1) && _is_primitive_type_node(ctx, node_oprd2)) {
+				if (ctx->arch == BE_ARCH_32) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT32);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+
+					if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+						_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+					}
+				} else if (ctx->arch == BE_ARCH_64) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT64);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+
+					if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+						_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+					}
+				} else {
+					assert(0);
+				}
+			} else {
+				_SYNERR_NODE(ctx, node, "binary operator '&&' do not support this operand combination.");
+			}
+
+			break;
+		}
+		default: {
+			_expr_bor(ctx, node);
+			break;
+		}
+	}
+
+	#undef	_CHECK
+}
+
+static void _expr_or(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	#define	_CHECK	\
+	{	\
+		assert(node->nchilds == 2);	\
+	}
+
+	uint32_t node_type = node->type;
+
+	switch (node_type) {
+		case BE_NODE_EXPR_OR: {
+			_CHECK
+			ParserASTNode *node_oprd1 = node->childs[0];
+			ParserASTNode *node_oprd2 = node->childs[1];
+			_expr_and(ctx, node_oprd1);
+			_expr_and(ctx, node_oprd2);
+
+			BE_EXPR_AST_NODE_COPY_CONSTANT2(node, node_oprd1, node_oprd2);
+
+			if (_is_primitive_type_node(ctx, node_oprd1) && _is_primitive_type_node(ctx, node_oprd2)) {
+				if (ctx->arch == BE_ARCH_32) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT32);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+
+					if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+						_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+					}
+				} else if (ctx->arch == BE_ARCH_64) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT64);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+
+					if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+						_calc_binary_constexpr(ctx, node_type, node, node_oprd1, node_oprd2);
+					}
+				} else {
+					assert(0);
+				}
+			} else {
+				_SYNERR_NODE(ctx, node, "binary operator '||' do not support this operand combination.");
+			}
+
+			break;
+		}
+		default: {
+			_expr_and(ctx, node);
+			break;
+		}
+	}
+
+	#undef	_CHECK
+}
+
+static void _expr_cond(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	uint32_t node_type = node->type;
+
+	switch (node_type) {
+		case BE_NODE_EXPR_COND: {
+			assert(node->nchilds == 3);
+
+			ParserASTNode *node_expr = node->childs[0];
+			ParserASTNode *node_expr_true = node->childs[1];
+			ParserASTNode *node_expr_false = node->childs[2];
+
+			_expr_or(ctx, node_expr);
+			_expr(ctx, node_expr_true);
+			_expr(ctx, node_expr_false);
+
+			ParserASTNode *node_expr_true_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr_true);
+			ParserASTNode *node_expr_false_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr_false);
+
+			if (!_is_integer_type_node(ctx, node_expr)
+					&& !_is_pointer_type_node(ctx, node_expr)) {
+				_SYNERR_NODE(
+					ctx,
+					node,
+					"conditional operator condexpr type must be primitive type or pointer type."
+				);
+			}
+
+			if (_is_primitive_type_node(ctx, node_expr_true)
+					&& _is_compatible_type(ctx, node_expr_true_type, node_expr_false_type, false)) {
+				int32_t weight_node_expr_true = _get_primitive_type_weight_by_expr_node(ctx, node_expr_true);
+				int32_t weight_node_expr_false = _get_primitive_type_weight_by_expr_node(ctx, node_expr_false);
+				if (weight_node_expr_true > weight_node_expr_false) {
+					BE_EXPR_AST_NODE_COPY(node, node_expr_true);
+				} else {
+					BE_EXPR_AST_NODE_COPY(node, node_expr_false);
+				}
+			} else if (_is_pointer_type_node(ctx, node_expr_true)
+					&& _is_compatible_type(ctx, node_expr_true_type, node_expr_false_type, true)) {
+				BE_EXPR_AST_NODE_COPY(node, node_expr_true);
+			} else {
+				_SYNERR_NODE(
+					ctx,
+					node,
+					"conditional operator do not support this operand combination."
+				);
+			}
+
+			BE_EXPR_AST_NODE_COPY_CONSTANT3(
+				node,
+				node_expr,
+				node_expr_true,
+				node_expr_false
+			);
+			if (BE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+				_calc_cond_constexpr(ctx, node, node_expr, node_expr_true, node_expr_false);
+			}
+
+			break;
+		}
+		default: {
+			_expr_or(ctx, node);
+			break;
+		}
+	}
+}
 
 static void _expr(
 	ParserContext *ctx,
@@ -2853,7 +3480,7 @@ static void _expr(
 	assert(ctx);
 	assert(node);
 
-	// _expr_assign(ctx, node);
+	_expr_cond(ctx, node);
 }
 
 static void _expr_wrapper(
@@ -2873,6 +3500,194 @@ static void _expr_wrapper(
 
 
 
+static uint8_t _get_var_scope_type(
+	ParserASTNode *node,
+	ParserSymbol **symbol_func
+) {
+	assert(node);
+	assert(node->type == BE_NODE_VAR);
+
+	if (symbol_func != NULL) {
+		*symbol_func = NULL;
+	}
+
+	ParserASTNode *parent = node->parent;
+	while (parent != NULL) {
+		switch (parent->type) {
+			case BE_NODE_MODULE: {
+				return BE_VAR_TYPE_GLOBAL;
+			}
+			case BE_NODE_FUNC: {
+				if (symbol_func != NULL) {
+					*symbol_func = BE_FUNC_AST_NODE_GET_SYMBOL(parent);
+				}
+				return BE_VAR_TYPE_LOCAL;
+			}
+			case BE_NODE_STRUCT: {
+				return BE_VAR_TYPE_STRUCT_MEMBER;
+			}
+		}
+		parent = parent->parent;
+	}
+
+	assert(0);
+}
+
+static void _var_with_parent(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_parent
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_VAR);
+	assert(node->nchilds > 0);
+	assert(node_parent);
+
+	ParserASTNode *align_node = BE_VAR_AST_NODE_GET_ALIGN_NODE(node);
+	int align = 0;
+	if (align_node != NULL) {
+		assert(align_node->nchilds == 1);
+		switch (_get_node_catagory(align_node->childs[0]->type)) {
+			case BE_SEM_NODE_CATEGORY_TYPE: {
+				ParserASTNode *type_node = align_node->childs[0];
+				_type(ctx, type_node, NULL);
+				align = (int) _calc_type_align(ctx, node, type_node);
+				assert(align >= 1);
+				BE_VAR_AST_NODE_SET_ALIGN(node, align);
+				break;
+			}
+			case BE_SEM_NODE_CATAGORY_EXPR: {
+				ParserASTNode *expr_node = align_node->childs[0];
+				_expr(ctx, expr_node);
+				if (!BE_EXPR_AST_NODE_GET_CONSTANT(expr_node)) {
+					_SYNERR_NODE(ctx, expr_node, "align parameter must be constant expression.");
+				}
+				align = _get_constexpr_int(ctx, expr_node);
+				if (align <= 0) {
+					_SYNERR_NODE(ctx, expr_node, "align parameter must be greater than 0.");
+				}
+				if (align != 1 && align % 2 != 0) {
+					_SYNERR_NODE(ctx, expr_node, "align parameter is not a power of 2.");
+				}
+				BE_VAR_AST_NODE_SET_ALIGN(node, align);
+				break;
+			}
+			default: {
+				assert(0);
+				break;
+			}
+		}
+	}
+
+	ParserSymbol *func_symbol = NULL;
+	uint8_t var_scope_type = _get_var_scope_type(node, &func_symbol);
+	BE_VAR_AST_NODE_SET_TYPE(node, var_scope_type);
+
+	for (int i = 0; i < node->nchilds; i++) {
+		ParserASTNode *node_var_item = node->childs[i];
+		assert(node_var_item->type == BE_NODE_VAR_ITEM);
+		assert(node_var_item->nchilds == 2 || node_var_item->nchilds == 3);
+
+		ParserASTNode *node_id = node_var_item->childs[0];
+		assert(node_id->type == BE_NODE_IDENTIFIER);
+
+		ParserASTNode *node_type = node_var_item->childs[1];
+		uint8_t var_type = 0;
+		_type(ctx, node_type, &var_type);
+		if (var_type == BE_TYPE_FUNC) {
+			_SYNERR_NODE(
+					ctx,
+					node,
+					"cannot define a function type variable, "
+					"but can define a function pointer type(*function(...)) variable."
+				);
+		}
+		
+		ParserSymbol *symbol = be_parser_add_var_symbol_to_node(
+			ctx,
+			node_parent,
+			node_id->token,
+			var_type,
+			node_type
+		);
+		BE_VAR_SYMBOL_SET_FUNC_SYMBOL(symbol, func_symbol);
+		if (align > 0) {
+			BE_VAR_SYMBOL_SET_ALIGN(symbol, align);
+		} else {
+			BE_VAR_SYMBOL_SET_ALIGN(symbol, _calc_type_align(ctx, node, node_type));
+		}
+
+		BE_VAR_ITEM_AST_NODE_SET_SYMBOL(node_var_item, symbol);
+
+		if (node_var_item->nchilds == 3) {
+			// 如果变量是结构体成员变量，则不被允许包含初始化表达式。
+			if (var_scope_type == BE_VAR_TYPE_STRUCT_MEMBER) {
+				_SYNERR_NODE(
+					ctx,
+					node,
+					"struct member variable cannot contain initial expression."
+				);
+			}
+
+			ParserASTNode *node_expr = node_var_item->childs[2];
+
+			// 插入一个cast节点进行类型强制转换。
+			ParserASTNode *node_cast = be_parser_new_node(
+				ctx, BE_NODE_EXPR_CAST, "BE_NODE_EXPR_CAST", NULL
+			);
+			parser_add_child(ctx, node_cast, node_type);
+			parser_insert_node(ctx, &(node_expr->childs[0]), node_cast);
+
+			_expr_wrapper(ctx, node_expr);
+
+			// 如果变量是全局变量，则初始化表达式只允许常量表达式。
+			bool const_expr = BE_EXPR_AST_NODE_GET_CONSTANT(node_expr);
+			if (var_scope_type == BE_VAR_TYPE_GLOBAL && !const_expr) {
+				_SYNERR_NODE(
+					ctx,
+					node,
+					"variable initial expression must be constant expression."
+				);
+			}
+
+			ParserASTNode *node_expr_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr);
+			if (!_is_compatible_type_for_assign(ctx, node_type, node_expr_type, false)) {
+				_SYNERR_NODE(
+					ctx,
+					node,
+					"incompatible initial expression."
+				);
+			}
+		}
+
+	}
+}
+
+static void _var(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_VAR);
+	assert(node->nchilds > 0);
+
+	ParserASTNode *node_parent = node->parent;
+	assert(node_parent);
+
+	return _var_with_parent(ctx, node, node_parent);
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2885,7 +3700,7 @@ static void _module_item(
 
 	switch (node->type) {
 		case BE_NODE_VAR: {
-			// _var(ctx, node);
+			_var(ctx, node);
 			break;
 		}
 		case BE_NODE_STRUCT: {
