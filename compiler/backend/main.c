@@ -16,6 +16,8 @@
 #include "parser.h"
 #include "semantics.h"
 
+#include "asmgen_gas64.h"
+
 #include "../preprocessor/preprocessor.h"
 
 #define	_OPT_ARCH				"-arch"
@@ -295,7 +297,15 @@ int main(int argc, char *argv[]) {
 	// 执行操作（编译、打印AST）。
 	if (strcmp(opt_action, _OPT_ACTION_COMPILE) == 0) {
 		if (strcmp(opt_target, _OPT_TARGET_GAS) == 0) {
-			_error("target 'gas' is not supported currently.");
+			if (arch == BE_ARCH_32) {
+				_error("target 'gas(32)' is not supported currently.");
+			} else if (arch == BE_ARCH_64) {
+				ASMGeneratorGas64Context *asmgen_ctx = be_asmgen_gas64_new_context(ctx, output);
+				be_asmgen_gas64_generate(asmgen_ctx);
+				be_asmgen_gas64_free_context(asmgen_ctx);
+			} else {
+				assert(0);
+			}
 		} else if (strcmp(opt_target, _OPT_TARGET_IASM) == 0) {
 			_error("target 'iasm' is not supported currently.");
 		} else {

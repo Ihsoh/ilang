@@ -4,7 +4,7 @@ struct A {
 
 var a:int32 = 1, b:int32 = 3 + 20 + 100;
 
-function add(n1:int32, n2:int32):int32 {
+function test_add(n1:int32, n2:int32):int32 {
 
 }
 

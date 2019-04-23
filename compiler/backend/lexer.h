@@ -124,7 +124,7 @@ extern char be_lexer_get_char_val(
 	LexerToken *token
 );
 
-extern void fe_lexer_unescape_string(
+extern void be_lexer_unescape_string(
 	LexerContext *ctx,
 	ResizableString *target,
 	const char *source,

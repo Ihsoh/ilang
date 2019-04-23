@@ -9,7 +9,17 @@
 typedef struct {
 	ParserContext 		*psrctx;
 	FILE 				*out;
-	ResizableString 	global;
+
+	ResizableString 	*global;
+	ResizableString		*head;
+	ResizableString		*body;
+	ResizableString		*foot;
+
+	ResizableString		*local_var_defs;
+
+	size_t				counter;
+
+	ParserSymbol		*func_symbol;
 } ASMGeneratorGas64Context;
 
 
