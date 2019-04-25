@@ -4302,3 +4302,15 @@ void be_sem_parser_print_ast(
 
 	_print_ast(ctx->ast, file, 0, '\t');
 }
+
+size_t be_sem_calc_type_size(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_type
+) {
+	assert(ctx);
+	assert(node);
+	assert(node_type);
+
+	return _calc_type_size(ctx, node, node_type);
+}

@@ -18,6 +18,10 @@ extern void be_sem_parser_print_ast(
 	FILE *file
 );
 
-
+extern size_t be_sem_calc_type_size(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_type
+);
 
 #endif

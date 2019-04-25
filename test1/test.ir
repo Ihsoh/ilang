@@ -3,13 +3,15 @@ struct A {
 }
 
 var a:int32 = 1, b:int32 = 3 + 20 + 100;
+var c:struct A;
+var d:char;
+align(4) var e:char;
+var f:[3]int32;
 
 function test_add(n1:int32, n2:int32):int32 {
 
 }
 
-function main(argc:int32, argv:**char):int32 {
-	var c:int32 = 3, d:int32 = 4;
-	;
+function _main(argc:int32, argv:**char):int32 {
 
 }

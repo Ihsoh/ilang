@@ -278,6 +278,66 @@ static void _asm_constexpr_initializer(
 	_asm_constexpr(ctx, rstr, node_constexpr);
 }
 
+static void _asm_zero_initializer(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	ParserASTNode *node_type
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(node_type);
+
+	switch (node_type->type) {
+		case BE_NODE_TYPE_CHAR:
+		case BE_NODE_TYPE_INT8:
+		case BE_NODE_TYPE_UINT8:
+		case BE_NODE_TYPE_INT16:
+		case BE_NODE_TYPE_UINT16:
+		case BE_NODE_TYPE_INT32:
+		case BE_NODE_TYPE_UINT32:
+		case BE_NODE_TYPE_INT64:
+		case BE_NODE_TYPE_UINT64: {
+			rstr_append_with_cstr(rstr, "0");
+			break;
+		}
+		case BE_NODE_TYPE_FLOAT:
+		case BE_NODE_TYPE_DOUBLE: {
+			rstr_append_with_cstr(rstr, "0.0");
+			break;
+		}
+		case BE_NODE_TYPE_STRUCT:
+		case BE_NODE_TYPE_ARRAY: {
+			assert(0);
+			break;
+		}
+		case BE_NODE_TYPE_POINTER: {
+			rstr_append_with_cstr(rstr, "0");
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+}
+
+static void _asm_global_var_initializer(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	ParserASTNode *node_constexpr,
+	ParserASTNode *node_type
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(node_type);
+
+	if (node_constexpr != NULL) {
+		_asm_constexpr_initializer(ctx, rstr, node_constexpr);
+	} else {
+		_asm_zero_initializer(ctx, rstr, node_type);
+	}
+}
+
 static void _asm_var(
 	ASMGeneratorGas64Context *ctx,
 	ParserASTNode *node
@@ -307,7 +367,7 @@ static void _asm_var(
 			case BE_VAR_TYPE_GLOBAL: {
 				// .section __DATA,__data
 				// .globl [VAR_NAME]
-				// .p2align	[?]
+				// .balign	[?]
 				// [VAR_NAME]:
 				// .[TYPE] [EXPR]
 
@@ -325,78 +385,101 @@ static void _asm_var(
 				rstr_append_with_raw(ctx->head, node_identifier->token->content, node_identifier->token->len);
 				rstr_append_with_char(ctx->head, '\n');
 
-				// .p2align	[?]
-				// TODO: ...
+				// .balign	[?]
+				if (align > 0) {
+					rstr_appendf(ctx->head, ".balign %d\n", align);
+				}
 
 				rstr_append_with_raw(ctx->head, node_identifier->token->content, node_identifier->token->len);
 				rstr_append_with_char(ctx->head, ':');
 				rstr_append_with_char(ctx->head, '\n');
 
-				// switch (node_type->type) {
-				// 	case FE_NODE_TYPE_CHAR: {
-				// 		rstr_append_with_cstr(ctx->head, ".byte ");
-
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_INT8: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_UINT8: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_INT16: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_UINT16: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_INT32: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_UINT32: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_INT64: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_UINT64: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_FLOAT: {
-
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_DOUBLE: {
-						
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_STRUCT: {
-				// 		assert(0);
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_ARRAY: {
-				// 		assert(0);
-				// 		break;
-				// 	}
-				// 	case FE_NODE_TYPE_POINTER: {
-				// 		assert(0);
-				// 		break;
-				// 	}
-				// 	default: {
-				// 		assert(0);
-				// 		break;
-				// 	}
-				// }
+				switch (node_type->type) {
+					case BE_NODE_TYPE_CHAR: {
+						rstr_append_with_cstr(ctx->head, ".byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_INT8: {
+						rstr_append_with_cstr(ctx->head, ".byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_UINT8: {
+						rstr_append_with_cstr(ctx->head, ".byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_INT16: {
+						rstr_append_with_cstr(ctx->head, ".2byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_UINT16: {
+						rstr_append_with_cstr(ctx->head, ".2byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_INT32: {
+						rstr_append_with_cstr(ctx->head, ".4byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_UINT32: {
+						rstr_append_with_cstr(ctx->head, ".4byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_INT64: {
+						rstr_append_with_cstr(ctx->head, ".8byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_UINT64: {
+						rstr_append_with_cstr(ctx->head, ".8byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_FLOAT: {
+						rstr_append_with_cstr(ctx->head, ".float ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_DOUBLE: {
+						rstr_append_with_cstr(ctx->head, ".double ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_STRUCT: {
+						rstr_appendf(
+							ctx->head,
+							".zero %zu\n",
+							be_sem_calc_type_size(ctx->psrctx, node, node_type)
+						);
+						break;
+					}
+					case BE_NODE_TYPE_ARRAY: {
+						rstr_appendf(
+							ctx->head,
+							".zero %zu\n",
+							be_sem_calc_type_size(ctx->psrctx, node, node_type)
+						);
+						break;
+					}
+					case BE_NODE_TYPE_POINTER: {
+						rstr_append_with_cstr(ctx->head, ".8byte ");
+						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						break;
+					}
+					default: {
+						assert(0);
+						break;
+					}
+				}
 
 				rstr_free(&rstr_var_name);
+
+				rstr_append_with_cstr(ctx->head, "\n\n");
 
 				break;
 			}
