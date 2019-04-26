@@ -580,7 +580,7 @@ static void _asm_func(
 			assert(type_size != 0);
 
 			if (address % align > 0) {
-				size_t align_padding = align - type_size % align;;
+				size_t align_padding = align - address % align;
 				address += align_padding;
 				total_size += align_padding;
 			}
