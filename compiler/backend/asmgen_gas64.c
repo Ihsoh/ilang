@@ -271,7 +271,7 @@ static void _asm_constexpr_initializer(
 	ParserASTNode *node_constexpr
 ) {
 	assert(ctx);
-	assert(rstr);
+	assert(rstr);\
 	assert(node_constexpr);
 	assert(BE_EXPR_AST_NODE_GET_CONSTANT(node_constexpr));
 
@@ -562,6 +562,35 @@ static void _asm_func(
 		// movq %rsp, %rbp
 		rstr_append_with_cstr(ctx->body, "pushq %rbp\nmovq %rsp, %rbp\n\n");
 
+		size_t address = 0;
+		size_t total_size = 0;
+		for (int i = 0; i < node_func_params->nchilds; i++) {
+			ParserASTNode *node_param = node_func_params->childs[i];
+			if (node_param->type == BE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM) {
+				continue;
+			}
+
+			ParserASTNode *node_param_type = node_param->childs[1];
+			ParserSymbol *symbol = BE_FUNC_PARAM_AST_NODE_GET_SYMBOL(node_param);
+
+			int align = BE_VAR_SYMBOL_GET_ALIGN(symbol);
+			assert(align);
+
+			size_t type_size = BE_VAR_SYMBOL_GET_TYPE_SIZE(symbol);
+			assert(type_size != 0);
+
+			if (address % align > 0) {
+				size_t align_padding = align - type_size % align;;
+				address += align_padding;
+				total_size += align_padding;
+			}
+
+			BE_VAR_SYMBOL_SET_ADDRESS(symbol, address);
+
+			address += type_size;
+			total_size += type_size;
+		}
+
 
 
 		// popq	%rbp
@@ -665,6 +694,9 @@ ASMGeneratorGas64Context * be_asmgen_gas64_new_context(
 	ctx->body = rstr_new();
 	ctx->foot = rstr_new();
 	ctx->local_var_defs = NULL;
+
+	ctx->local_var_address_counter = 0;
+	ctx->local_var_size = 0;
 
 	rstr_init(ctx->global);
 	rstr_init(ctx->head);

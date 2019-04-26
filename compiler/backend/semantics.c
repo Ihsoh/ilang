@@ -3603,13 +3603,16 @@ static void _var_with_parent(
 					"but can define a function pointer type(*function(...)) variable."
 				);
 		}
+
+		size_t type_size = _calc_type_size(ctx, node, node_type);
 		
 		ParserSymbol *symbol = be_parser_add_var_symbol_to_node(
 			ctx,
 			node_parent,
 			node_id->token,
 			var_type,
-			node_type
+			node_type,
+			type_size
 		);
 		BE_VAR_SYMBOL_SET_FUNC_SYMBOL(symbol, func_symbol);
 		if (align > 0) {
@@ -3932,12 +3935,15 @@ static void _func(
 				);
 			}
 
+			size_t type_size = _calc_type_size(ctx, node, node_func_param_type);
+
 			ParserSymbol *symbol = be_parser_add_var_symbol_to_node(
 				ctx,
 				node,
 				node_func_param_id->token,
 				param_type,
-				node_func_param_type
+				node_func_param_type,
+				type_size
 			);
 
 			BE_FUNC_PARAM_AST_NODE_SET_SYMBOL(node_func_param, symbol);

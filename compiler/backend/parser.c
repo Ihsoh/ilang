@@ -1476,7 +1476,8 @@ ParserSymbol * be_parser_add_var_symbol_to_node(
 	ParserASTNode *node,
 	LexerToken *token,
 	uint8_t var_type,
-	ParserASTNode *var_type_node
+	ParserASTNode *var_type_node,
+	size_t type_size
 ) {
 	assert(ctx);
 	assert(node);
@@ -1489,6 +1490,10 @@ ParserSymbol * be_parser_add_var_symbol_to_node(
 	data.type_node = var_type_node;
 	data.func_symbol = NULL;
 	data.has_code_gen_name = false;
+
+	data.align = 1;
+	data.address = SIZE_MAX;
+	data.type_size = type_size;
 
 	ParserSymbol *symbol = parser_add_symbol_to_node(
 		ctx,

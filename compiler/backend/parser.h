@@ -518,6 +518,13 @@ typedef struct {
 	ResizableString		code_gen_name;
 
 	int					align;
+
+	// 只有局部变量有效，虚拟的栈空间地址，从0开始计数。
+	// 当值为SIZE_MAX时，该字段无效，未初始化。
+	size_t				address;
+
+	// 变量类型的大小，当值为0时该字段无效，未初始化。
+	size_t				type_size;
 } BeParserVarSymbolData;
 
 #define	BE_VAR_SYMBOL_GET_TYPE(symbol)					(((BeParserVarSymbolData *)&((symbol)->data[0]))->type)
@@ -526,10 +533,14 @@ typedef struct {
 #define	BE_VAR_SYMBOL_GET_HAS_CODE_GEN_NAME(symbol)		(((BeParserVarSymbolData *)&((symbol)->data[0]))->has_code_gen_name)
 #define	BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol)			(&(((BeParserVarSymbolData *)&((symbol)->data[0]))->code_gen_name))
 #define	BE_VAR_SYMBOL_GET_ALIGN(symbol)					(((BeParserVarSymbolData *)&((symbol)->data[0]))->align)
+#define	BE_VAR_SYMBOL_GET_ADDRESS(symbol)				(((BeParserVarSymbolData *)&((symbol)->data[0]))->address)
+#define	BE_VAR_SYMBOL_GET_TYPE_SIZE(symbol)				(((BeParserVarSymbolData *)&((symbol)->data[0]))->type_size)
 
 #define	BE_VAR_SYMBOL_SET_FUNC_SYMBOL(symbol, v)		(((BeParserVarSymbolData *)&((symbol)->data[0]))->func_symbol = (v))
 #define	BE_VAR_SYMBOL_SET_HAS_CODE_GEN_NAME(symbol, v)	(((BeParserVarSymbolData *)&((symbol)->data[0]))->has_code_gen_name = (v))
 #define	BE_VAR_SYMBOL_SET_ALIGN(symbol, v)				(((BeParserVarSymbolData *)&((symbol)->data[0]))->align = (v))
+#define	BE_VAR_SYMBOL_SET_ADDRESS(symbol, v)			(((BeParserVarSymbolData *)&((symbol)->data[0]))->address = (v))
+#define	BE_VAR_SYMBOL_SET_TYPE_SIZE(symbol, v)			(((BeParserVarSymbolData *)&((symbol)->data[0]))->type_size = (v))
 
 
 
@@ -539,7 +550,8 @@ extern ParserSymbol * be_parser_add_var_symbol_to_node(
 	ParserASTNode *node,
 	LexerToken *token,
 	uint8_t var_type,
-	ParserASTNode *var_type_node
+	ParserASTNode *var_type_node,
+	size_t type_size
 );
 
 

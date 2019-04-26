@@ -16,6 +16,8 @@ typedef struct {
 	ResizableString		*foot;
 
 	ResizableString		*local_var_defs;
+	size_t				local_var_address_counter;
+	size_t				local_var_size;
 
 	size_t				counter;
 
