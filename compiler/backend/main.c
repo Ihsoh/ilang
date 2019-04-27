@@ -16,6 +16,7 @@
 #include "parser.h"
 #include "semantics.h"
 
+#include "asmgen.h"
 #include "asmgen_gas64.h"
 
 #include "../preprocessor/preprocessor.h"
@@ -23,6 +24,11 @@
 #define	_OPT_ARCH				"-arch"
 #define	_OPT_ARCH_32			"32"
 #define	_OPT_ARCH_64			"64"
+
+#define	_OPT_PLATFORM			"-platform"
+#define	_OPT_PLATFORM_WINDOWS	"windows"
+#define	_OPT_PLATFORM_SYSTEM_V	"system-v"
+#define	_OPT_PLATFORM_ISYSTEM	"isystem"
 
 #define	_OPT_INCPATH			"-incpath"
 
@@ -94,6 +100,7 @@ int main(int argc, char *argv[]) {
 
 	char *opt_file = NULL;
 	char *opt_arch = NULL;
+	char *opt_platform = NULL;
 	char *opt_incpath = NULL;
 	char *opt_action = NULL;
 	char *opt_target = NULL;
@@ -132,6 +139,21 @@ int main(int argc, char *argv[]) {
 					_error(
 						"the option '-arch' is specified a invalid value '%s', maybe specify a '32' or '64'.",
 						opt_arch
+					);
+				}
+			} else if (strcmp(opt, _OPT_PLATFORM) == 0) {
+				if (opt_platform != NULL) {
+					_error("the platform option '-platform' cannot be specified multi-times.");
+				}
+				_NEXT_ARG(_OPT_ARCH)
+				opt_platform = opt;
+				if (strcmp(opt_platform, _OPT_PLATFORM_WINDOWS) != 0
+						&& strcmp(opt_platform, _OPT_PLATFORM_SYSTEM_V) != 0
+						&& strcmp(opt_platform, _OPT_PLATFORM_ISYSTEM) != 0) {
+					_error(
+						"the option '-platform' is specified a invalid value '%s', "
+							"maybe specify a 'windows' or 'system-v' or 'isystem'.",
+						opt_platform
 					);
 				}
 			} else if (strcmp(opt, _OPT_INCPATH) == 0) {
@@ -294,13 +316,26 @@ int main(int argc, char *argv[]) {
 	// 语义解析。
 	be_sem_process(ctx);
 
+	int platform = BE_ASMGEN_PLATFORM_DEFAULT;
+	if (opt_platform != NULL) {
+		if (strcmp(opt_platform, _OPT_PLATFORM_WINDOWS) == 0) {
+			platform = BE_ASMGEN_PLATFORM_WINDOWS;
+		} else if (strcmp(opt_platform, _OPT_PLATFORM_SYSTEM_V) == 0) {
+			platform = BE_ASMGEN_PLATFORM_SYSTEM_V;
+		} else if (strcmp(opt_platform, _OPT_PLATFORM_ISYSTEM) == 0) {
+			platform = BE_ASMGEN_PLATFORM_ISYSTEM;
+		} else {
+			assert(0);
+		}
+	}
+
 	// 执行操作（编译、打印AST）。
 	if (strcmp(opt_action, _OPT_ACTION_COMPILE) == 0) {
 		if (strcmp(opt_target, _OPT_TARGET_GAS) == 0) {
 			if (arch == BE_ARCH_32) {
 				_error("target 'gas(32)' is not supported currently.");
 			} else if (arch == BE_ARCH_64) {
-				ASMGeneratorGas64Context *asmgen_ctx = be_asmgen_gas64_new_context(ctx, output);
+				ASMGeneratorGas64Context *asmgen_ctx = be_asmgen_gas64_new_context(ctx, output, platform);
 				be_asmgen_gas64_generate(asmgen_ctx);
 				be_asmgen_gas64_free_context(asmgen_ctx);
 			} else {
