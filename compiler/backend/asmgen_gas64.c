@@ -940,6 +940,10 @@ static void _asm_stat(
 			_asm_stat_var(ctx, node_stat);
 			break;
 		}
+		case BE_NODE_STAT_ASSIGN: {
+
+			break;
+		}
 		case BE_NODE_STAT_DUMMY: {
 			
 			break;
@@ -1023,6 +1027,20 @@ static void _asm_func(
 		// movq %rsp, %rbp
 		rstr_append_with_cstr(ctx->body, "pushq %rbp\nmovq %rsp, %rbp\n\n");
 
+		/*
+			Position			Contents				Frame
+			------------------------------------------------------
+			8n+16(%rbp)			param N
+								...						previous
+			16(%rbp)			param 0			
+			------------------------------------------------------
+			8(%rbp)				return address
+			0(%rbp)				previous %rbp value
+			-8(%rbp)			local variable 0		current
+			-16(%rbp)			local variable 1
+			-24(%rbp)			local variable 2
+								...
+		*/
 		ctx->local_var_address_counter = 0;
 		ctx->local_var_size = 0;
 		ctx->local_var_index_counter = 1;
@@ -1084,8 +1102,6 @@ static void _asm_func(
 			ctx->local_var_size += type_size;
 			ctx->local_var_index_counter++;
 		}
-
-
 
 		ResizableString *body = ctx->body;
 		ctx->body = rstr_new();

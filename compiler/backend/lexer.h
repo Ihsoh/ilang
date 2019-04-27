@@ -36,6 +36,8 @@
 #define	BE_TOKEN_KEYWORD_LOAD			0x300c	// load
 #define	BE_TOKEN_KEYWORD_SIZEOF			0x300d	// sizeof
 #define	BE_TOKEN_KEYWORD_ALIGNOF		0x300e	// alignof
+#define	BE_TOKEN_KEYWORD_CBR			0x300f	// cbr
+#define	BE_TOKEN_KEYWORD_ASSIGN			0x3010	// assign
 
 #define	BE_TOKEN_KEYWORD_CHAR			0x3100	// char
 #define	BE_TOKEN_KEYWORD_INT8			0x3101	// int8

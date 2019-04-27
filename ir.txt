@@ -3,12 +3,15 @@ function free(ptr:*) dummy
 function printf(fmt:*char, ...) dummy
 
 function test_1() {
-	var sum:int32 = 0;
-	var i:int32 = 0;
+	var sum:int32;
+	expr sum = val 0;
+	assign sum, 0;
+	var i:int32;
+	assign i, 0;
 label _loop;
-	i = add i, 1;
-	sum = add sum, i;
-	@_is_end = ge i, 100;
+	add i, i, 1;
+	add sum, add sum, i;
+	ge @_is_end, i, 100;
 	cbr @_is_end, _end, _loop;
 label _end;
 	call printf("sum = %d\n", sum);

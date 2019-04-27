@@ -9,8 +9,9 @@ align(4) var e:char;
 var f:[3]int32;
 
 function test_add(n1:int64, n2:int32):int32 {
-	// var x:int32 = 1;
-	// var y:int32 = 2;
+	var x:int32;
+	var y:int32;
+	assign x, 1;
 }
 
 function _main(argc:int32, argv:**char):int32 {

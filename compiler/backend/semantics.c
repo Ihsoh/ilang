@@ -3633,6 +3633,15 @@ static void _var_with_parent(
 				);
 			}
 
+			// 如果变量是局部变量，则不被允许包含初始化表达式。
+			if (var_scope_type == BE_VAR_TYPE_LOCAL) {
+				_SYNERR_NODE(
+					ctx,
+					node,
+					"local variable cannot contain initial expression."
+				);
+			}
+
 			ParserASTNode *node_expr = node_var_item->childs[2];
 
 			// 插入一个cast节点进行类型强制转换。
@@ -3795,6 +3804,17 @@ static void _stat_var(
 	_var(ctx, node);
 }
 
+static void _stat_assign(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASSIGN);
+
+	// TODO: ...
+}
+
 static void _stat_dummy(
 	ParserContext *ctx,
 	ParserASTNode *node
@@ -3816,6 +3836,10 @@ static void _stat(
 	switch (node->type) {
 		case BE_NODE_VAR: {
 			_stat_var(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_ASSIGN: {
+			_stat_assign(ctx, node);
 			break;
 		}
 		case BE_NODE_STAT_DUMMY: {

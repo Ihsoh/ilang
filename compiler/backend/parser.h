@@ -83,6 +83,8 @@
 
 #define	BE_NODE_STAT_STORE					0x0b80
 
+#define	BE_NODE_STAT_ASSIGN					0x0b81
+
 
 
 
