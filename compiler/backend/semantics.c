@@ -3804,6 +3804,99 @@ static void _stat_var(
 	_var(ctx, node);
 }
 
+ParserSymbol * _get_var_symbol_by_id_node(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_IDENTIFIER);
+
+	ParserSymbol *symbol = parser_get_symbol_from_node(
+		ctx, node, BE_SYM_VAR, node->token
+	);
+	if (symbol == NULL) {
+		_SYNERR_TOKEN(ctx, node->token, "invalid identifier.");
+	}
+
+	return symbol;
+}
+
+static bool _is_assignable_type(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	
+	uint8_t type = _get_type_by_type_node(ctx, node);
+
+	switch (type) {
+		case BE_TYPE_CHAR:
+		case BE_TYPE_INT8:
+		case BE_TYPE_INT16:
+		case BE_TYPE_INT32:
+		case BE_TYPE_INT64:
+		case BE_TYPE_UINT8:
+		case BE_TYPE_UINT16:
+		case BE_TYPE_UINT32:
+		case BE_TYPE_UINT64:
+		case BE_TYPE_FLOAT:
+		case BE_TYPE_DOUBLE:
+		case BE_TYPE_POINTER: {
+			return true;
+		}
+		default: {
+			return false;
+		}
+	}
+}
+
+static ParserASTNode * _check_assignable(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserSymbol *symbol
+) {
+	assert(ctx);
+	assert(node);
+	assert(symbol);
+	assert(symbol->type == BE_SYM_VAR);
+
+	ParserASTNode *node_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol);
+	if (!_is_assignable_type(ctx, node_type)) {
+		_SYNERR_NODE(ctx, node, "variable is not assignable.");
+	}
+
+	return node_type;
+}
+
+static void _check_param_combination2(
+	ParserContext *ctx,
+	ParserASTNode *node,		// 用来报错时提供错误位置。
+	ParserASTNode *node_type1,
+	ParserASTNode *node_type2
+) {
+	assert(ctx);
+	assert(node);
+	assert(node_type1);
+	assert(node_type2);
+
+	if (!_is_compatible_type(ctx, node_type1, node_type2, true)) {
+		_SYNERR_NODE(ctx, node, "invalid parameter combination.");
+	}
+}
+
+static void _check_param_combination3(
+	ParserContext *ctx,
+	ParserASTNode *node,		// 用来报错时提供错误位置。
+	ParserASTNode *node_type1,
+	ParserASTNode *node_type2,
+	ParserASTNode *node_type3
+) {
+	_check_param_combination2(ctx, node, node_type1, node_type2);
+	_check_param_combination2(ctx, node, node_type2, node_type3);
+}
+
 static void _stat_assign(
 	ParserContext *ctx,
 	ParserASTNode *node
@@ -3811,8 +3904,25 @@ static void _stat_assign(
 	assert(ctx);
 	assert(node);
 	assert(node->type == BE_NODE_STAT_ASSIGN);
+	assert(node->nchilds == 2);
 
-	// TODO: ...
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	ParserASTNode *node_target_type = _check_assignable(ctx, node_target, symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	if (node_source->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+		ParserASTNode *node_source_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source);
+		_check_param_combination2(ctx, node, node_target_type, node_source_type);
+	} else if (node_source->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_source);
+		ParserASTNode *node_source_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_source);
+		_check_param_combination2(ctx, node, node_target_type, node_source_type);
+	} else {
+		assert(0);
+	}
 }
 
 static void _stat_dummy(

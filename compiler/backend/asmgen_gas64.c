@@ -928,6 +928,17 @@ static void _asm_stat_var(
 	_asm_var(ctx, node);
 }
 
+static void _asm_stat_assign(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASSIGN);
+
+	
+}
+
 static void _asm_stat(
 	ASMGeneratorGas64Context *ctx,
 	ParserASTNode *node_stat
@@ -941,7 +952,7 @@ static void _asm_stat(
 			break;
 		}
 		case BE_NODE_STAT_ASSIGN: {
-
+			_asm_stat_assign(ctx, node_stat);
 			break;
 		}
 		case BE_NODE_STAT_DUMMY: {
