@@ -3804,7 +3804,7 @@ static void _stat_var(
 	_var(ctx, node);
 }
 
-ParserSymbol * _get_var_symbol_by_id_node(
+static ParserSymbol * _get_var_symbol_by_id_node(
 	ParserContext *ctx,
 	ParserASTNode *node
 ) {

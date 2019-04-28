@@ -12,9 +12,9 @@ function test_add(n1:int64, n2:int32):int32 {
 	var x:int32;
 	var y:int32;
 	var z:int64;
-	assign x, cast<int32>(1);
+	// assign x, cast<int32>(1);
 	assign y, x;
-	assign y, z;
+	// assign y, z;
 }
 
 function _main(argc:int32, argv:**char):int32 {

@@ -425,22 +425,16 @@ static void _asm_inst_mov_x_x(
 			break;
 		}
 		case BE_TYPE_INT32:
-		case BE_TYPE_UINT32: {
+		case BE_TYPE_UINT32:
+		case BE_TYPE_FLOAT: {
 			mnemonic = "movl";
 			break;
 		}
 		case BE_TYPE_INT64:
 		case BE_TYPE_UINT64:
+		case BE_TYPE_DOUBLE:
 		case BE_TYPE_POINTER: {
 			mnemonic = "movq";
-			break;
-		}
-		case BE_TYPE_FLOAT: {
-			mnemonic = "movss";
-			break;
-		}
-		case BE_TYPE_DOUBLE: {
-			mnemonic = "movsd";
 			break;
 		}
 		default: {
@@ -469,16 +463,73 @@ static void _asm_inst_mov_sym_x(
 	assert(target);
 	assert(source);
 
-	ResizableString rstr_target;
-	rstr_init_with_raw(&rstr_target, target->token->content, target->token->len);
 	_asm_inst_mov_x_x(
 		ctx,
 		rstr,
 		BE_VAR_SYMBOL_GET_TYPE(target),
-		RSTR_CSTR(&rstr_target),
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(target)),
 		source
 	);
-	rstr_free(&rstr_target);
+}
+
+static void _asm_inst_mov_x_sym(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	ParserSymbol *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		rstr,
+		BE_VAR_SYMBOL_GET_TYPE(source),
+		target,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(source))
+	);
+}
+
+static void _asm_inst_mov_sym_sym(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	ParserSymbol *target,
+	ParserSymbol *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+	assert(BE_VAR_SYMBOL_GET_TYPE_SIZE(target) == BE_VAR_SYMBOL_GET_TYPE_SIZE(source));
+
+	const char *reg = "";
+	switch (BE_VAR_SYMBOL_GET_TYPE_SIZE(target)) {
+		case 1: {
+			reg = _ASM_REG_NAME_CL;
+			break;
+		}
+		case 2: {
+			reg = _ASM_REG_NAME_CX;
+			break;
+		}
+		case 4: {
+			reg = _ASM_REG_NAME_ECX;
+			break;
+		}
+		case 8: {
+			reg = _ASM_REG_NAME_RCX;
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	_asm_inst_mov_x_sym(ctx, rstr, reg, source);
+	_asm_inst_mov_sym_x(ctx, rstr, target, reg);
 }
 
 
@@ -879,7 +930,7 @@ static void _asm_var(
 				);
 
 				rstr_appendf(
-					ctx->body,
+					ctx->local_var_defs,
 					"# local-var: type=local, index=%zu, address=%zu, align=%d, size=%zu, value=%s, name=",
 					ctx->local_var_index_counter,
 					ctx->local_var_address_counter,
@@ -888,12 +939,12 @@ static void _asm_var(
 					RSTR_CSTR(code_gen_name)
 				);
 				rstr_append_with_raw(
-					ctx->body,
+					ctx->local_var_defs,
 					node_identifier->token->content,
 					node_identifier->token->len
 				);
 				rstr_append_with_char(
-					ctx->body,
+					ctx->local_var_defs,
 					'\n'
 				);
 
@@ -928,6 +979,24 @@ static void _asm_stat_var(
 	_asm_var(ctx, node);
 }
 
+static ParserSymbol * _get_var_symbol_by_id_node(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_IDENTIFIER);
+
+	ParserSymbol *symbol = parser_get_symbol_from_node(
+		ctx->psrctx, node, BE_SYM_VAR, node->token
+	);
+	if (symbol == NULL) {
+		assert(0);
+	}
+
+	return symbol;
+}
+
 static void _asm_stat_assign(
 	ASMGeneratorGas64Context *ctx,
 	ParserASTNode *node
@@ -936,7 +1005,23 @@ static void _asm_stat_assign(
 	assert(node);
 	assert(node->type == BE_NODE_STAT_ASSIGN);
 
-	
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	if (node_source->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+		_asm_inst_mov_sym_sym(ctx, ctx->body, symbol_target, symbol_source);
+	} else if (node_source->type == BE_NODE_EXPR) {
+		ResizableString rstr_source;
+		rstr_init(&rstr_source);
+		_asm_constexpr(ctx, &rstr_source, node_source);
+		_asm_inst_mov_sym_x(ctx, ctx->body, symbol_target, RSTR_CSTR(&rstr_source));
+		rstr_free(&rstr_source);
+	} else {
+		assert(0);
+	}
 }
 
 static void _asm_stat(
@@ -1121,13 +1206,13 @@ static void _asm_func(
 		_asm_stats_block(ctx, node_body);
 
 		rstr_appendf(
-			ctx->body,
+			ctx->local_var_defs,
 			"# local-var-space: total-size=%zu\n",
 			ctx->local_var_size
 		);
 
 		rstr_appendf(
-			ctx->body,
+			ctx->local_var_defs,
 			"subq $%zu, %%rsp\n\n",
 			ctx->local_var_size
 		);
@@ -1153,7 +1238,7 @@ static void _asm_func(
 
 			_asm_inst_mov_x_x(
 				ctx,
-				ctx->body,
+				ctx->local_var_defs,
 				BE_TYPE_UINT64,
 				_ASM_REG_NAME_RCX,
 				RSTR_CSTR(&rstr_source)
@@ -1161,7 +1246,7 @@ static void _asm_func(
 
 			_asm_inst_mov_x_x(
 				ctx,
-				ctx->body,
+				ctx->local_var_defs,
 				BE_TYPE_UINT64,
 				RSTR_CSTR(code_gen_name),
 				_ASM_REG_NAME_RCX
@@ -1171,6 +1256,7 @@ static void _asm_func(
 		}
 
 		rstr_append_with_rstr(body, ctx->local_var_defs);
+		rstr_append_with_cstr(body, "\n# code:\n");
 		rstr_append_with_rstr(body, ctx->body);
 	
 		rstr_free(ctx->body);
