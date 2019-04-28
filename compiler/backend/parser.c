@@ -1261,6 +1261,98 @@ _RULE(stat_assign)
 	_RULE_ADD_CHILD(node_source)
 _RULE_END
 
+_RULE(stat_asm)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_ASM) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_ASM, NULL)
+
+	ParserASTNode *node_asm_code = _RULE_NAME(literal_string)(_RULE_PARSER_CTX);
+	if (node_asm_code == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_ADD_CHILD(node_asm_code)
+_RULE_END
+
+_RULE(stat_asm_set_reg)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_ASM_SET_REG) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_ASM_SET_REG, NULL)
+
+	ParserASTNode *node_target = _RULE_NAME(literal_string)(_RULE_PARSER_CTX);
+	if (node_target == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_source = _RULE_NAME(constexpr_or_id)(_RULE_PARSER_CTX);
+	if (node_source == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_ADD_CHILD(node_target)
+	_RULE_ADD_CHILD(node_source)
+_RULE_END
+
+_RULE(stat_asm_get_reg)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_ASM_GET_REG) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_ASM_GET_REG, NULL)
+
+	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_target == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_source = _RULE_NAME(literal_string)(_RULE_PARSER_CTX);
+	if (node_source == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_ADD_CHILD(node_target)
+	_RULE_ADD_CHILD(node_source)
+_RULE_END
+
+
+
+
+
+
+
+
 _RULE(stat_dummy)
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
@@ -1281,6 +1373,22 @@ _RULE(stat)
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(stat_assign)(_RULE_PARSER_CTX))
 	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_asm)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_asm_set_reg)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_asm_get_reg)(_RULE_PARSER_CTX))
+	}
+
+
+
+
 
 
 

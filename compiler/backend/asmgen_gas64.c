@@ -66,13 +66,13 @@ static int _new_string(
 	assert(str);
 
 	// .section __TEXT,__cstring,cstring_literals
-	// STR.[X]
+	// _STR.[X]
 	// .asciz [STRING]
 
 	size_t no = _next_no(ctx);
 
 	if (name != NULL) {
-		rstr_appendf(name, "STR.%zu", no);
+		rstr_appendf(name, "_STR.%zu", no);
 	}
 	
 	ResizableString unescaped_str;
@@ -91,7 +91,7 @@ static int _new_string(
 	);
 	rstr_appendf(
 		ctx->head,
-		"STR.%zu:\n",
+		"_STR.%zu:\n",
 		no
 	);
 
@@ -121,25 +121,28 @@ static int _new_string(
 
 
 
-
+#define	_ASM_REG_AX					0
 #define	_ASM_REG_NAME_AL			"%al"
 #define	_ASM_REG_NAME_AH			"%ah"
 #define	_ASM_REG_NAME_AX			"%ax"
 #define	_ASM_REG_NAME_EAX			"%eax"
 #define	_ASM_REG_NAME_RAX			"%rax"
 
+#define	_ASM_REG_BX					1
 #define	_ASM_REG_NAME_BL			"%bl"
 #define	_ASM_REG_NAME_BH			"%bh"
 #define	_ASM_REG_NAME_BX			"%bx"
 #define	_ASM_REG_NAME_EBX			"%ebx"
 #define	_ASM_REG_NAME_RBX			"%rbx"
 
+#define	_ASM_REG_CX					2
 #define	_ASM_REG_NAME_CL			"%cl"
 #define	_ASM_REG_NAME_CH			"%ch"
 #define	_ASM_REG_NAME_CX			"%cx"
 #define	_ASM_REG_NAME_ECX			"%ecx"
 #define	_ASM_REG_NAME_RCX			"%rcx"
 
+#define	_ASM_REG_DX					3
 #define	_ASM_REG_NAME_DL			"%dl"
 #define	_ASM_REG_NAME_DH			"%dh"
 #define	_ASM_REG_NAME_DX			"%dx"
@@ -332,6 +335,108 @@ static int _new_string(
 
 
 
+/*
+	获取同一个寄存器的不同宽度时的名称。
+*/
+
+#define	_REG_B(r)	(_asm_inst_reg(ctx, BE_TYPE_UINT8, (r)))
+#define	_REG_W(r)	(_asm_inst_reg(ctx, BE_TYPE_UINT16, (r)))
+#define	_REG_D(r)	(_asm_inst_reg(ctx, BE_TYPE_UINT32, (r)))
+#define	_REG_Q(r)	(_asm_inst_reg(ctx, BE_TYPE_UINT64, (r)))
+
+static const char * _asm_inst_reg(
+	ASMGeneratorGas64Context *ctx,
+	uint8_t type,
+	int reg
+) {
+	assert(ctx);
+
+	const char *regs[][4] = {
+		{_ASM_REG_NAME_AL, _ASM_REG_NAME_AX, _ASM_REG_NAME_EAX, _ASM_REG_NAME_RAX},
+		{_ASM_REG_NAME_BL, _ASM_REG_NAME_BX, _ASM_REG_NAME_EBX, _ASM_REG_NAME_RBX},
+		{_ASM_REG_NAME_CL, _ASM_REG_NAME_CX, _ASM_REG_NAME_ECX, _ASM_REG_NAME_RCX},
+		{_ASM_REG_NAME_DL, _ASM_REG_NAME_DX, _ASM_REG_NAME_EDX, _ASM_REG_NAME_RDX}
+	};
+	assert(reg < sizeof(regs) / sizeof(regs[0]));
+
+	int idx = 0;
+	switch (type) {
+		case BE_TYPE_CHAR:
+		case BE_TYPE_INT8:
+		case BE_TYPE_UINT8: {
+			idx = 0;
+			break;
+		}
+		case BE_TYPE_INT16:
+		case BE_TYPE_UINT16: {
+			idx = 1;
+			break;
+		}
+		case BE_TYPE_INT32:
+		case BE_TYPE_UINT32:
+		case BE_TYPE_FLOAT: {
+			idx = 2;
+			break;
+		}
+		case BE_TYPE_INT64:
+		case BE_TYPE_UINT64:
+		case BE_TYPE_DOUBLE:
+		case BE_TYPE_POINTER: {
+			idx = 3;
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	return regs[reg][idx];
+}
+
+/*
+	AT&T:	section:disp(base, index, scale)
+	Intel: 	section:[base + index*scale + disp]
+*/
+
+static void _asm_inst_memref_base_disp(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *base,
+	const char *disp
+) {
+	assert(ctx);
+	assert(rstr);
+
+	rstr_appendf(
+		rstr,
+		"%s(%s)",
+		disp,
+		base
+	);
+}
+
+/*
+	AT&T:	$CONST
+	Intel:	CONST
+*/
+
+static void _asm_inst_uint_const(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint64_t val
+) {
+	rstr_appendf(
+		rstr,
+		"$%llu",
+		val
+	);
+}
+
+/*
+	构建指令工具函数。
+*/
+
 static void _asm_inst1(
 	ASMGeneratorGas64Context *ctx,
 	ResizableString *rstr,
@@ -397,6 +502,10 @@ static void _asm_inst3(
 		arg3
 	);
 }
+
+/*
+	MOV
+*/
 
 static void _asm_inst_mov_x_x(
 	ASMGeneratorGas64Context *ctx,
@@ -507,19 +616,19 @@ static void _asm_inst_mov_sym_sym(
 	const char *reg = "";
 	switch (BE_VAR_SYMBOL_GET_TYPE_SIZE(target)) {
 		case 1: {
-			reg = _ASM_REG_NAME_CL;
+			reg = _ASM_REG_NAME_AL;
 			break;
 		}
 		case 2: {
-			reg = _ASM_REG_NAME_CX;
+			reg = _ASM_REG_NAME_AX;
 			break;
 		}
 		case 4: {
-			reg = _ASM_REG_NAME_ECX;
+			reg = _ASM_REG_NAME_EAX;
 			break;
 		}
 		case 8: {
-			reg = _ASM_REG_NAME_RCX;
+			reg = _ASM_REG_NAME_RAX;
 			break;
 		}
 		default: {
@@ -531,6 +640,132 @@ static void _asm_inst_mov_sym_sym(
 	_asm_inst_mov_x_sym(ctx, rstr, reg, source);
 	_asm_inst_mov_sym_x(ctx, rstr, target, reg);
 }
+
+/*
+	LEA
+*/
+
+static void _asm_inst_lea_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "leaq";
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+static void _asm_inst_lea_x_sym(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	ParserSymbol *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	_asm_inst_lea_x_x(
+		ctx,
+		rstr,
+		target,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(source))
+	);
+}
+
+static void _asm_inst_lea_sym_sym(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	ParserSymbol *target,
+	ParserSymbol *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+	assert(BE_VAR_SYMBOL_GET_TYPE(target) == BE_TYPE_POINTER);
+
+	const char *reg = _ASM_REG_NAME_RAX;
+
+	_asm_inst_lea_x_sym(ctx, rstr, reg, source);
+	_asm_inst_mov_sym_x(ctx, rstr, target, reg);
+}
+
+/*
+	ADD
+*/
+
+static void _asm_inst_add_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "";
+
+	switch (type) {
+		case BE_TYPE_CHAR:
+		case BE_TYPE_INT8:
+		case BE_TYPE_UINT8: {
+			mnemonic = "addb";
+			break;
+		}
+		case BE_TYPE_INT16:
+		case BE_TYPE_UINT16: {
+			mnemonic = "addw";
+			break;
+		}
+		case BE_TYPE_INT32:
+		case BE_TYPE_UINT32: {
+			mnemonic = "addl";
+			break;
+		}
+		case BE_TYPE_INT64:
+		case BE_TYPE_UINT64:
+		case BE_TYPE_POINTER: {
+			mnemonic = "addq";
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+
+
+
+
+
+
 
 
 
@@ -630,10 +865,10 @@ static void _asm_constexpr(
 		}
 		case BE_TYPE_FLOAT: {
 			char str[128];
-			double val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_FLOAT_VAL(node_constexpr);
+			float val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_FLOAT_VAL(node_constexpr);
 			snprintf(
-				str, sizeof(str), "0x%llX",
-				*(uint64_t *)&val
+				str, sizeof(str), "0x%X",
+				*(uint32_t *)&val
 			);
 			rstr_append_with_cstr(rstr_val, str);
 			break;
@@ -671,6 +906,180 @@ static void _asm_constexpr(
 				uint64_t val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
 				snprintf(
 					str, sizeof(str), "0x%llX",
+					val
+				);
+				rstr_append_with_cstr(rstr_val, str);
+			}
+			break;
+		}
+		default: {
+			assert(0);
+		}
+	}
+}
+
+static void _asm_constexpr_param(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr_val,
+	ParserASTNode *node_constexpr
+) {
+	assert(ctx);
+	assert(rstr_val);
+	assert(node_constexpr);
+	assert(BE_EXPR_AST_NODE_GET_CONSTANT(node_constexpr));
+
+	switch (BE_EXPR_AST_NODE_GET_CONSTANT_TYPE(node_constexpr)) {
+		case BE_TYPE_CHAR: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%d",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_CHAR_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_INT8: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%d",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT8_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_INT16: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%d",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT16_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_INT32: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%d",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT32_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_INT64: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%lld",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT64_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_UINT8: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%u",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT8_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_UINT16: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%u",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT16_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_UINT32: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%u",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT32_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_UINT64: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "$%llu",
+				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT64_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_FLOAT: {
+			char str[128];
+			float val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_FLOAT_VAL(node_constexpr);
+			snprintf(
+				str, sizeof(str), "$0x%X",
+				*(uint32_t *)&val
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_DOUBLE: {
+			char str[128];
+			double val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_DOUBLE_VAL(node_constexpr);
+			snprintf(
+				str, sizeof(str), "$0x%llX",
+				*(uint64_t *)&val
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case BE_TYPE_POINTER: {
+			if (BE_EXPR_AST_NODE_GET_HAS_CONSTSTR(node_constexpr)) {
+				BeParserConstexprString *conststr = BE_EXPR_AST_NODE_GET_CONSTSTR(node_constexpr);
+				uint64_t ptr_val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
+
+				ResizableString conststr_name;
+				rstr_init(&conststr_name);
+
+				int len = _new_string(ctx, &conststr_name, conststr->str, conststr->len);
+
+				ResizableString rstr_source;
+				rstr_init(&rstr_source);
+				_asm_inst_memref_base_disp(
+					ctx,
+					&rstr_source,
+					_ASM_REG_NAME_RIP,
+					RSTR_CSTR(&conststr_name)
+				);
+
+				_asm_inst_lea_x_x(
+					ctx,
+					ctx->body,
+					_ASM_REG_NAME_RAX,
+					RSTR_CSTR(&rstr_source)
+				);
+
+				ResizableString rstr_ptr_val;
+				rstr_init(&rstr_ptr_val);
+				_asm_inst_uint_const(ctx, &rstr_ptr_val, ptr_val);
+				_asm_inst_add_x_x(
+					ctx,
+					ctx->body,
+					BE_TYPE_POINTER,
+					_ASM_REG_NAME_RAX,
+					RSTR_CSTR(&rstr_ptr_val)
+				);
+				rstr_free(&rstr_ptr_val);
+
+				rstr_append_with_cstr(
+					rstr_val,
+					_ASM_REG_NAME_RAX
+				);
+
+				rstr_free(&conststr_name);
+				rstr_free(&rstr_source);
+			} else {
+				char str[128];
+				uint64_t val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
+				snprintf(
+					str, sizeof(str), "$0x%llX",
 					val
 				);
 				rstr_append_with_cstr(rstr_val, str);
@@ -789,7 +1198,7 @@ static void _asm_var(
 				// [VAR_NAME]:
 				// .[TYPE] [EXPR]
 
-				rstr_append_with_cstr(ctx->head, ".section __DATA,__data\n");
+				rstr_append_with_cstr(ctx->body, ".section __DATA,__data\n");
 				
 				ResizableString rstr_var_name;
 				rstr_init(&rstr_var_name);
@@ -799,78 +1208,78 @@ static void _asm_var(
 					node_identifier->token->len
 				);
 
-				rstr_append_with_cstr(ctx->head, ".globl ");
-				rstr_append_with_raw(ctx->head, node_identifier->token->content, node_identifier->token->len);
-				rstr_append_with_char(ctx->head, '\n');
+				rstr_append_with_cstr(ctx->body, ".globl ");
+				rstr_append_with_raw(ctx->body, node_identifier->token->content, node_identifier->token->len);
+				rstr_append_with_char(ctx->body, '\n');
 
 				// .balign	[?]
 				if (align > 0) {
-					rstr_appendf(ctx->head, ".balign %d\n", align);
+					rstr_appendf(ctx->body, ".balign %d\n", align);
 				}
 
-				rstr_append_with_raw(ctx->head, node_identifier->token->content, node_identifier->token->len);
-				rstr_append_with_char(ctx->head, ':');
-				rstr_append_with_char(ctx->head, '\n');
+				rstr_append_with_raw(ctx->body, node_identifier->token->content, node_identifier->token->len);
+				rstr_append_with_char(ctx->body, ':');
+				rstr_append_with_char(ctx->body, '\n');
 
 				switch (node_type->type) {
 					case BE_NODE_TYPE_CHAR: {
-						rstr_append_with_cstr(ctx->head, ".byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_INT8: {
-						rstr_append_with_cstr(ctx->head, ".byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_UINT8: {
-						rstr_append_with_cstr(ctx->head, ".byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_INT16: {
-						rstr_append_with_cstr(ctx->head, ".2byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".2byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_UINT16: {
-						rstr_append_with_cstr(ctx->head, ".2byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".2byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_INT32: {
-						rstr_append_with_cstr(ctx->head, ".4byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".4byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_UINT32: {
-						rstr_append_with_cstr(ctx->head, ".4byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".4byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_INT64: {
-						rstr_append_with_cstr(ctx->head, ".8byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".8byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_UINT64: {
-						rstr_append_with_cstr(ctx->head, ".8byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".8byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_FLOAT: {
-						rstr_append_with_cstr(ctx->head, ".float ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".float ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_DOUBLE: {
-						rstr_append_with_cstr(ctx->head, ".double ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".double ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_STRUCT: {
 						rstr_appendf(
-							ctx->head,
+							ctx->body,
 							".zero %zu\n",
 							be_sem_calc_type_size(ctx->psrctx, node, node_type)
 						);
@@ -878,15 +1287,15 @@ static void _asm_var(
 					}
 					case BE_NODE_TYPE_ARRAY: {
 						rstr_appendf(
-							ctx->head,
+							ctx->body,
 							".zero %zu\n",
 							be_sem_calc_type_size(ctx->psrctx, node, node_type)
 						);
 						break;
 					}
 					case BE_NODE_TYPE_POINTER: {
-						rstr_append_with_cstr(ctx->head, ".8byte ");
-						_asm_global_var_initializer(ctx, ctx->head, node_expr, node_type);
+						rstr_append_with_cstr(ctx->body, ".8byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					default: {
@@ -895,9 +1304,21 @@ static void _asm_var(
 					}
 				}
 
+				// 更新全局变量符号在代码生成时的名字。
+				ParserSymbol *symbol = BE_VAR_ITEM_AST_NODE_GET_SYMBOL(node_var_item);
+				BE_VAR_SYMBOL_SET_HAS_CODE_GEN_NAME(symbol, true);
+				ResizableString *code_gen_name = BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol);
+				rstr_init(code_gen_name);
+				_asm_inst_memref_base_disp(
+					ctx,
+					code_gen_name,
+					_ASM_REG_NAME_RIP,
+					RSTR_CSTR(&rstr_var_name)
+				);
+
 				rstr_free(&rstr_var_name);
 
-				rstr_append_with_cstr(ctx->head, "\n\n");
+				rstr_append_with_cstr(ctx->body, "\n\n");
 
 				break;
 			}
@@ -1016,8 +1437,24 @@ static void _asm_stat_assign(
 	} else if (node_source->type == BE_NODE_EXPR) {
 		ResizableString rstr_source;
 		rstr_init(&rstr_source);
-		_asm_constexpr(ctx, &rstr_source, node_source);
-		_asm_inst_mov_sym_x(ctx, ctx->body, symbol_target, RSTR_CSTR(&rstr_source));
+		_asm_constexpr_param(ctx, &rstr_source, node_source);
+		
+		uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+		_asm_inst_mov_x_x(
+			ctx,
+			ctx->body,
+			type_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX),
+			RSTR_CSTR(&rstr_source)
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+
 		rstr_free(&rstr_source);
 	} else {
 		assert(0);
@@ -1240,7 +1677,7 @@ static void _asm_func(
 				ctx,
 				ctx->local_var_defs,
 				BE_TYPE_UINT64,
-				_ASM_REG_NAME_RCX,
+				_ASM_REG_NAME_RAX,
 				RSTR_CSTR(&rstr_source)
 			);
 
@@ -1249,7 +1686,7 @@ static void _asm_func(
 				ctx->local_var_defs,
 				BE_TYPE_UINT64,
 				RSTR_CSTR(code_gen_name),
-				_ASM_REG_NAME_RCX
+				_ASM_REG_NAME_RAX
 			);
 
 			rstr_free(&rstr_source);

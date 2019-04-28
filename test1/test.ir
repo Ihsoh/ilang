@@ -2,18 +2,27 @@ struct A {
 	var aa:int32, ab:int32;
 }
 
-var a:int32 = 1, b:int32 = 3 + 20 + 100;
-var c:struct A;
-var d:char;
-align(4) var e:char;
-var f:[3]int32;
+var ga:int32 = 1;
+var gb:float = 1.2;
+var gc:*char = "abc";
+var gd:*char = "abcdef" + 2;
 
 function test_add(n1:int64, n2:int32):int32 {
-	var x:int32;
-	var y:int32;
-	var z:int64;
-	// assign x, cast<int32>(1);
-	assign y, x;
+	var a:int32;
+	var b:int32;
+	var c:int64;
+	assign a, cast<int32>(1);
+	assign b, a;
+	assign b, ga;
+
+	var d:float;
+	assign d, cast<float>(1.23);
+	var e:double;
+	assign e, cast<double>(3.21);
+
+	var f:*char;
+	assign f, "wahaha" + 3;
+
 	// assign y, z;
 }
 

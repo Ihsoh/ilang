@@ -28,7 +28,7 @@
 #define	BE_TOKEN_KEYWORD_CAST			0x3004	// cast
 #define	BE_TOKEN_KEYWORD_STRUCT			0x3005	// struct
 #define	BE_TOKEN_KEYWORD_VAR			0x3006	// var
-#define	BE_TOKEN_KEYWORD_ASM			0x3007	// asm
+// #define	BE_TOKEN_KEYWORD_ASM			0x3007	// asm
 #define	BE_TOKEN_KEYWORD_DUMMY			0x3008	// dummy
 #define	BE_TOKEN_KEYWORD_ALIGN			0x3009	// align
 #define	BE_TOKEN_KEYWORD_PACKED			0x300a	// packed
@@ -38,6 +38,9 @@
 #define	BE_TOKEN_KEYWORD_ALIGNOF		0x300e	// alignof
 #define	BE_TOKEN_KEYWORD_CBR			0x300f	// cbr
 #define	BE_TOKEN_KEYWORD_ASSIGN			0x3010	// assign
+#define	BE_TOKEN_KEYWORD_ASM			0x3011	// asm
+#define	BE_TOKEN_KEYWORD_ASM_SET_REG	0x3012	// asm_set_reg
+#define	BE_TOKEN_KEYWORD_ASM_GET_REG	0x3013	// asm_get_reg
 
 #define	BE_TOKEN_KEYWORD_CHAR			0x3100	// char
 #define	BE_TOKEN_KEYWORD_INT8			0x3101	// int8

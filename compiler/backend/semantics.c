@@ -3925,6 +3925,45 @@ static void _stat_assign(
 	}
 }
 
+static void _stat_asm(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM);
+
+	// 什么也不干。
+}
+
+static void _stat_asm_set_reg(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM_SET_REG);
+
+	// TODO: ...
+}
+
+static void _stat_asm_get_reg(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM_GET_REG);
+
+	// TODO: ...
+}
+
+
+
+
+
+
+
 static void _stat_dummy(
 	ParserContext *ctx,
 	ParserASTNode *node
@@ -3952,6 +3991,23 @@ static void _stat(
 			_stat_assign(ctx, node);
 			break;
 		}
+		case BE_NODE_STAT_ASM: {
+			_stat_asm(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_ASM_SET_REG: {
+			_stat_asm_set_reg(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_ASM_GET_REG: {
+			_stat_asm_get_reg(ctx, node);
+			break;
+		}
+
+
+
+
+
 		case BE_NODE_STAT_DUMMY: {
 			_stat_dummy(ctx, node);
 			break;

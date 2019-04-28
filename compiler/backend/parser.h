@@ -71,7 +71,8 @@
 #define	BE_NODE_STAT_LABEL					0x0b30
 
 #define	BE_NODE_STAT_ASM					0x0b40
-#define	BE_NODE_STAT_ASM_OPTION				0x0b41
+#define	BE_NODE_STAT_ASM_SET_REG			0x0b41
+#define	BE_NODE_STAT_ASM_GET_REG			0x0b42
 
 #define	BE_NODE_STAT_EXPR					0x0b50
 

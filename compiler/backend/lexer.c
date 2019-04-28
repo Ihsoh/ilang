@@ -15,7 +15,7 @@
 #include "../lexer.h"
 
 static bool _is_delimiter(int chr) {
-	return chr == -1 || !isalpha(chr) || chr != '_' || chr != '@';
+	return chr == -1 || !isalpha(chr) || chr != '_' || chr != '.' || chr != '$';
 }
 
 static CommonLexerContext _common_lexer_context = {
@@ -162,6 +162,10 @@ LEXER_MATCHER(keyword)
 		_KEYWORD("cbr", BE_TOKEN_KEYWORD_CBR),
 		_KEYWORD("assign", BE_TOKEN_KEYWORD_ASSIGN),
 
+		_KEYWORD("asm", BE_TOKEN_KEYWORD_ASM),
+		_KEYWORD("asm_set_reg", BE_TOKEN_KEYWORD_ASM_SET_REG),
+		_KEYWORD("asm_get_reg", BE_TOKEN_KEYWORD_ASM_GET_REG),
+
 		{NULL, 0, BE_TOKEN_INVALID}
 	};
 
@@ -169,11 +173,11 @@ LEXER_MATCHER(keyword)
 
 	char chr = lexer_next_char(ctx);
 
-	if (isalpha(chr) || chr == '_' || chr == '@') {
+	if (isalpha(chr) || chr == '_' || chr == '.' || chr == '$') {
 		lexer_init_token(ctx, &token, BE_TOKEN_IDENTIFIER);
 
 		for (;;) {
-			LEXER_MATCH_CHAR(ctx, &chr, &token, isalnum(chr) || chr == '_' || chr == '@', {
+			LEXER_MATCH_CHAR(ctx, &chr, &token, isalnum(chr) || chr == '_' || chr == '.' || chr == '@', {
 				// MATCHED
 			}, {
 				// NOT MATCHED
