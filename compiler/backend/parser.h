@@ -63,8 +63,7 @@
 
 #define	BE_NODE_STATS_BLOCK					0x0b00
 
-#define	BE_NODE_STATS_BR					0x0b10
-#define	BE_NODE_STATS_BR_COND				0x0b11
+#define	BE_NODE_STAT_BR						0x0b10
 
 #define	BE_NODE_STAT_RETURN					0x0b20
 
@@ -84,7 +83,9 @@
 
 #define	BE_NODE_STAT_STORE					0x0b80
 
-#define	BE_NODE_STAT_ASSIGN					0x0b81
+#define	BE_NODE_STAT_ASSIGN					0x0b90
+
+#define	BE_NODE_STAT_CBR					0x0ba0
 
 
 
@@ -619,6 +620,8 @@ typedef struct {
 	bool			dummy;
 
 	unsigned int	counter;
+
+	ParserASTNode	*func_name_node;
 } BeParserFuncSymbolData;
 
 #define	BE_FUNC_SYMBOL_GET_PARAMS_NODE(symbol)				(((BeParserFuncSymbolData *)&((symbol)->data[0]))->params_node)
@@ -626,8 +629,10 @@ typedef struct {
 #define	BE_FUNC_SYMBOL_GET_FUNC_TYPE_NODE(symbol)			(((BeParserFuncSymbolData *)&((symbol)->data[0]))->func_type_node)
 #define	BE_FUNC_SYMBOL_GET_FUNC_POINTER_TYPE_NODE(symbol)	(((BeParserFuncSymbolData *)&((symbol)->data[0]))->func_pointer_type_node)
 #define	BE_FUNC_SYMBOL_GET_DUMMY(symbol)					(((BeParserFuncSymbolData *)&((symbol)->data[0]))->dummy)
+#define	BE_FUNC_SYMBOL_GET_FUNC_NAME_NODE(symbol)			(((BeParserFuncSymbolData *)&((symbol)->data[0]))->func_name_node)
 
 #define	BE_FUNC_SYMBOL_SET_DUMMY(symbol, d)					(((BeParserFuncSymbolData *)&((symbol)->data[0]))->dummy = (d))
+#define	BE_FUNC_SYMBOL_SET_FUNC_NAME_NODE(symbol, n)		(((BeParserFuncSymbolData *)&((symbol)->data[0]))->func_name_node = (n))
 
 #define	BE_FUNC_SYMBOL_NEXT_NO(symbol)						(((BeParserFuncSymbolData *)&((symbol)->data[0]))->counter++)
 

@@ -1563,6 +1563,45 @@ static void _asm_stat_asm_get_reg(
 	rstr_free(&rstr_reg);
 }
 
+static void _out_label(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	ParserASTNode *node_id
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(node_id);
+
+	ParserSymbol *func_symbol = ctx->func_symbol;
+	assert(func_symbol);
+	ParserASTNode *func_name_node = BE_FUNC_SYMBOL_GET_FUNC_NAME_NODE(func_symbol);
+	assert(func_name_node);
+
+	rstr_append_with_cstr(rstr, "_LABEL.");
+	rstr_append_with_raw(rstr, func_name_node->token->content, func_name_node->token->len);
+	rstr_append_with_char(rstr, '.');
+	rstr_append_with_raw(rstr, node_id->token->content, node_id->token->len);
+}
+
+static void _asm_stat_label(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_LABEL);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_id = node->childs[0];
+	assert(node_id->type == BE_NODE_IDENTIFIER);
+
+	_out_label(ctx, ctx->body, node_id);
+	rstr_append_with_cstr(ctx->body, ":\n");
+}
+
+
+
+
 static void _asm_stat(
 	ASMGeneratorGas64Context *ctx,
 	ParserASTNode *node_stat
@@ -1590,6 +1629,11 @@ static void _asm_stat(
 		}
 		case BE_NODE_STAT_ASM_GET_REG: {
 			_asm_stat_asm_get_reg(ctx, node_stat);
+			break;
+		}
+
+		case BE_NODE_STAT_LABEL: {
+			_asm_stat_label(ctx, node_stat);
 			break;
 		}
 

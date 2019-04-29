@@ -28,9 +28,18 @@ function test_add(n1:int64, n2:int32):int32 {
 
 	asm_set_reg "%rdi", c;
 	asm_get_reg x, "%rdi";
-	asm "\n\n\tor %rax, %rax;\n\n";
+	
+
+	var abc:struct A;
+	// asm_set_reg "%rax", abc;
+	// asm_get_reg abc, "%rax";
 
 	// assign y, z;
+
+test_label_01:
+	asm "\n\n\tor %rax, %rax;\n\n";
+test_label_02:
+	asm "\n\n\tor %rbx, %rbx;\n\n";
 }
 
 function _main(argc:int32, argv:**char):int32 {

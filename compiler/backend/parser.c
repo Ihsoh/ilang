@@ -1346,7 +1346,97 @@ _RULE(stat_asm_get_reg)
 	_RULE_ADD_CHILD(node_source)
 _RULE_END
 
+_RULE(stat_label)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_LABEL) {
+		_RULE_NOT_MATCHED
+	}
 
+	_RULE_NODE(BE_NODE_STAT_LABEL, NULL)
+
+	ParserASTNode *node_identifier = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_identifier != NULL) {
+		_RULE_ADD_CHILD(node_identifier)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+_RULE(stat_label_simple)
+	ParserASTNode *node_identifier = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_identifier != NULL) {
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COLON) {
+			_RULE_NOT_MATCHED
+		}
+
+		_RULE_NODE(BE_NODE_STAT_LABEL, NULL)
+		_RULE_ADD_CHILD(node_identifier)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+_RULE(stat_br)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_BR) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_BR, NULL)
+
+	ParserASTNode *node_identifier = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_identifier != NULL) {
+		_RULE_ADD_CHILD(node_identifier)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+_RULE(stat_cbr)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_CBR) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_CBR, NULL)
+
+	ParserASTNode *node_id_cond = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_id_cond != NULL) {
+		_RULE_ADD_CHILD(node_id_cond)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_label_true = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_label_true != NULL) {
+		_RULE_ADD_CHILD(node_label_true)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_label_false = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_label_false != NULL) {
+		_RULE_ADD_CHILD(node_label_false)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
 
 
 
@@ -1384,6 +1474,22 @@ _RULE(stat)
 
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(stat_asm_get_reg)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_label)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_label_simple)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_br)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_cbr)(_RULE_PARSER_CTX))
 	}
 
 

@@ -3943,8 +3943,19 @@ static void _stat_asm_set_reg(
 	assert(ctx);
 	assert(node);
 	assert(node->type == BE_NODE_STAT_ASM_SET_REG);
+	assert(node->nchilds == 2);
 
-	// TODO: ...
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_LITERAL_STRING);
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+	uint8_t type_source = BE_VAR_SYMBOL_GET_TYPE(symbol_source);
+	if (!_is_primitive_type(type_source)
+			&& !_is_pointer_type(type_source)) {
+		_SYNERR_NODE(ctx, node_source, "source parameter type must be primitive type or pointer type.");
+	}
 }
 
 static void _stat_asm_get_reg(
@@ -3954,10 +3965,97 @@ static void _stat_asm_get_reg(
 	assert(ctx);
 	assert(node);
 	assert(node->type == BE_NODE_STAT_ASM_GET_REG);
+	assert(node->nchilds == 2);
 
-	// TODO: ...
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+	if (!_is_primitive_type(type_target)
+			&& !_is_pointer_type(type_target)) {
+		_SYNERR_NODE(ctx, node_target, "target parameter type must be primitive type or pointer type.");
+	}
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_LITERAL_STRING);
 }
 
+static void _stat_label(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_LABEL);
+	assert(node->nchilds == 1);
+	assert(node->childs[0]->type == BE_NODE_IDENTIFIER);
+
+	// 什么也不做。
+}
+
+static void _stat_br(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BR);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_id = node->childs[0];
+	assert(node_id->type == BE_NODE_IDENTIFIER);
+
+	if (!parser_get_symbol_from_node(ctx, node, BE_SYM_LABEL, node_id->token)) {
+		_SYNERR_TOKEN(
+			ctx,
+			node_id->token,
+			"undefined label."
+		);
+	}
+}
+
+static void _stat_cbr(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_CBR);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_id_cond = node->childs[0];
+	assert(node_id_cond->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_id_cond = _get_var_symbol_by_id_node(ctx, node_id_cond);
+	uint8_t type_id_cond = BE_VAR_SYMBOL_GET_TYPE(symbol_id_cond);
+	if (!_is_integer_type(type_id_cond)
+			&& !_is_pointer_type(type_id_cond)) {
+		_SYNERR_NODE(
+			ctx,
+			node_id_cond,
+			"condition parameter type must be integer type or pointer type."
+		);
+	}
+
+	ParserASTNode *node_label_true = node->childs[1];
+	assert(node_label_true->type == BE_NODE_IDENTIFIER);
+	if (!parser_get_symbol_from_node(ctx, node, BE_SYM_LABEL, node_label_true->token)) {
+		_SYNERR_TOKEN(
+			ctx,
+			node_label_true->token,
+			"undefined label."
+		);
+	}
+
+	ParserASTNode *node_label_false = node->childs[2];
+	assert(node_label_false->type == BE_NODE_IDENTIFIER);
+	if (!parser_get_symbol_from_node(ctx, node, BE_SYM_LABEL, node_label_false->token)) {
+		_SYNERR_TOKEN(
+			ctx,
+			node_label_false->token,
+			"undefined label."
+		);
+	}
+}
 
 
 
@@ -3991,6 +4089,7 @@ static void _stat(
 			_stat_assign(ctx, node);
 			break;
 		}
+
 		case BE_NODE_STAT_ASM: {
 			_stat_asm(ctx, node);
 			break;
@@ -4004,7 +4103,18 @@ static void _stat(
 			break;
 		}
 
-
+		case BE_NODE_STAT_LABEL: {
+			_stat_label(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_BR: {
+			_stat_br(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_CBR: {
+			_stat_cbr(ctx, node);
+			break;
+		}
 
 
 
@@ -4192,6 +4302,9 @@ static void _func(
 		}
 
 		assert(symbol);
+
+		BE_FUNC_SYMBOL_SET_FUNC_NAME_NODE(symbol, node_identifier);
+
 		BE_FUNC_AST_NODE_SET_SYMBOL(node, symbol);
 
 		for (int i = 0; i < node_func_params->nchilds; i++) {
