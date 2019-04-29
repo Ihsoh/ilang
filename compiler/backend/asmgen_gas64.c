@@ -1461,6 +1461,108 @@ static void _asm_stat_assign(
 	}
 }
 
+static void _out_literal_string(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(node);
+	assert(node->type == BE_NODE_LITERAL_STRING);
+	
+	ResizableString unescaped_str;
+	rstr_init(&unescaped_str);
+	be_lexer_unescape_string(
+		ctx->psrctx->lexctx,
+		&unescaped_str,
+		node->token->content + 1,
+		node->token->len - 2
+	);
+
+	rstr_append_with_cstr(
+		rstr,
+		RSTR_CSTR(&unescaped_str)
+	);
+
+	rstr_free(&unescaped_str);
+}
+
+static void _asm_stat_asm(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_asm_code = node->childs[0];
+	assert(node_asm_code->type == BE_NODE_LITERAL_STRING);
+
+	_out_literal_string(ctx, ctx->body, node_asm_code);
+}
+
+static void _asm_stat_asm_set_reg(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM_SET_REG);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_LITERAL_STRING);
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+
+	ResizableString rstr_reg;
+	rstr_init(&rstr_reg);
+	_out_literal_string(ctx, &rstr_reg, node_target);
+
+	_asm_inst_mov_x_sym(
+		ctx,
+		ctx->body,
+		RSTR_CSTR(&rstr_reg),
+		symbol_source
+	);
+
+	rstr_free(&rstr_reg);
+}
+
+static void _asm_stat_asm_get_reg(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM_GET_REG);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_LITERAL_STRING);
+
+	ResizableString rstr_reg;
+	rstr_init(&rstr_reg);
+	_out_literal_string(ctx, &rstr_reg, node_source);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		RSTR_CSTR(&rstr_reg)
+	);
+
+	rstr_free(&rstr_reg);
+}
+
 static void _asm_stat(
 	ASMGeneratorGas64Context *ctx,
 	ParserASTNode *node_stat
@@ -1477,6 +1579,24 @@ static void _asm_stat(
 			_asm_stat_assign(ctx, node_stat);
 			break;
 		}
+
+		case BE_NODE_STAT_ASM: {
+			_asm_stat_asm(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_ASM_SET_REG: {
+			_asm_stat_asm_set_reg(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_ASM_GET_REG: {
+			_asm_stat_asm_get_reg(ctx, node_stat);
+			break;
+		}
+
+
+
+
+
 		case BE_NODE_STAT_DUMMY: {
 			
 			break;

@@ -23,6 +23,13 @@ function test_add(n1:int64, n2:int32):int32 {
 	var f:*char;
 	assign f, "wahaha" + 3;
 
+
+	var x:int64;
+
+	asm_set_reg "%rdi", c;
+	asm_get_reg x, "%rdi";
+	asm "\n\n\tor %rax, %rax;\n\n";
+
 	// assign y, z;
 }
 
