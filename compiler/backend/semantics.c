@@ -4218,6 +4218,54 @@ static void _stat_ref(
 	);
 }
 
+static void _stat_store(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_STORE);
+
+	ParserASTNode *node_target = node->childs[0];
+	ParserASTNode *node_type_target = NULL;
+	if (node_target->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+		node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
+	} else if (node_target->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_target);
+		node_type_target = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_target);
+	} else {
+		assert(0);
+	}
+
+	ParserASTNode *node_source = node->childs[1];
+	ParserASTNode *node_type_source = NULL;
+	if (node_source->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+		node_type_source = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source);
+	} else if (node_source->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_source);
+		node_type_source = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_source);
+	} else {
+		assert(0);
+	}
+
+	assert(node_type_target);
+	assert(node_type_source);
+
+	if (!_is_pointer_type(_get_type_by_type_node(ctx, node_type_target))) {
+		_SYNERR_NODE(ctx, node_target, "target parameter type must be pointer type.");
+	}
+
+	_check_param_combination2(
+		ctx,
+		node,
+		node_type_target->childs[0],
+		node_type_source
+	);
+}
+
+
 
 
 
@@ -4282,6 +4330,10 @@ static void _stat(
 
 		case BE_NODE_STAT_REF: {
 			_stat_ref(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_STORE: {
+			_stat_store(ctx, node);
 			break;
 		}
 

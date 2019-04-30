@@ -1515,17 +1515,6 @@ static void _asm_var(
 
 
 
-static void _asm_stat_var(
-	ASMGeneratorGas64Context *ctx,
-	ParserASTNode *node
-) {
-	assert(ctx);
-	assert(node);
-	assert(node->type == BE_NODE_VAR);
-
-	_asm_var(ctx, node);
-}
-
 static ParserSymbol * _get_var_symbol_by_id_node(
 	ASMGeneratorGas64Context *ctx,
 	ParserASTNode *node
@@ -1542,6 +1531,54 @@ static ParserSymbol * _get_var_symbol_by_id_node(
 	}
 
 	return symbol;
+}
+
+static void _move_id_or_constexpr_to_reg(
+	ASMGeneratorGas64Context *ctx,
+	const char *target_reg,
+	ParserASTNode *source_id_or_constexpr
+) {
+	assert(ctx);
+	assert(target_reg);
+	assert(source_id_or_constexpr);
+
+	if (source_id_or_constexpr->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol = _get_var_symbol_by_id_node(ctx, source_id_or_constexpr);
+		_asm_inst_mov_x_sym(
+			ctx,
+			ctx->body,
+			target_reg,
+			symbol
+		);
+	} else if (source_id_or_constexpr->type == BE_NODE_EXPR) {
+		ResizableString rstr;
+		rstr_init(&rstr);
+		_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
+
+		uint8_t type = BE_EXPR_AST_NODE_GET_TYPE(source_id_or_constexpr);
+		_asm_inst_mov_x_x(
+			ctx,
+			ctx->body,
+			type,
+			target_reg,
+			RSTR_CSTR(&rstr)
+		);
+
+		rstr_free(&rstr);
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_var(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_VAR);
+
+	_asm_var(ctx, node);
 }
 
 static void _asm_stat_assign(
@@ -1933,6 +1970,33 @@ static void _asm_stat_ref(
 	);
 }
 
+static void _asm_stat_store(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_STORE);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	_move_id_or_constexpr_to_reg(
+		ctx,
+		_ASM_REG_NAME_RAX,
+		node_target
+	);
+
+	ParserASTNode *node_source = node->childs[1];
+	_move_id_or_constexpr_to_reg(
+		ctx,
+		_ASM_REG_NAME_RBX,
+		node_source
+	);
+
+	// TODO: _move_id_or_constexpr_to_reg(...)要返回一个type。用来直到要往
+	//		内存里复制多大的数据。
+}
+
 
 
 
@@ -1988,6 +2052,10 @@ static void _asm_stat(
 
 		case BE_NODE_STAT_REF: {
 			_asm_stat_ref(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_STORE: {
+			_asm_stat_store(ctx, node_stat);
 			break;
 		}
 

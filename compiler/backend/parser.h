@@ -82,6 +82,7 @@
 #define	BE_NODE_STAT_VA_COPY				0x0b72
 
 #define	BE_NODE_STAT_STORE					0x0b80
+#define	BE_NODE_STAT_LOAD					0x0b81
 
 #define	BE_NODE_STAT_ASSIGN					0x0b90
 
