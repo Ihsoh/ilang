@@ -335,6 +335,11 @@ static int _new_string(
 
 
 
+#define	_ASM_CONST_0				"$0"
+
+
+
+
 /*
 	获取同一个寄存器的不同宽度时的名称。
 */
@@ -760,8 +765,128 @@ static void _asm_inst_add_x_x(
 	);
 }
 
+/*
+	JMP
+	Jcc
+*/
 
+static void _asm_inst_jmp_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
 
+	const char *mnemonic = "jmp";
+
+	_asm_inst1(ctx, rstr, mnemonic, target);
+}
+
+static void _asm_inst_je_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+
+	const char *mnemonic = "je";
+
+	_asm_inst1(ctx, rstr, mnemonic, target);
+}
+
+static void _asm_inst_jne_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+
+	const char *mnemonic = "jne";
+
+	_asm_inst1(ctx, rstr, mnemonic, target);
+}
+
+/*
+	CMP
+*/
+
+static void _asm_inst_cmp_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "";
+
+	switch (type) {
+		case BE_TYPE_CHAR:
+		case BE_TYPE_INT8:
+		case BE_TYPE_UINT8: {
+			mnemonic = "cmpb";
+			break;
+		}
+		case BE_TYPE_INT16:
+		case BE_TYPE_UINT16: {
+			mnemonic = "cmpw";
+			break;
+		}
+		case BE_TYPE_INT32:
+		case BE_TYPE_UINT32: {
+			mnemonic = "cmpl";
+			break;
+		}
+		case BE_TYPE_INT64:
+		case BE_TYPE_UINT64:
+		case BE_TYPE_POINTER: {
+			mnemonic = "cmpq";
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+static void _asm_inst_cmp_sym_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	ParserSymbol *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	_asm_inst_cmp_x_x(
+		ctx,
+		rstr,
+		BE_VAR_SYMBOL_GET_TYPE(target),
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(target)),
+		source
+	);
+}
 
 
 
@@ -1599,6 +1724,61 @@ static void _asm_stat_label(
 	rstr_append_with_cstr(ctx->body, ":\n");
 }
 
+static void _asm_stat_br(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BR);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_id = node->childs[0];
+	assert(node_id->type == BE_NODE_IDENTIFIER);
+
+	ResizableString rstr_id;
+	rstr_init(&rstr_id);
+	_out_label(ctx, &rstr_id, node_id);
+
+	_asm_inst_jmp_x(ctx, ctx->body, RSTR_CSTR(&rstr_id));
+
+	rstr_free(&rstr_id);
+}
+
+static void _asm_stat_cbr(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_CBR);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_id_cond = node->childs[0];
+	assert(node_id_cond->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_id_cond = _get_var_symbol_by_id_node(ctx, node_id_cond);
+
+	ParserASTNode *node_label_true = node->childs[1];
+	assert(node_label_true->type == BE_NODE_IDENTIFIER);
+	ResizableString rstr_label_true;
+	rstr_init(&rstr_label_true);
+	_out_label(ctx, &rstr_label_true, node_label_true);
+
+	ParserASTNode *node_label_false = node->childs[2];
+	assert(node_label_false->type == BE_NODE_IDENTIFIER);
+	ResizableString rstr_label_false;
+	rstr_init(&rstr_label_false);
+	_out_label(ctx, &rstr_label_false, node_label_false);
+
+	_asm_inst_cmp_sym_x(ctx, ctx->body, symbol_id_cond, _ASM_CONST_0);
+	_asm_inst_je_x(ctx, ctx->body, RSTR_CSTR(&rstr_label_false));
+	_asm_inst_jne_x(ctx, ctx->body, RSTR_CSTR(&rstr_label_true));
+
+	rstr_free(&rstr_label_true);
+	rstr_free(&rstr_label_false);
+}
+
+
 
 
 
@@ -1636,7 +1816,14 @@ static void _asm_stat(
 			_asm_stat_label(ctx, node_stat);
 			break;
 		}
-
+		case BE_NODE_STAT_BR: {
+			_asm_stat_br(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_CBR: {
+			_asm_stat_cbr(ctx, node_stat);
+			break;
+		}
 
 
 

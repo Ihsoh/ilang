@@ -36,10 +36,16 @@ function test_add(n1:int64, n2:int32):int32 {
 
 	// assign y, z;
 
-test_label_01:
+	var cond:int64;
+	assign cond, cast<int64>(0);
+	cbr cond, label_true, label_false;
+label_true:
 	asm "\n\n\tor %rax, %rax;\n\n";
-test_label_02:
+	br label_end;
+label_false:
 	asm "\n\n\tor %rbx, %rbx;\n\n";
+label_end:
+
 }
 
 function _main(argc:int32, argv:**char):int32 {

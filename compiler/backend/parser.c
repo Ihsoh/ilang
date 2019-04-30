@@ -1418,10 +1418,20 @@ _RULE(stat_cbr)
 		_RULE_NOT_MATCHED
 	}
 
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+		_RULE_NOT_MATCHED
+	}
+
 	ParserASTNode *node_label_true = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
 	if (node_label_true != NULL) {
 		_RULE_ADD_CHILD(node_label_true)
 	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
 		_RULE_NOT_MATCHED
 	}
 
