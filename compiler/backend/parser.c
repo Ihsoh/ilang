@@ -1448,6 +1448,24 @@ _RULE(stat_cbr)
 	}
 _RULE_END
 
+_RULE(stat_return)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_RETURN) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_RETURN, NULL)
+
+	ParserASTNode *node_id = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_id != NULL) {
+		_RULE_ADD_CHILD(node_id)
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
 
 
 
@@ -1500,6 +1518,10 @@ _RULE(stat)
 
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(stat_cbr)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_return)(_RULE_PARSER_CTX))
 	}
 
 

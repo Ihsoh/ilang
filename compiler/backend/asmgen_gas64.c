@@ -335,9 +335,10 @@ static int _new_string(
 
 
 
-#define	_ASM_CONST_0				"$0"
+#define	_ASM_CONST_0					"$0"
 
-
+#define	_ASM_FUNC_RETURN_LABEL_PREFIX	"FUNC_RET"
+#define	_ASM_FUNC_RETURN_LABEL			"RET"
 
 
 /*
@@ -1688,14 +1689,15 @@ static void _asm_stat_asm_get_reg(
 	rstr_free(&rstr_reg);
 }
 
-static void _out_label(
+static void __out_label(
 	ASMGeneratorGas64Context *ctx,
 	ResizableString *rstr,
-	ParserASTNode *node_id
+	const char *prefix,
+	const char *label
 ) {
 	assert(ctx);
 	assert(rstr);
-	assert(node_id);
+	assert(label);
 
 	ParserSymbol *func_symbol = ctx->func_symbol;
 	assert(func_symbol);
@@ -1705,7 +1707,26 @@ static void _out_label(
 	rstr_append_with_cstr(rstr, "_LABEL.");
 	rstr_append_with_raw(rstr, func_name_node->token->content, func_name_node->token->len);
 	rstr_append_with_char(rstr, '.');
-	rstr_append_with_raw(rstr, node_id->token->content, node_id->token->len);
+	if (prefix != NULL) {
+		rstr_appendf(rstr, "%s.", prefix);
+	}
+	rstr_append_with_cstr(rstr, label);
+}
+
+static void _out_label(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *prefix,
+	ParserASTNode *node_id
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(node_id);
+
+	ResizableString rstr_id;
+	rstr_init_with_raw(&rstr_id, node_id->token->content, node_id->token->len);
+	__out_label(ctx, rstr, prefix, RSTR_CSTR(&rstr_id));
+	rstr_free(&rstr_id);
 }
 
 static void _asm_stat_label(
@@ -1720,7 +1741,7 @@ static void _asm_stat_label(
 	ParserASTNode *node_id = node->childs[0];
 	assert(node_id->type == BE_NODE_IDENTIFIER);
 
-	_out_label(ctx, ctx->body, node_id);
+	_out_label(ctx, ctx->body, NULL, node_id);
 	rstr_append_with_cstr(ctx->body, ":\n");
 }
 
@@ -1738,7 +1759,7 @@ static void _asm_stat_br(
 
 	ResizableString rstr_id;
 	rstr_init(&rstr_id);
-	_out_label(ctx, &rstr_id, node_id);
+	_out_label(ctx, &rstr_id, NULL, node_id);
 
 	_asm_inst_jmp_x(ctx, ctx->body, RSTR_CSTR(&rstr_id));
 
@@ -1762,13 +1783,13 @@ static void _asm_stat_cbr(
 	assert(node_label_true->type == BE_NODE_IDENTIFIER);
 	ResizableString rstr_label_true;
 	rstr_init(&rstr_label_true);
-	_out_label(ctx, &rstr_label_true, node_label_true);
+	_out_label(ctx, &rstr_label_true, NULL, node_label_true);
 
 	ParserASTNode *node_label_false = node->childs[2];
 	assert(node_label_false->type == BE_NODE_IDENTIFIER);
 	ResizableString rstr_label_false;
 	rstr_init(&rstr_label_false);
-	_out_label(ctx, &rstr_label_false, node_label_false);
+	_out_label(ctx, &rstr_label_false, NULL, node_label_false);
 
 	_asm_inst_cmp_sym_x(ctx, ctx->body, symbol_id_cond, _ASM_CONST_0);
 	_asm_inst_je_x(ctx, ctx->body, RSTR_CSTR(&rstr_label_false));
@@ -1778,7 +1799,40 @@ static void _asm_stat_cbr(
 	rstr_free(&rstr_label_false);
 }
 
+static void _asm_stat_return(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_RETURN);
+	assert(node->nchilds == 0
+			|| node->nchilds == 1);
 
+	if (node->nchilds == 1) {
+		ParserASTNode *node_id =  node->childs[0];
+		assert(node_id->type == BE_NODE_IDENTIFIER);
+		ParserSymbol *symbol_id = _get_var_symbol_by_id_node(ctx, node_id);
+		uint8_t type_id = BE_VAR_SYMBOL_GET_TYPE(symbol_id);
+		_asm_inst_mov_x_sym(
+			ctx,
+			ctx->body,
+			_asm_inst_reg(ctx, type_id, _ASM_REG_AX),
+			symbol_id
+		);
+	}
+
+	ResizableString rstr_ret;
+	rstr_init(&rstr_ret);
+	__out_label(
+		ctx,
+		&rstr_ret,
+		_ASM_FUNC_RETURN_LABEL_PREFIX,
+		_ASM_FUNC_RETURN_LABEL
+	);
+	_asm_inst_jmp_x(ctx, ctx->body, RSTR_CSTR(&rstr_ret));
+	rstr_free(&rstr_ret);
+}
 
 
 
@@ -1822,6 +1876,11 @@ static void _asm_stat(
 		}
 		case BE_NODE_STAT_CBR: {
 			_asm_stat_cbr(ctx, node_stat);
+			break;
+		}
+
+		case BE_NODE_STAT_RETURN: {
+			_asm_stat_return(ctx, node_stat);
 			break;
 		}
 
@@ -2051,6 +2110,17 @@ static void _asm_func(
 		ctx->body = body;
 		rstr_free(ctx->local_var_defs);
 		ctx->local_var_defs = NULL;
+
+
+
+		// 用于return指令的标签。
+		__out_label(
+			ctx,
+			ctx->body,
+			_ASM_FUNC_RETURN_LABEL_PREFIX,
+			_ASM_FUNC_RETURN_LABEL
+		);
+		rstr_append_with_cstr(ctx->body, ":\n");
 
 		// popq	%rbp
 		// retq

@@ -4057,7 +4057,99 @@ static void _stat_cbr(
 	}
 }
 
+static ParserASTNode * __search_node_along_parent(
+	ParserASTNode *node,
+	va_list arg_ptr
+) {
+	assert(node);
+	assert(arg_ptr);
 
+	unsigned int types[32];
+	size_t count = 0;
+
+	for (;;) {
+		unsigned int type = va_arg(arg_ptr, unsigned int);
+		if (type == BE_NODE_INVALID) {
+			break;
+		}
+		if (count >= sizeof(types) / sizeof(unsigned int)) {
+			assert(0);
+		}
+		types[count++] = type;
+	}
+
+	ParserASTNode *parent = node;
+	while (parent != NULL) {
+		for (int i = 0; i < count; i++) {
+			if (parent->type == types[i]) {
+				return parent;
+			}
+		}
+		parent = parent->parent;
+	}
+	return NULL;
+}
+
+static ParserASTNode * _search_node_along_parent(
+	ParserASTNode *node,
+	...
+) {
+	assert(node);
+
+	va_list arg_ptr;
+	va_start(arg_ptr, node);
+	
+	return __search_node_along_parent(node, arg_ptr);
+}
+
+static void _stat_return(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_RETURN);
+
+	ParserASTNode *node_func = _search_node_along_parent(node->parent, BE_NODE_FUNC, 0);
+	if (node_func == NULL) {
+		_SYNERR_NODE(
+			ctx,
+			node,
+			"statement 'return' must be use in function."
+		);
+	}
+
+	ParserASTNode *node_return_type = NULL;
+	if (node_func->nchilds == 4) {
+		node_return_type = node_func->childs[2];
+	}
+
+	if (node->nchilds == 0) {
+		if (node_return_type != NULL) {
+			_SYNERR_NODE(
+				ctx,
+				node,
+				"statement 'return' requires return value."
+			);
+		}
+	} else if (node->nchilds == 1) {
+		if (node_return_type == NULL) {
+			_SYNERR_NODE(
+				ctx,
+				node,
+				"statement 'return' does not require return value."
+			);
+		}
+
+		ParserASTNode *node_id = node->childs[0];
+		assert(node_id->type == BE_NODE_IDENTIFIER);
+		ParserSymbol *symbol_id = _get_var_symbol_by_id_node(ctx, node_id);
+		ParserASTNode *node_id_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_id);
+		_check_param_combination2(ctx, node, node_return_type, node_id_type);
+	} else {
+		assert(0);
+	}
+}
 
 
 
@@ -4113,6 +4205,11 @@ static void _stat(
 		}
 		case BE_NODE_STAT_CBR: {
 			_stat_cbr(ctx, node);
+			break;
+		}
+
+		case BE_NODE_STAT_RETURN: {
+			_stat_return(ctx, node);
 			break;
 		}
 
