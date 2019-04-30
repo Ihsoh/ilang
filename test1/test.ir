@@ -19,5 +19,5 @@ label_false2:
 }
 
 function _main(argc:int32, argv:**char):int32 {
-
+	return cast<int32>(0);
 }

@@ -1456,9 +1456,9 @@ _RULE(stat_return)
 
 	_RULE_NODE(BE_NODE_STAT_RETURN, NULL)
 
-	ParserASTNode *node_id = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
-	if (node_id != NULL) {
-		_RULE_ADD_CHILD(node_id)
+	ParserASTNode *node_ret_val = _RULE_NAME(constexpr_or_id)(_RULE_PARSER_CTX);
+	if (node_ret_val != NULL) {
+		_RULE_ADD_CHILD(node_ret_val)
 	}
 
 	_RULE_NEXT_TOKEN

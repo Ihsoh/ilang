@@ -4173,11 +4173,18 @@ static void _stat_return(
 			);
 		}
 
-		ParserASTNode *node_id = node->childs[0];
-		assert(node_id->type == BE_NODE_IDENTIFIER);
-		ParserSymbol *symbol_id = _get_var_symbol_by_id_node(ctx, node_id);
-		ParserASTNode *node_id_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_id);
-		_check_param_combination2(ctx, node, node_return_type, node_id_type);
+		ParserASTNode *node_ret_val = node->childs[0];
+		if (node_ret_val->type == BE_NODE_IDENTIFIER) {
+			ParserSymbol *symbol_ret_val = _get_var_symbol_by_id_node(ctx, node_ret_val);
+			ParserASTNode *node_ret_val_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_ret_val);
+			_check_param_combination2(ctx, node, node_return_type, node_ret_val_type);
+		} else if (node_ret_val->type == BE_NODE_EXPR) {
+			_expr_wrapper(ctx, node_ret_val);
+			ParserASTNode *node_ret_val_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_ret_val);
+			_check_param_combination2(ctx, node, node_return_type, node_ret_val_type);
+		} else {
+			assert(0);
+		}
 	} else {
 		assert(0);
 	}
