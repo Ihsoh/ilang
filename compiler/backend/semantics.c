@@ -3949,12 +3949,30 @@ static void _stat_asm_set_reg(
 	assert(node_target->type == BE_NODE_LITERAL_STRING);
 
 	ParserASTNode *node_source = node->childs[1];
-	assert(node_source->type == BE_NODE_IDENTIFIER);
-	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
-	uint8_t type_source = BE_VAR_SYMBOL_GET_TYPE(symbol_source);
-	if (!_is_primitive_type(type_source)
-			&& !_is_pointer_type(type_source)) {
-		_SYNERR_NODE(ctx, node_source, "source parameter type must be primitive type or pointer type.");
+	if (node_source->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+		uint8_t type_source = BE_VAR_SYMBOL_GET_TYPE(symbol_source);
+		if (!_is_primitive_type(type_source)
+				&& !_is_pointer_type(type_source)) {
+			_SYNERR_NODE(
+				ctx,
+				node_source,
+				"source parameter type must be primitive type or pointer type."
+			);
+		}
+	} else if (node_source->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_source);
+		uint8_t type_source = BE_EXPR_AST_NODE_GET_TYPE(node_source);
+		if (!_is_primitive_type(type_source)
+				&& !_is_pointer_type(type_source)) {
+			_SYNERR_NODE(
+				ctx,
+				node_source,
+				"source parameter type must be primitive type or pointer type."
+			);
+		}
+	} else {
+		assert(0);
 	}
 }
 
@@ -4024,16 +4042,30 @@ static void _stat_cbr(
 	assert(node->nchilds == 3);
 
 	ParserASTNode *node_id_cond = node->childs[0];
-	assert(node_id_cond->type == BE_NODE_IDENTIFIER);
-	ParserSymbol *symbol_id_cond = _get_var_symbol_by_id_node(ctx, node_id_cond);
-	uint8_t type_id_cond = BE_VAR_SYMBOL_GET_TYPE(symbol_id_cond);
-	if (!_is_integer_type(type_id_cond)
-			&& !_is_pointer_type(type_id_cond)) {
-		_SYNERR_NODE(
-			ctx,
-			node_id_cond,
-			"condition parameter type must be integer type or pointer type."
-		);
+	if (node_id_cond->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_id_cond = _get_var_symbol_by_id_node(ctx, node_id_cond);
+		uint8_t type_id_cond = BE_VAR_SYMBOL_GET_TYPE(symbol_id_cond);
+		if (!_is_integer_type(type_id_cond)
+				&& !_is_pointer_type(type_id_cond)) {
+			_SYNERR_NODE(
+				ctx,
+				node_id_cond,
+				"condition parameter type must be integer type or pointer type."
+			);
+		}
+	} else if (node_id_cond->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_id_cond);
+		uint8_t type_id_cond = BE_EXPR_AST_NODE_GET_TYPE(node_id_cond);
+		if (!_is_primitive_type(type_id_cond)
+				&& !_is_pointer_type(type_id_cond)) {
+			_SYNERR_NODE(
+				ctx,
+				node_id_cond,
+				"condition parameter type must be primitive type or pointer type."
+			);
+		}
+	} else {
+		assert(0);
 	}
 
 	ParserASTNode *node_label_true = node->childs[1];

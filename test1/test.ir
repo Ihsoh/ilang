@@ -2,54 +2,22 @@ struct A {
 	var aa:int32, ab:int32;
 }
 
-var ga:int32 = 1;
-var gb:float = 1.2;
-var gc:*char = "abc";
-var gd:*char = "abcdef" + 2;
-
 function test_add(n1:int64, n2:int32):int32 {
 	var a:int32;
-	var b:int32;
-	var c:int64;
 	assign a, cast<int32>(1);
-	assign b, a;
-	assign b, ga;
 
-	var d:float;
-	assign d, cast<float>(1.23);
-	var e:double;
-	assign e, cast<double>(3.21);
-
-	var f:*char;
-	assign f, "wahaha" + 3;
-
-
-	var x:int64;
-
-	asm_set_reg "%rdi", c;
-	asm_get_reg x, "%rdi";
+	cbr a, label_true1, label_false1;
 	
+label_true1:
+label_false1:
 
-	var abc:struct A;
-	// asm_set_reg "%rax", abc;
-	// asm_get_reg abc, "%rax";
-
-	// assign y, z;
-
-	var cond:int64;
-	assign cond, cast<int64>(0);
-	cbr cond, label_true, label_false;
-label_true:
-	asm "\n\n\tor %rax, %rax;\n\n";
-	br label_end;
-label_false:
-	asm "\n\n\tor %rbx, %rbx;\n\n";
-label_end:
+	cbr 1, label_true2, label_false2;
+	
+label_true2:
+label_false2:
 
 }
 
 function _main(argc:int32, argv:**char):int32 {
-	var r:int32;
-	assign r, cast<int32>(0);
-	return r;
+
 }
