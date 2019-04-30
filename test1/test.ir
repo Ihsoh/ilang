@@ -18,6 +18,14 @@ label_false2:
 
 }
 
+var ga:int64 = 0;
+
 function _main(argc:int32, argv:**char):int32 {
+
+	var a:int64;
+	var b:*int64;
+	ref b, a;
+	ref b, ga;
+
 	return cast<int32>(0);
 }

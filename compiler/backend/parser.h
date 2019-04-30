@@ -87,7 +87,7 @@
 
 #define	BE_NODE_STAT_CBR					0x0ba0
 
-
+#define	BE_NODE_STAT_REF					0x0bb0
 
 
 #define	BE_NODE_VAR							0x0c00

@@ -4190,6 +4190,34 @@ static void _stat_return(
 	}
 }
 
+static void _stat_ref(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_REF);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
+	if (!_is_pointer_type(BE_VAR_SYMBOL_GET_TYPE(symbol_target))) {
+		_SYNERR_NODE(ctx, node_target, "target parameter type must be pointer type.");
+	}
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+	ParserASTNode *node_type_source = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source);
+	_check_param_combination2(
+		ctx,
+		node,
+		node_type_target->childs[0],
+		node_type_source
+	);
+}
+
 
 
 
@@ -4249,6 +4277,11 @@ static void _stat(
 
 		case BE_NODE_STAT_RETURN: {
 			_stat_return(ctx, node);
+			break;
+		}
+
+		case BE_NODE_STAT_REF: {
+			_stat_ref(ctx, node);
 			break;
 		}
 

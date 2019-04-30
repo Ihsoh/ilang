@@ -74,10 +74,11 @@ function main(argc:int32, argv:**char):int32 {
 	call test_3();
 	call test_4();
 
-	var a:int64 = 123;
-	asm_set_reg "%rax", a;
-	asm "addl $321, %rax";
-	asm_get_reg a, "%rax";
+	var a:int32;
+	var b:*int32;
+	ref b, a;
+	store b, cast<int32>(123);
+	load a, b;
 
 	return 0;
 }

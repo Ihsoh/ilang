@@ -1908,6 +1908,34 @@ static void _asm_stat_return(
 	rstr_free(&rstr_ret);
 }
 
+static void _asm_stat_ref(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_REF);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+
+	_asm_inst_lea_sym_sym(
+		ctx,
+		ctx->body,
+		symbol_target,
+		symbol_source
+	);
+}
+
+
+
+
 
 
 static void _asm_stat(
@@ -1955,6 +1983,11 @@ static void _asm_stat(
 
 		case BE_NODE_STAT_RETURN: {
 			_asm_stat_return(ctx, node_stat);
+			break;
+		}
+
+		case BE_NODE_STAT_REF: {
+			_asm_stat_ref(ctx, node_stat);
 			break;
 		}
 

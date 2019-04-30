@@ -1467,6 +1467,40 @@ _RULE(stat_return)
 	}
 _RULE_END
 
+_RULE(stat_ref)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_REF) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_REF, NULL)
+
+	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_target != NULL) {
+		_RULE_ADD_CHILD(node_target)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_source = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_source != NULL) {
+		_RULE_ADD_CHILD(node_source)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+
 
 
 
@@ -1522,6 +1556,10 @@ _RULE(stat)
 
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(stat_return)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(stat_ref)(_RULE_PARSER_CTX))
 	}
 
 

@@ -41,6 +41,7 @@
 #define	BE_TOKEN_KEYWORD_ASM			0x3011	// asm
 #define	BE_TOKEN_KEYWORD_ASM_SET_REG	0x3012	// asm_set_reg
 #define	BE_TOKEN_KEYWORD_ASM_GET_REG	0x3013	// asm_get_reg
+#define	BE_TOKEN_KEYWORD_REF			0x3014	// ref
 
 #define	BE_TOKEN_KEYWORD_CHAR			0x3100	// char
 #define	BE_TOKEN_KEYWORD_INT8			0x3101	// int8
