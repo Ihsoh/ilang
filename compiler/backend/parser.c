@@ -1541,7 +1541,7 @@ _RULE(stat_load)
 
 	_RULE_NODE(BE_NODE_STAT_LOAD, NULL)
 
-	ParserASTNode *node_target = _RULE_NAME(constexpr_or_id)(_RULE_PARSER_CTX);
+	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
 	if (node_target != NULL) {
 		_RULE_ADD_CHILD(node_target)
 	} else {

@@ -405,6 +405,22 @@ static const char * _asm_inst_reg(
 	Intel: 	section:[base + index*scale + disp]
 */
 
+static void _asm_inst_memref_base(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *base
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(base);
+
+	rstr_appendf(
+		rstr,
+		"(%s)",
+		base
+	);
+}
+
 static void _asm_inst_memref_base_disp(
 	ASMGeneratorGas64Context *ctx,
 	ResizableString *rstr,
@@ -413,6 +429,8 @@ static void _asm_inst_memref_base_disp(
 ) {
 	assert(ctx);
 	assert(rstr);
+	assert(base);
+	assert(disp);
 
 	rstr_appendf(
 		rstr,
@@ -1533,38 +1551,42 @@ static ParserSymbol * _get_var_symbol_by_id_node(
 	return symbol;
 }
 
-static void _move_id_or_constexpr_to_reg(
+static uint8_t _move_id_or_constexpr_to_reg(
 	ASMGeneratorGas64Context *ctx,
-	const char *target_reg,
+	int target_reg,
 	ParserASTNode *source_id_or_constexpr
 ) {
 	assert(ctx);
-	assert(target_reg);
 	assert(source_id_or_constexpr);
 
 	if (source_id_or_constexpr->type == BE_NODE_IDENTIFIER) {
 		ParserSymbol *symbol = _get_var_symbol_by_id_node(ctx, source_id_or_constexpr);
+		uint8_t symbol_type = BE_VAR_SYMBOL_GET_TYPE(symbol);
+		
 		_asm_inst_mov_x_sym(
 			ctx,
 			ctx->body,
-			target_reg,
+			_asm_inst_reg(ctx, symbol_type, target_reg),
 			symbol
 		);
+
+		return symbol_type;
 	} else if (source_id_or_constexpr->type == BE_NODE_EXPR) {
 		ResizableString rstr;
 		rstr_init(&rstr);
 		_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
-
 		uint8_t type = BE_EXPR_AST_NODE_GET_TYPE(source_id_or_constexpr);
+		
 		_asm_inst_mov_x_x(
 			ctx,
 			ctx->body,
 			type,
-			target_reg,
+			_asm_inst_reg(ctx, type, target_reg),
 			RSTR_CSTR(&rstr)
 		);
 
 		rstr_free(&rstr);
+		return type;
 	} else {
 		assert(0);
 	}
@@ -1980,21 +2002,79 @@ static void _asm_stat_store(
 	assert(node->nchilds == 2);
 
 	ParserASTNode *node_target = node->childs[0];
-	_move_id_or_constexpr_to_reg(
+	uint8_t type_target = _move_id_or_constexpr_to_reg(
 		ctx,
-		_ASM_REG_NAME_RAX,
+		_ASM_REG_AX,
 		node_target
 	);
+	assert(type_target == BE_TYPE_POINTER);
 
 	ParserASTNode *node_source = node->childs[1];
-	_move_id_or_constexpr_to_reg(
+	uint8_t type_source = _move_id_or_constexpr_to_reg(
 		ctx,
-		_ASM_REG_NAME_RBX,
+		_ASM_REG_BX,
 		node_source
 	);
 
-	// TODO: _move_id_or_constexpr_to_reg(...)要返回一个type。用来直到要往
-	//		内存里复制多大的数据。
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(ctx, &rstr_memref, _ASM_REG_NAME_RAX);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		type_source,
+		RSTR_CSTR(&rstr_memref),
+		_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+	);
+
+	rstr_free(&rstr_memref);
+}
+
+static void _asm_stat_load(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_LOAD);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	uint8_t type_source = _move_id_or_constexpr_to_reg(
+		ctx,
+		_ASM_REG_AX,
+		node_source
+	);
+	assert(type_source == BE_TYPE_POINTER);
+
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(ctx, &rstr_memref, _ASM_REG_NAME_RAX);
+
+	const char *tmp_reg = _asm_inst_reg(ctx, type_target, _ASM_REG_AX);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		type_target,
+		tmp_reg,
+		RSTR_CSTR(&rstr_memref)
+	);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		tmp_reg
+	);
+
+	rstr_free(&rstr_memref);
 }
 
 
@@ -2056,6 +2136,10 @@ static void _asm_stat(
 		}
 		case BE_NODE_STAT_STORE: {
 			_asm_stat_store(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_LOAD: {
+			_asm_stat_load(ctx, node_stat);
 			break;
 		}
 

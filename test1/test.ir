@@ -2,6 +2,11 @@ struct A {
 	var aa:int32, ab:int32;
 }
 
+function test_float() {
+	var a:float;
+	assign a, cast<float>(1.23);
+}
+
 function test_add(n1:int64, n2:int32):int32 {
 	var a:int32;
 	assign a, cast<int32>(1);
@@ -22,10 +27,31 @@ var ga:int64 = 0;
 
 function _main(argc:int32, argv:**char):int32 {
 
-	var a:int64;
-	var b:*int64;
+	store cast<*int8>(0x12), cast<int8>(1);
+	store cast<*int16>(0x34), cast<int16>(2);
+	store cast<*int32>(0x56), cast<int32>(3);
+	store cast<*int64>(0x78), cast<int64>(4);
+
+	asm "\n#.............................\n\n";
+
+	var a:int32;
+	assign a, cast<int32>(1);
+
+	asm "\n#.............................\n\n";
+
+	var b:*int32;
 	ref b, a;
-	ref b, ga;
+
+	asm "\n#.............................\n\n";
+
+	store b, cast<int32>(2333);
+
+	asm "\n#.............................\n\n";
+
+	var c:int32;
+	load c, b;
+
+	asm "\n#.............................\n\n";
 
 	return cast<int32>(0);
 }
