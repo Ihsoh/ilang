@@ -2355,6 +2355,56 @@ static void _asm_stat_sitofp(
 	}
 }
 
+static void _zero_extend64(
+	ASMGeneratorGas64Context *ctx,
+	int reg_target,
+	ParserASTNode *node_source
+) {
+	assert(ctx);
+	assert(node_source);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_asm_inst_reg(ctx, BE_TYPE_UINT64, reg_target),
+		_ASM_CONST_0
+	);
+
+	_move_id_or_constexpr_to_reg(
+		ctx,
+		reg_target,
+		node_source
+	);
+}
+
+static void _asm_stat_inttoptr(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_INTTOPTR);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+	assert(type_target == BE_TYPE_POINTER);
+
+	ParserASTNode *node_source = node->childs[1];
+	_zero_extend64(ctx, _ASM_REG_AX, node_source);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_ASM_REG_NAME_RAX
+	);
+}
+
+
 
 
 
@@ -2432,6 +2482,10 @@ static void _asm_stat(
 		}
 		case BE_NODE_STAT_SITOFP: {
 			_asm_stat_sitofp(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_INTTOPTR: {
+			_asm_stat_inttoptr(ctx, node_stat);
 			break;
 		}
 

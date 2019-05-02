@@ -57,18 +57,47 @@ function _main(argc:int32, argv:**char):int32 {
 }
 
 function test_cast() {
-	var a:int8;
-	assign a, cast<int8>(0x12);
+	var a:*int64;
 
 	asm "\n#.............................\n\n";
 
-	var b:float;
-	sitofp b, a;
+	var b:int8;
+	assign b, cast<int8>(1);
+	inttoptr a, b;
 
 	asm "\n#.............................\n\n";
 
-	var c:double;
-	sitofp c, a;
+	var c:int16;
+	assign c, cast<int16>(2);
+	inttoptr a, c;
+
+	asm "\n#.............................\n\n";
+
+	var d:int32;
+	assign d, cast<int32>(3);
+	inttoptr a, d;
+
+	asm "\n#.............................\n\n";
+
+	var e:int64;
+	assign e, cast<int64>(4);
+	inttoptr a, e;
+
+	asm "\n#.............................\n\n";
+
+	inttoptr a, cast<int8>(5);
+
+	asm "\n#.............................\n\n";
+
+	inttoptr a, cast<int16>(6);
+
+	asm "\n#.............................\n\n";
+
+	inttoptr a, cast<int32>(7);
+
+	asm "\n#.............................\n\n";
+
+	inttoptr a, cast<int64>(8);
 
 	asm "\n#.............................\n\n";
 }
