@@ -28,7 +28,7 @@
 #define	BE_TOKEN_KEYWORD_CAST			0x3004	// cast
 #define	BE_TOKEN_KEYWORD_STRUCT			0x3005	// struct
 #define	BE_TOKEN_KEYWORD_VAR			0x3006	// var
-// #define	BE_TOKEN_KEYWORD_ASM			0x3007	// asm
+// #define	XXXXX						0x3007	// TODO: XXXXX
 #define	BE_TOKEN_KEYWORD_DUMMY			0x3008	// dummy
 #define	BE_TOKEN_KEYWORD_ALIGN			0x3009	// align
 #define	BE_TOKEN_KEYWORD_PACKED			0x300a	// packed
@@ -42,6 +42,23 @@
 #define	BE_TOKEN_KEYWORD_ASM_SET_REG	0x3012	// asm_set_reg
 #define	BE_TOKEN_KEYWORD_ASM_GET_REG	0x3013	// asm_get_reg
 #define	BE_TOKEN_KEYWORD_REF			0x3014	// ref
+
+#define	BE_TOKEN_KEYWORD_TRUNC			0x3015	// trunc
+#define	BE_TOKEN_KEYWORD_SEXT			0x3016	// sext
+#define	BE_TOKEN_KEYWORD_SITOFP			0x3017	// sitofp
+#define	BE_TOKEN_KEYWORD_INTTOPTR		0x3018	// inttoptr
+#define	BE_TOKEN_KEYWORD_ZEXT			0x3019	// zext
+#define	BE_TOKEN_KEYWORD_UITOFP			0x301a	// uitofp
+#define	BE_TOKEN_KEYWORD_FPTOSI			0x301b	// fptosi
+#define	BE_TOKEN_KEYWORD_FPTOUI			0x301c	// fptoui
+#define	BE_TOKEN_KEYWORD_FPEXT			0x301d	// fpext
+#define	BE_TOKEN_KEYWORD_FPTRUNC		0x301e	// fptrunc
+#define	BE_TOKEN_KEYWORD_PTRTOINT		0x301f	// fptoint
+#define	BE_TOKEN_KEYWORD_BITCAST		0x3020	// bitcast
+
+
+
+
 
 #define	BE_TOKEN_KEYWORD_CHAR			0x3100	// char
 #define	BE_TOKEN_KEYWORD_INT8			0x3101	// int8

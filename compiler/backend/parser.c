@@ -1566,6 +1566,57 @@ _RULE(stat_load)
 	}
 _RULE_END
 
+#define	_RULE_stat_xxx_i_ci(stat_xxx, XXX)	\
+	_RULE(stat_xxx)	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_##XXX) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NODE(BE_NODE_STAT_##XXX, NULL)	\
+	\
+		ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);	\
+		if (node_target != NULL) {	\
+			_RULE_ADD_CHILD(node_target)	\
+		} else {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		ParserASTNode *node_source = _RULE_NAME(constexpr_or_id)(_RULE_PARSER_CTX);	\
+		if (node_source != NULL) {	\
+			_RULE_ADD_CHILD(node_source)	\
+		} else {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	_RULE_END
+
+_RULE_stat_xxx_i_ci(stat_trunc, TRUNC)
+_RULE_stat_xxx_i_ci(stat_sext, SEXT)
+_RULE_stat_xxx_i_ci(stat_sitofp, SITOFP)
+_RULE_stat_xxx_i_ci(stat_inttoptr, INTTOPTR)
+_RULE_stat_xxx_i_ci(stat_zext, ZEXT)
+_RULE_stat_xxx_i_ci(stat_uitofp, UITOFP)
+_RULE_stat_xxx_i_ci(stat_fptosi, FPTOSI)
+_RULE_stat_xxx_i_ci(stat_fptoui, FPTOUI)
+_RULE_stat_xxx_i_ci(stat_fpext, FPEXT)
+_RULE_stat_xxx_i_ci(stat_fptrunc, FPTRUNC)
+_RULE_stat_xxx_i_ci(stat_fptoint, PTRTOINT)
+_RULE_stat_xxx_i_ci(stat_bitcast, BITCAST)
+
+
+
+
+
 
 
 
@@ -1582,67 +1633,45 @@ _RULE(stat)
 
 	_RULE_NAME(attrs)(_RULE_PARSER_CTX);
 
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_var)(_RULE_PARSER_CTX))
-	}
+	#define	_A(stat_xxx)	\
+		if (_RULE_CURRENT_NODE == NULL) {\
+			_RULE_RETURNED_NODE(_RULE_NAME(stat_xxx)(_RULE_PARSER_CTX))	\
+		}
 
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_assign)(_RULE_PARSER_CTX))
-	}
+	_A(stat_var)
+	_A(stat_assign)
+	_A(stat_asm)
+	_A(stat_asm_set_reg)
+	_A(stat_asm_get_reg)
+	_A(stat_label)
+	_A(stat_label_simple)
+	_A(stat_br)
+	_A(stat_cbr)
+	_A(stat_return)
+	_A(stat_ref)
+	_A(stat_store)
+	_A(stat_load)
 
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_asm)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_asm_set_reg)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_asm_get_reg)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_label)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_label_simple)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_br)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_cbr)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_return)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_ref)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_store)(_RULE_PARSER_CTX))
-	}
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_load)(_RULE_PARSER_CTX))
-	}
+	_A(stat_trunc)
+	_A(stat_sext)
+	_A(stat_sitofp)
+	_A(stat_inttoptr)
+	_A(stat_zext)
+	_A(stat_uitofp)
+	_A(stat_fptosi)
+	_A(stat_fptoui)
+	_A(stat_fpext)
+	_A(stat_fptrunc)
+	_A(stat_fptoint)
+	_A(stat_bitcast)
 
 
 
 
 
+	_A(stat_dummy)
 
-
-	if (_RULE_CURRENT_NODE == NULL) {
-		_RULE_RETURNED_NODE(_RULE_NAME(stat_dummy)(_RULE_PARSER_CTX))
-	}
+	#undef	_A
 
 	_check_not_used_attrs(_RULE_PARSER_CTX);
 

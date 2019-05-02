@@ -4307,6 +4307,86 @@ static void _stat_load(
 	);
 }
 
+typedef struct {
+	ParserASTNode *node_target;
+	ParserSymbol *symbol_target;
+	ParserASTNode *node_type_target;
+	ParserASTNode *node_source;
+	ParserASTNode *node_type_source;
+	ParserSymbol *symbol_source;
+	uint8_t type_target;
+	uint8_t type_source;
+	size_t size_target;
+	size_t size_source;
+} _ResultCheckStat_I_CI;
+
+static void _check_stat_i_ci(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	uint32_t node_type,
+	_ResultCheckStat_I_CI *result
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == node_type);
+	assert(node->nchilds == 2);
+	assert(result);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	ParserASTNode *node_type_source = NULL;
+	ParserSymbol *symbol_source = NULL;
+	if (node_source->type == BE_NODE_IDENTIFIER) {
+		symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+		node_type_source = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source);
+	} else if (node_source->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_source);
+		node_type_source = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_source);
+	} else {
+		assert(0);
+	}
+
+	assert(node_type_target);
+	assert(node_type_source);
+
+	result->node_target = node_target;
+	result->symbol_target = symbol_target;
+	result->node_type_target = node_type_target;
+	result->node_source = node_source;
+	result->node_type_source = node_type_source;
+	result->symbol_source = symbol_source;
+	result->type_target = _get_type_by_type_node(ctx, node_type_target);
+	result->type_source = _get_type_by_type_node(ctx, node_type_source);
+	result->size_target = _calc_type_size(ctx, node, node_type_target);
+	result->size_source = _calc_type_size(ctx, node, node_type_source);
+}
+
+static void _stat_trunc(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_TRUNC, &check_result);
+
+	if (!_is_integer_type(check_result.type_target)) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be integer type.");
+	}
+	if (!_is_integer_type(check_result.type_source)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be integer type.");
+	}
+
+	if (check_result.size_source <= check_result.size_target) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter size must be larger than target parameter size.");
+	}
+}
+
+
+
+
 
 
 
@@ -4381,6 +4461,13 @@ static void _stat(
 			_stat_load(ctx, node);
 			break;
 		}
+
+		case BE_NODE_STAT_TRUNC: {
+			_stat_trunc(ctx, node);
+			break;
+		}
+
+
 
 
 

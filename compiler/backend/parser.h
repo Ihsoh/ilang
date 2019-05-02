@@ -90,6 +90,22 @@
 
 #define	BE_NODE_STAT_REF					0x0bb0
 
+#define	BE_NODE_STAT_TRUNC					0x0bc0
+#define	BE_NODE_STAT_SEXT					0x0bc1
+#define	BE_NODE_STAT_SITOFP					0x0bc2
+#define	BE_NODE_STAT_INTTOPTR				0x0bc3
+#define	BE_NODE_STAT_ZEXT					0x0bc4
+#define	BE_NODE_STAT_UITOFP					0x0bc5
+#define	BE_NODE_STAT_FPTOSI					0x0bc6
+#define	BE_NODE_STAT_FPTOUI					0x0bc7
+#define	BE_NODE_STAT_FPEXT					0x0bc8
+#define	BE_NODE_STAT_FPTRUNC				0x0bc9
+#define	BE_NODE_STAT_PTRTOINT				0x0bca
+#define	BE_NODE_STAT_BITCAST				0x0bcb
+
+
+
+
 
 #define	BE_NODE_VAR							0x0c00
 #define	BE_NODE_VAR_ITEM					0x0c01

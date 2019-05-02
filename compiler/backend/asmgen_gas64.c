@@ -341,6 +341,42 @@ static int _new_string(
 #define	_ASM_FUNC_RETURN_LABEL			"RET"
 
 
+
+
+static char _asm_inst_type_suffix(
+	ASMGeneratorGas64Context *ctx,
+	uint8_t type
+) {
+	assert(ctx);
+
+	switch (type) {
+		case BE_TYPE_CHAR:
+		case BE_TYPE_INT8:
+		case BE_TYPE_UINT8: {
+			return 'b';
+		}
+		case BE_TYPE_INT16:
+		case BE_TYPE_UINT16: {
+			return 'w';
+		}
+		case BE_TYPE_INT32:
+		case BE_TYPE_UINT32:
+		case BE_TYPE_FLOAT: {
+			return 'l';
+		}
+		case BE_TYPE_INT64:
+		case BE_TYPE_UINT64:
+		case BE_TYPE_DOUBLE:
+		case BE_TYPE_POINTER: {
+			return 'q';
+		}
+		default: {
+			assert(0);
+			return '\0';
+		}
+	}
+}
+
 /*
 	获取同一个寄存器的不同宽度时的名称。
 */
@@ -907,6 +943,44 @@ static void _asm_inst_cmp_sym_x(
 	);
 }
 
+/*
+	MOVSX/MOVSXD
+*/
+
+static void _asm_inst_movsx(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t target_type,
+	const char *target,
+	uint8_t source_type,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "mov");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, source_type)
+	);
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, target_type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
 
 
 
@@ -2077,6 +2151,45 @@ static void _asm_stat_load(
 	rstr_free(&rstr_memref);
 }
 
+static void _asm_stat_trunc(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_TRUNC);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RAX,
+		_ASM_CONST_0
+	);
+
+	uint8_t type_source = _move_id_or_constexpr_to_reg(
+		ctx,
+		_ASM_REG_AX,
+		node_source
+	);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+	);
+}
+
+
 
 
 
@@ -2142,6 +2255,13 @@ static void _asm_stat(
 			_asm_stat_load(ctx, node_stat);
 			break;
 		}
+
+		case BE_NODE_STAT_TRUNC: {
+			_asm_stat_trunc(ctx, node_stat);
+			break;
+		}
+
+
 
 
 
