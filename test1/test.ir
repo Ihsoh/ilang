@@ -57,23 +57,23 @@ function _main(argc:int32, argv:**char):int32 {
 }
 
 function test_cast() {
-	var a:int64;
-	assign a, cast<int64>(0xabcd);
+	var a:uint8;
+	assign a, cast<uint8>(0x12);
 
 	asm "\n#.............................\n\n";
 
-	var b:int32;
-	trunc b, a;
+	var b:uint16;
+	sext b, a;
 
 	asm "\n#.............................\n\n";
 
-	var c:int16;
-	trunc c, a;
+	var c:uint32;
+	sext c, a;
 
 	asm "\n#.............................\n\n";
 
-	var d:int8;
-	trunc d, a;
+	var d:uint64;
+	sext d, a;
 
 	asm "\n#.............................\n\n";
 }

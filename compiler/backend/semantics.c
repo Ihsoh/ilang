@@ -4379,8 +4379,27 @@ static void _stat_trunc(
 		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be integer type.");
 	}
 
-	if (check_result.size_source <= check_result.size_target) {
+	if (!(check_result.size_source > check_result.size_target)) {
 		_SYNERR_NODE(ctx, check_result.node_source, "source parameter size must be larger than target parameter size.");
+	}
+}
+
+static void _stat_sext(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_SEXT, &check_result);
+
+	if (!_is_integer_type(check_result.type_target)) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be integer type.");
+	}
+	if (!_is_integer_type(check_result.type_source)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be integer type.");
+	}
+
+	if (!(check_result.size_source < check_result.size_target)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter size must be smaller than target parameter size.");
 	}
 }
 
@@ -4464,6 +4483,10 @@ static void _stat(
 
 		case BE_NODE_STAT_TRUNC: {
 			_stat_trunc(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_SEXT: {
+			_stat_sext(ctx, node);
 			break;
 		}
 

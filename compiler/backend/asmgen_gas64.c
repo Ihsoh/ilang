@@ -947,7 +947,7 @@ static void _asm_inst_cmp_sym_x(
 	MOVSX/MOVSXD
 */
 
-static void _asm_inst_movsx(
+static void _asm_inst_movsx_x_x(
 	ASMGeneratorGas64Context *ctx,
 	ResizableString *rstr,
 	uint8_t target_type,
@@ -961,7 +961,7 @@ static void _asm_inst_movsx(
 	assert(source);
 
 	ResizableString rstr_mnemonic;
-	rstr_init_with_cstr(&rstr_mnemonic, "mov");
+	rstr_init_with_cstr(&rstr_mnemonic, "movs");
 	rstr_append_with_char(
 		&rstr_mnemonic,
 		_asm_inst_type_suffix(ctx, source_type)
@@ -1543,12 +1543,10 @@ static void _asm_var(
 			case BE_VAR_TYPE_LOCAL: {
 				ParserSymbol *symbol = BE_VAR_ITEM_AST_NODE_GET_SYMBOL(node_var_item);
 				
-				// int align = BE_VAR_SYMBOL_GET_ALIGN(symbol);
-				int align = 8;
+				int align = BE_VAR_SYMBOL_GET_ALIGN(symbol);
 				assert(align);
 
-				// size_t type_size = BE_VAR_SYMBOL_GET_TYPE_SIZE(symbol);
-				size_t type_size = 8;
+				size_t type_size = BE_VAR_SYMBOL_GET_TYPE_SIZE(symbol);
 				assert(type_size != 0);
 
 				if (ctx->local_var_address_counter % align > 0) {
@@ -1565,7 +1563,7 @@ static void _asm_var(
 				rstr_appendf(
 					code_gen_name,
 					"%d(%%rbp)",
-					-8 * ctx->local_var_index_counter
+					-(ctx->local_var_address_counter + type_size)
 				);
 
 				rstr_appendf(
@@ -2189,6 +2187,48 @@ static void _asm_stat_trunc(
 	);
 }
 
+static void _asm_stat_sext(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_SEXT);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+	const char *reg_target = _asm_inst_reg(ctx, type_target, _ASM_REG_AX);
+
+	ParserASTNode *node_source = node->childs[1];
+	uint8_t type_source = _move_id_or_constexpr_to_reg(
+		ctx,
+		_ASM_REG_BX,
+		node_source
+	);
+	const char *reg_source = _asm_inst_reg(ctx, type_source, _ASM_REG_BX);
+
+	_asm_inst_movsx_x_x(
+		ctx,
+		ctx->body,
+		type_target,
+		reg_target,
+		type_source,
+		reg_source
+	);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		reg_target
+	);
+}
+
+
+
 
 
 
@@ -2258,6 +2298,10 @@ static void _asm_stat(
 
 		case BE_NODE_STAT_TRUNC: {
 			_asm_stat_trunc(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_SEXT: {
+			_asm_stat_sext(ctx, node_stat);
 			break;
 		}
 
