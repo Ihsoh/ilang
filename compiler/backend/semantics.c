@@ -4403,6 +4403,21 @@ static void _stat_sext(
 	}
 }
 
+static void _stat_sitofp(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_SITOFP, &check_result);
+
+	if (!_is_float_type(check_result.type_target)) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be float type.");
+	}
+	if (!_is_signed_type(check_result.type_source)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be signed integer type.");
+	}
+}
+
 
 
 
@@ -4487,6 +4502,10 @@ static void _stat(
 		}
 		case BE_NODE_STAT_SEXT: {
 			_stat_sext(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_SITOFP: {
+			_stat_sitofp(ctx, node);
 			break;
 		}
 

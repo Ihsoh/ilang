@@ -57,23 +57,18 @@ function _main(argc:int32, argv:**char):int32 {
 }
 
 function test_cast() {
-	var a:uint8;
-	assign a, cast<uint8>(0x12);
+	var a:int8;
+	assign a, cast<int8>(0x12);
 
 	asm "\n#.............................\n\n";
 
-	var b:uint16;
-	sext b, a;
+	var b:float;
+	sitofp b, a;
 
 	asm "\n#.............................\n\n";
 
-	var c:uint32;
-	sext c, a;
-
-	asm "\n#.............................\n\n";
-
-	var d:uint64;
-	sext d, a;
+	var c:double;
+	sitofp c, a;
 
 	asm "\n#.............................\n\n";
 }
