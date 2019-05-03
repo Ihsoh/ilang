@@ -57,47 +57,18 @@ function _main(argc:int32, argv:**char):int32 {
 }
 
 function test_cast() {
-	var a:*int64;
+	var a:uint32;
+	assign a, cast<uint32>(123);
+	var b:double;
+	uitofp b, a;
 
-	asm "\n#.............................\n\n";
+	asm "\n#x.............................\n\n";
 
-	var b:int8;
-	assign b, cast<int8>(1);
-	inttoptr a, b;
+	var c:uint64;
+	assign c, cast<uint64>(123);
+	var d:double;
+	uitofp d, c;
 
-	asm "\n#.............................\n\n";
+	asm "\n#x.............................\n\n";
 
-	var c:int16;
-	assign c, cast<int16>(2);
-	inttoptr a, c;
-
-	asm "\n#.............................\n\n";
-
-	var d:int32;
-	assign d, cast<int32>(3);
-	inttoptr a, d;
-
-	asm "\n#.............................\n\n";
-
-	var e:int64;
-	assign e, cast<int64>(4);
-	inttoptr a, e;
-
-	asm "\n#.............................\n\n";
-
-	inttoptr a, cast<int8>(5);
-
-	asm "\n#.............................\n\n";
-
-	inttoptr a, cast<int16>(6);
-
-	asm "\n#.............................\n\n";
-
-	inttoptr a, cast<int32>(7);
-
-	asm "\n#.............................\n\n";
-
-	inttoptr a, cast<int64>(8);
-
-	asm "\n#.............................\n\n";
 }

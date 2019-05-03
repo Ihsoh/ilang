@@ -4433,6 +4433,40 @@ static void _stat_inttoptr(
 	}
 }
 
+static void _stat_zext(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_ZEXT, &check_result);
+
+	if (!_is_integer_type(check_result.type_target)) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be integer type.");
+	}
+	if (!_is_integer_type(check_result.type_source)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be integer type.");
+	}
+
+	if (!(check_result.size_source < check_result.size_target)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter size must be smaller than target parameter size.");
+	}
+}
+
+static void _stat_uitofp(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_UITOFP, &check_result);
+
+	if (!_is_float_type(check_result.type_target)) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be float type.");
+	}
+	if (!_is_unsigned_type(check_result.type_source)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be unsigned integer type.");
+	}
+}
+
 
 
 
@@ -4525,6 +4559,14 @@ static void _stat(
 		}
 		case BE_NODE_STAT_INTTOPTR: {
 			_stat_inttoptr(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_ZEXT: {
+			_stat_zext(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_UITOFP: {
+			_stat_uitofp(ctx, node);
 			break;
 		}
 
