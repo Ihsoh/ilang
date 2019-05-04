@@ -28,7 +28,7 @@
 #define	BE_TOKEN_KEYWORD_CAST			0x3004	// cast
 #define	BE_TOKEN_KEYWORD_STRUCT			0x3005	// struct
 #define	BE_TOKEN_KEYWORD_VAR			0x3006	// var
-// #define	XXXXX						0x3007	// TODO: XXXXX
+#define	BE_TOKEN_KEYWORD_CALL			0x3007	// call
 #define	BE_TOKEN_KEYWORD_DUMMY			0x3008	// dummy
 #define	BE_TOKEN_KEYWORD_ALIGN			0x3009	// align
 #define	BE_TOKEN_KEYWORD_PACKED			0x300a	// packed
@@ -55,6 +55,8 @@
 #define	BE_TOKEN_KEYWORD_FPTRUNC		0x301e	// fptrunc
 #define	BE_TOKEN_KEYWORD_PTRTOINT		0x301f	// fptoint
 #define	BE_TOKEN_KEYWORD_BITCAST		0x3020	// bitcast
+
+#define	BE_TOKEN_KEYWORD_VCALL			0x3021	// vcall
 
 
 

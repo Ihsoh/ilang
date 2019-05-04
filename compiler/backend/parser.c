@@ -1613,7 +1613,74 @@ _RULE_stat_xxx_i_ci(stat_fptrunc, FPTRUNC)
 _RULE_stat_xxx_i_ci(stat_fptoint, PTRTOINT)
 _RULE_stat_xxx_i_ci(stat_bitcast, BITCAST)
 
+_RULE(stat_func_call_params)
+	_RULE_NODE(BE_NODE_STAT_FUNC_CALL_PARAMS, NULL)
 
+	ParserASTNode *node_constexpr_or_id = _RULE_NAME(constexpr_or_id)(_RULE_PARSER_CTX);
+	if (node_constexpr_or_id != NULL) {
+		_RULE_ADD_CHILD(node_constexpr_or_id)
+
+		for (;;) {
+			_RULE_PUSH_LEXCTX
+
+			_RULE_NEXT_TOKEN
+			if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+				_RULE_POP_LEXCTX
+				break;
+			}
+
+			node_constexpr_or_id = _RULE_NAME(constexpr_or_id)(_RULE_PARSER_CTX);
+			if (node_constexpr_or_id == NULL) {
+				_RULE_POP_LEXCTX
+				_RULE_NOT_MATCHED
+			}
+			_RULE_ADD_CHILD(node_constexpr_or_id)
+
+			_RULE_ABANDON_LEXCTX
+		}
+	}
+_RULE_END
+
+_RULE(stat_func_call)
+	_RULE_NODE(BE_NODE_STAT_FUNC_CALL, NULL)
+
+	ParserASTNode *node_func = _RULE_NAME(constexpr_or_id)(_RULE_PARSER_CTX);
+	if (node_func == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_func)
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_PARENTHESES_LEFT) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_func_call_params = _RULE_NAME(stat_func_call_params)(_RULE_PARSER_CTX);
+	if (node_func_call_params == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_func_call_params)
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_PARENTHESES_RIGHT) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+_RULE(stat_vcall)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_VCALL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_VCALL, NULL)
+
+	ParserASTNode *node_stat_func_call = _RULE_NAME(stat_func_call)(_RULE_PARSER_CTX);
+	if (node_stat_func_call == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_stat_func_call)
+_RULE_END
 
 
 

@@ -103,6 +103,10 @@
 #define	BE_NODE_STAT_PTRTOINT				0x0bca
 #define	BE_NODE_STAT_BITCAST				0x0bcb
 
+#define	BE_NODE_STAT_CALL					0x0bd0
+#define	BE_NODE_STAT_VCALL					0x0bd1
+#define	BE_NODE_STAT_FUNC_CALL				0x0bd2
+#define	BE_NODE_STAT_FUNC_CALL_PARAMS		0x0bd3
 
 
 
