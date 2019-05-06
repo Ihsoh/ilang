@@ -1,29 +1,49 @@
-function _print_i64(n:int64) {
-	asm_set_reg "%r8", n;
+function _print_i64(str:*char, n:int64) {
+	asm_set_reg "%r8", str;
+	asm_set_reg "%r9", n;
 
 	asm "pushq %rbp\n";
 	asm "movq %rsp, %rbp\n";
 	asm "subq $16, %rsp\n";
 	asm "andq $0xfffffffffffffff0, %rsp\n";
+
+	asm "\n#------------------------------\n\n";
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %r9\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %r9\n";
+	asm "addq $8, %rsp\n";
+
+	asm "\n#------------------------------\n\n";
+	
 	asm_set_reg "%rdi", "%ld\n";
-	asm "movq %r8, %rsi\n";
-	asm "callq	_printf\n";
+	asm "movq %r9, %rsi\n";
+	asm "callq _printf\n";
+
+	asm "\n#------------------------------\n\n";
+
 	asm "movq %rbp, %rsp\n";
 	asm "popq %rbp\n";
 }
 
 function _add_i64(n1:int64, n2:int64):int64 {
-	vcall _print_i64(n1);
-	vcall _print_i64(n2);
+	vcall _print_i64("n1 = ", cast<int64>(100));
+	vcall _print_i64("n2 = ", cast<int64>(200));
 
 	return cast<int64>(30);
 }
 
 function _main():int32 {
 
-	var result:int64;
+	// var value:double;
+	// assign value, cast<double>(4.14);
 
-	call result, _add_i64(cast<int64>(10), cast<int64>(20));
+	var result:int64;
+	fptosi result, cast<double>(6.14);
+
+	vcall _print_i64("result = ", result);
 
 	return cast<int32>(0);
 }
