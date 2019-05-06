@@ -1680,6 +1680,43 @@ _RULE(stat_vcall)
 		_RULE_NOT_MATCHED
 	}
 	_RULE_ADD_CHILD(node_stat_func_call)
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+_RULE(stat_call)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_CALL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_CALL, NULL)
+
+	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_target != NULL) {
+		_RULE_ADD_CHILD(node_target)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_stat_func_call = _RULE_NAME(stat_func_call)(_RULE_PARSER_CTX);
+	if (node_stat_func_call == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_stat_func_call)
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
 _RULE_END
 
 
@@ -1731,6 +1768,9 @@ _RULE(stat)
 	_A(stat_fptrunc)
 	_A(stat_fptoint)
 	_A(stat_bitcast)
+
+	_A(stat_vcall)
+	_A(stat_call)
 
 
 

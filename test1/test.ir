@@ -1,74 +1,29 @@
-struct A {
-	var aa:int32, ab:int32;
+function _print_i64(n:int64) {
+	asm_set_reg "%r8", n;
+
+	asm "pushq %rbp\n";
+	asm "movq %rsp, %rbp\n";
+	asm "subq $16, %rsp\n";
+	asm "andq $0xfffffffffffffff0, %rsp\n";
+	asm_set_reg "%rdi", "%ld\n";
+	asm "movq %r8, %rsi\n";
+	asm "callq	_printf\n";
+	asm "movq %rbp, %rsp\n";
+	asm "popq %rbp\n";
 }
 
-function test_float() {
-	var a:float;
-	assign a, cast<float>(1.23);
+function _add_i64(n1:int64, n2:int64):int64 {
+	vcall _print_i64(n1);
+	vcall _print_i64(n2);
+
+	return cast<int64>(30);
 }
 
-function test_add(n1:int64, n2:int32):int32 {
-	var a:int32;
-	assign a, cast<int32>(1);
+function _main():int32 {
 
-	cbr a, label_true1, label_false1;
-	
-label_true1:
-label_false1:
+	var result:int64;
 
-	cbr 1, label_true2, label_false2;
-	
-label_true2:
-label_false2:
-
-}
-
-var ga:int64 = 0;
-
-function _main(argc:int32, argv:**char):int32 {
-
-	store cast<*int8>(0x12), cast<int8>(1);
-	store cast<*int16>(0x34), cast<int16>(2);
-	store cast<*int32>(0x56), cast<int32>(3);
-	store cast<*int64>(0x78), cast<int64>(4);
-
-	asm "\n#.............................\n\n";
-
-	var a:int32;
-	assign a, cast<int32>(1);
-
-	asm "\n#.............................\n\n";
-
-	var b:*int32;
-	ref b, a;
-
-	asm "\n#.............................\n\n";
-
-	store b, cast<int32>(2333);
-
-	asm "\n#.............................\n\n";
-
-	var c:int32;
-	load c, b;
-
-	asm "\n#.............................\n\n";
+	call result, _add_i64(cast<int64>(10), cast<int64>(20));
 
 	return cast<int32>(0);
-}
-
-function test_cast() {
-	var a:uint32;
-	assign a, cast<uint32>(123);
-	var b:double;
-	uitofp b, a;
-
-	asm "\n#x.............................\n\n";
-
-	var c:uint64;
-	assign c, cast<uint64>(123);
-	var d:double;
-	uitofp d, c;
-
-	asm "\n#x.............................\n\n";
-
 }

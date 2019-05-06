@@ -3822,6 +3822,42 @@ static ParserSymbol * _get_var_symbol_by_id_node(
 	return symbol;
 }
 
+static ParserSymbol * _get_func_symbol_by_id_node(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_IDENTIFIER);
+
+	ParserSymbol *symbol = parser_get_symbol_from_node(
+		ctx, node, BE_SYM_FUNC, node->token
+	);
+	if (symbol == NULL) {
+		_SYNERR_TOKEN(ctx, node->token, "invalid identifier.");
+	}
+
+	return symbol;
+}
+
+static ParserSymbol * _get_symbol_by_id_node(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_IDENTIFIER);
+
+	ParserSymbol *symbol = parser_get_symbol_from_node(
+		ctx, node, 0, node->token
+	);
+	if (symbol == NULL) {
+		_SYNERR_TOKEN(ctx, node->token, "invalid identifier.");
+	}
+
+	return symbol;
+}
+
 static bool _is_assignable_type(
 	ParserContext *ctx,
 	ParserASTNode *node
@@ -4473,6 +4509,184 @@ static void _stat_uitofp(
 
 
 
+static void _check_fncall_params(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	ParserASTNode *node_func_sym_params,
+	ParserASTNode *node_func_params
+) {
+	assert(ctx);
+	assert(node);
+	assert(node_func_sym_params);
+	assert(node_func_params);
+
+	bool func_param_count_matched = false;
+
+	if (node_func_params->nchilds >= node_func_sym_params->nchilds) {
+		func_param_count_matched = true;
+	}
+
+	if (node_func_sym_params->nchilds > 0
+			&& node_func_sym_params->childs[node_func_sym_params->nchilds - 1]->type == BE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM
+			&& node_func_params->nchilds >= node_func_sym_params->nchilds - 1) {
+		func_param_count_matched = true;
+	}
+
+	if (func_param_count_matched) {
+		int i;
+		for (i = 0; i < node_func_sym_params->nchilds; i++) {
+			ParserASTNode *node_func_sym_param = node_func_sym_params->childs[i];
+
+			if (node_func_sym_param->type == BE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM) {
+				break;
+			}
+
+			ParserASTNode *node_func_param = node_func_params->childs[i];
+			ParserASTNode *node_func_param_type = NULL;
+			if (node_func_param->type == BE_NODE_IDENTIFIER) {
+				ParserSymbol *symbol_func_param = _get_var_symbol_by_id_node(ctx, node_func_param);
+				node_func_param_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_func_param);
+			} else if (node_func_param->type == BE_NODE_EXPR) {
+				_expr_wrapper(ctx, node_func_param);
+				node_func_param_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_func_param);
+			} else {
+				assert(0);
+			}
+
+			ParserASTNode *node_func_sym_param_type = node_func_sym_param->childs[1];
+			if (!_is_compatible_type_for_assign(ctx, node_func_sym_param_type, node_func_param_type, false)) {
+				_SYNERR_NODE(ctx, node, "function call parameter type incompatible.");
+			}
+		}
+
+		for (; i < node_func_params->nchilds; i++) {
+			ParserASTNode *node_func_param = node_func_params->childs[i];
+			ParserASTNode *node_func_param_type = NULL;
+			if (node_func_param->type == BE_NODE_IDENTIFIER) {
+				ParserSymbol *symbol_func_param = _get_var_symbol_by_id_node(ctx, node_func_param);
+				node_func_param_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_func_param);
+			} else if (node_func_param->type == BE_NODE_EXPR) {
+				_expr_wrapper(ctx, node_func_param);
+				node_func_param_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_func_param);
+			} else {
+				assert(0);
+			}
+
+			uint8_t param_type = _get_type_by_type_node(ctx, node_func_param_type);
+			if (param_type == BE_TYPE_STRUCT
+					|| param_type == BE_TYPE_ARRAY
+					|| param_type == BE_TYPE_FUNC) {
+				_SYNERR_NODE(
+					ctx, node, "parameter type cannot be struct type or array type or function type operand."
+				);
+			}
+		}
+	} else {
+		_SYNERR_NODE(ctx, node, "function call parameter count not matched.");
+	}
+}
+
+static ParserASTNode * _stat_func_call(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_FUNC_CALL);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_func = node->childs[0];
+	ParserASTNode *node_func_pointer_type = NULL;
+	if (node_func->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_func = _get_symbol_by_id_node(ctx, node_func);
+		if (symbol_func->type == BE_SYM_FUNC) {
+			node_func_pointer_type = BE_FUNC_SYMBOL_GET_FUNC_POINTER_TYPE_NODE(symbol_func);
+		} else if (symbol_func->type == BE_SYM_VAR) {
+			node_func_pointer_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_func);
+		} else {
+			_SYNERR_NODE(ctx, node_func, "must be a function or variable.");
+		}
+	} else if (node_func->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_func);
+		node_func_pointer_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_func);
+	} else {
+		assert(0);
+	}
+	if (node_func_pointer_type->type != BE_NODE_TYPE_POINTER
+			|| node_func_pointer_type->childs[0]->type != BE_NODE_TYPE_FUNC) {
+		_SYNERR_NODE(ctx, node_func, "must be function pointer type.");
+	}
+	ParserASTNode *node_func_type = node_func_pointer_type->childs[0];
+	ParserASTNode *node_func_params = node_func_type->childs[0];
+
+	ParserASTNode *node_func_call_params = node->childs[1];
+	_check_fncall_params(ctx, node, node_func_params, node_func_call_params);
+
+	if (node_func_type->nchilds == 1) {
+		return _NODE_TYPE_VOID;
+	} else if (node_func_type->nchilds == 2) {
+		return node_func_type->childs[1];
+	} else {
+		assert(0);
+		return NULL;
+	}
+}
+
+static void _stat_vcall(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VCALL);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_func_call = node->childs[0];
+	ParserASTNode *node_ret_type = _stat_func_call(ctx, node_func_call);
+	assert(node_ret_type);
+	if (node_ret_type->type != BE_NODE_TYPE_VOID) {
+		_SYNERR_NODE(
+			ctx,
+			node,
+			"function have return value, maybe need to use 'call'."
+		);
+	}
+}
+
+static void _stat_call(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_CALL);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
+
+	ParserASTNode *node_func_call = node->childs[1];
+	ParserASTNode *node_ret_type = _stat_func_call(ctx, node_func_call);
+
+	_check_param_combination2(
+		ctx,
+		node,
+		node_type_target,
+		node_ret_type
+	);
+}
+
+
+
+
+
+
+
+
+
+
 static void _stat_dummy(
 	ParserContext *ctx,
 	ParserASTNode *node
@@ -4567,6 +4781,15 @@ static void _stat(
 		}
 		case BE_NODE_STAT_UITOFP: {
 			_stat_uitofp(ctx, node);
+			break;
+		}
+
+		case BE_NODE_STAT_VCALL: {
+			_stat_vcall(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_CALL: {
+			_stat_call(ctx, node);
 			break;
 		}
 
