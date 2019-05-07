@@ -1599,6 +1599,59 @@ static void _asm_inst_cvttsd2si_x_x(
 	);
 }
 
+/*
+	CVTSS2SD
+*/
+
+static void _asm_inst_cvtss2sd_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "cvtss2sd";
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+/*
+	CVTSD2SS
+*/
+
+static void _asm_inst_cvtsd2ss_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "cvtsd2ss";
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+
 
 
 
@@ -3360,6 +3413,187 @@ static void _asm_stat_fptosi(
 	);
 }
 
+static void _asm_stat_fptoui(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_FPTOUI);
+	assert(node->nchilds == 2);
+	/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		TODO: 	float/double -> 64位无符号整数不能简单地使用cvttss2si。
+				至少clang会生成一堆指令。
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	uint8_t type_source = _move_id_or_constexpr_to_xmm_reg(
+		ctx,
+		_ASM_REG_NAME_XMM0,
+		node_source
+	);
+
+	if (type_source == BE_TYPE_FLOAT) {
+		_asm_inst_cvttss2si_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_XMM0
+		);
+	} else if (type_source == BE_TYPE_DOUBLE) {
+		_asm_inst_cvttsd2si_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_XMM0
+		);
+	} else {
+		assert(0);
+	}
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+	);
+}
+
+static void _asm_stat_fpext(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_FPEXT);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	uint8_t type_source = _move_id_or_constexpr_to_xmm_reg(
+		ctx,
+		_ASM_REG_NAME_XMM0,
+		node_source
+	);
+
+	_asm_inst_cvtss2sd_x_x(
+		ctx,
+		ctx->body,
+		_ASM_REG_NAME_XMM0,
+		_ASM_REG_NAME_XMM0
+	);
+
+	_asm_inst_movsd_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_ASM_REG_NAME_XMM0
+	);
+}
+
+static void _asm_stat_fptrunc(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_FPTRUNC);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	uint8_t type_source = _move_id_or_constexpr_to_xmm_reg(
+		ctx,
+		_ASM_REG_NAME_XMM0,
+		node_source
+	);
+
+	_asm_inst_cvtsd2ss_x_x(
+		ctx,
+		ctx->body,
+		_ASM_REG_NAME_XMM0,
+		_ASM_REG_NAME_XMM0
+	);
+
+	_asm_inst_movsd_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_ASM_REG_NAME_XMM0
+	);
+}
+
+static void _asm_stat_ptrtoint(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_PTRTOINT);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	_move_id_or_constexpr_to_reg(
+		ctx,
+		_ASM_REG_AX,
+		node_source
+	);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+	);
+}
+
+static void _asm_stat_bitcast(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BITCAST);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	_move_id_or_constexpr_to_reg(
+		ctx,
+		_ASM_REG_AX,
+		node_source
+	);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+	);
+}
+
 
 
 
@@ -3576,6 +3810,26 @@ static void _asm_stat(
 		}
 		case BE_NODE_STAT_FPTOSI: {
 			_asm_stat_fptosi(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_FPTOUI: {
+			_asm_stat_fptoui(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_FPEXT: {
+			_asm_stat_fpext(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_FPTRUNC: {
+			_asm_stat_fptrunc(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_PTRTOINT: {
+			_asm_stat_ptrtoint(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_BITCAST: {
+			_asm_stat_bitcast(ctx, node_stat);
 			break;
 		}
 
