@@ -40,10 +40,12 @@ function _main():int32 {
 	// var value:double;
 	// assign value, cast<double>(4.14);
 
-	var result:int64;
-	fptosi result, cast<double>(6.14);
+	var result:uint64;
+	// TODO: FUCK, 普通的MOV不支持64位立即数。
+	assign result, cast<uint64>(0xffffffffffffffff);
+	// fptosi result, cast<double>(6.14);
 
-	vcall _print_i64("result = ", result);
+	// vcall _print_i64("result = ", result);
 
 	return cast<int32>(0);
 }

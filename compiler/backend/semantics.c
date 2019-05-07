@@ -280,6 +280,16 @@ static size_t _get_primitive_type_size(
 	}
 }
 
+static size_t _get_type_size(
+	uint8_t type
+) {
+	if (type == BE_TYPE_POINTER) {
+		return 8;
+	} else {
+		return _get_primitive_type_size(type);
+	}
+}
+
 static int32_t _get_primitive_type_weight(
 	uint8_t type
 ) {
@@ -4518,7 +4528,97 @@ static void _stat_fptosi(
 	}
 }
 
+static void _stat_fptoui(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_FPTOUI, &check_result);
 
+	if (!_is_unsigned_type(check_result.type_target)) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be unsigned integer type.");
+	}
+	if (!_is_float_type(check_result.type_source)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be float type.");
+	}
+}
+
+static void _stat_fpext(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_FPEXT, &check_result);
+
+	if (check_result.type_target != BE_TYPE_DOUBLE) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be double type.");
+	}
+	if (check_result.type_source != BE_TYPE_FLOAT) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be float type.");
+	}
+}
+
+static void _stat_fptrunc(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_FPTRUNC, &check_result);
+
+	if (check_result.type_target != BE_TYPE_FLOAT) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be float type.");
+	}
+	if (check_result.type_source != BE_TYPE_DOUBLE) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be double type.");
+	}
+}
+
+static void _stat_ptrtoint(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_PTRTOINT, &check_result);
+
+	if (!_is_integer_type(check_result.type_target)) {
+		_SYNERR_NODE(ctx, check_result.node_target, "target parameter type must be integer type.");
+	}
+	if (!_is_pointer_type(check_result.type_source)) {
+		_SYNERR_NODE(ctx, check_result.node_source, "source parameter type must be pointer type.");
+	}
+}
+
+static void _stat_bitcast(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_BITCAST, &check_result);
+
+	if (!_is_primitive_type(check_result.type_target)
+			&& !_is_pointer_type(check_result.type_target)) {
+		_SYNERR_NODE(
+			ctx,
+			check_result.node_target,
+			"target parameter type must be primitive type or pointer type."
+		);
+	}
+	if (!_is_primitive_type(check_result.type_source)
+			&& !_is_pointer_type(check_result.type_source)) {
+		_SYNERR_NODE(
+			ctx,
+			check_result.node_target,
+			"source parameter type must be primitive type or pointer type."
+		);
+	}
+	if (check_result.size_target != check_result.size_source) {
+		_SYNERR_NODE(
+			ctx,
+			check_result.node_target,
+			"target parameter size and source parameter size must be same."
+		);
+	}
+}
 
 
 
@@ -4800,6 +4900,26 @@ static void _stat(
 		}
 		case BE_NODE_STAT_FPTOSI: {
 			_stat_fptosi(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_FPTOUI: {
+			_stat_fptoui(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_FPEXT: {
+			_stat_fpext(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_FPTRUNC: {
+			_stat_fptrunc(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_PTRTOINT: {
+			_stat_ptrtoint(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_BITCAST: {
+			_stat_bitcast(ctx, node);
 			break;
 		}
 
