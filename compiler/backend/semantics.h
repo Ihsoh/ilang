@@ -24,4 +24,32 @@ extern size_t be_sem_calc_type_size(
 	ParserASTNode *node_type
 );
 
+extern bool be_sem_is_signed_type(
+	uint8_t type
+);
+
+extern bool be_sem_is_unsigned_type(
+	uint8_t type
+);
+
+extern bool be_sem_is_integer_type(
+	uint8_t type
+);
+
+extern bool be_sem_is_float_type(
+	uint8_t type
+);
+
+extern bool be_sem_is_primitive_type(
+	uint8_t type
+);
+
+extern bool be_sem_is_pointer_type(
+	uint8_t type
+);
+
+extern bool be_sem_is_number_type(
+	uint8_t type
+);
+
 #endif

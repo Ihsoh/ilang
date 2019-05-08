@@ -2423,6 +2423,14 @@ static uint8_t _move_id_or_constexpr_to_reg(
 	assert(ctx);
 	assert(source_id_or_constexpr);
 
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_asm_inst_reg(ctx, BE_TYPE_UINT64, target_reg),
+		_ASM_CONST_0
+	);
+
 	if (source_id_or_constexpr->type == BE_NODE_IDENTIFIER) {
 		ParserSymbol *symbol = _get_var_symbol_by_id_node(ctx, source_id_or_constexpr);
 		uint8_t symbol_type = BE_VAR_SYMBOL_GET_TYPE(symbol);
@@ -3594,11 +3602,6 @@ static void _asm_stat_bitcast(
 	);
 }
 
-
-
-
-
-
 static void _asm_stat_func_call(
 	ASMGeneratorGas64Context *ctx,
 	ParserASTNode *node
@@ -3716,6 +3719,134 @@ static void _asm_stat_call(
 		symbol_target,
 		_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
 	);
+}
+
+static void _asm_stat_add(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ADD);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	if (type_target == BE_TYPE_POINTER) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		_asm_inst_add_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_RBX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_ASM_REG_NAME_RAX
+		);
+	} else if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		_asm_inst_add_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_RBX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else if (type_target == BE_TYPE_FLOAT) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_addss_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_movss_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_ASM_REG_NAME_XMM0
+		);
+	} else if (type_target == BE_TYPE_DOUBLE) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_addsd_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_movsd_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_ASM_REG_NAME_XMM0
+		);
+	} else {
+		assert(0);
+	}
 }
 
 
@@ -3839,6 +3970,11 @@ static void _asm_stat(
 		}
 		case BE_NODE_STAT_CALL: {
 			_asm_stat_call(ctx, node_stat);
+			break;
+		}
+
+		case BE_NODE_STAT_ADD: {
+			_asm_stat_add(ctx, node_stat);
 			break;
 		}
 

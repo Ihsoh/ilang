@@ -9,6 +9,8 @@
 #include "../../osdep.h"
 
 #include "preprocessor.h"
+#include "comment.h"
+#include "line_concat.h"
 #include "parser.h"
 #include "lexer.h"
 #include "line.h"
@@ -111,8 +113,28 @@ static bool _include_file(
 		goto error;
 	}
 
+	ResizableString rstr_comment_removed;
+	rstr_init(&rstr_comment_removed);
+	pp_comment_process(
+		&rstr_comment_removed,
+		RSTR_CSTR(&path),
+		source,
+		len
+	);
+
+	ResizableString rstr_line_concated;
+	rstr_init(&rstr_line_concated);
+	pp_line_concat_process(
+		&rstr_line_concated,
+		RSTR_CSTR(&path),
+		RSTR_CSTR(&rstr_comment_removed),
+		RSTR_LEN(&rstr_comment_removed)
+	);
+
+	rstr_free(&rstr_comment_removed);
+
 	ParserContext *ctx_psr = pp_parser_new_context(
-		RSTR_CSTR(&path), source, len
+		RSTR_CSTR(&path), RSTR_CSTR(&rstr_line_concated), RSTR_LEN(&rstr_line_concated)
 	);
 	pp_parser_parse(ctx_psr);
 
@@ -137,11 +159,13 @@ static bool _include_file(
 	free((void *) source);
 
 	rstr_free(&path);
+	rstr_free(&rstr_line_concated);
 	return true;
 
 error:
 
 	rstr_free(&path);
+	rstr_free(&rstr_line_concated);
 	return false;
 }
 

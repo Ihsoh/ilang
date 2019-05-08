@@ -1,0 +1,232 @@
+#define	_STACK_ALIGN16_BEGIN	\
+	asm "pushq %rbp\n";	\
+	asm "movq %rsp, %rbp\n";	\
+	asm "subq $16, %rsp\n";	\
+	asm "andq $0xfffffffffffffff0, %rsp\n";
+
+#define	_STACK_ALIGN16_END	\
+	asm "movq %rbp, %rsp\n";	\
+	asm "popq %rbp\n";
+
+#define	_LINE	asm "\n#------------------------------\n\n";
+
+function _print_int8(str:*char, n:int8) {
+	asm_set_reg "%r8", str;
+	asm_set_reg "%dl", n;
+	asm "movsbq %dl, %rdx;\n";
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %rdx\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %rdx\n";
+	asm "addq $8, %rsp\n";
+
+	_LINE
+	
+	asm_set_reg "%rdi", "%ld\n";
+	asm "movq %rdx, %rsi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
+function _print_int16(str:*char, n:int16) {
+	asm_set_reg "%r8", str;
+	asm_set_reg "%dx", n;
+	asm "movswq %dx, %rdx;\n";
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %rdx\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %rdx\n";
+	asm "addq $8, %rsp\n";
+
+	_LINE
+	
+	asm_set_reg "%rdi", "%ld\n";
+	asm "movq %rdx, %rsi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
+function _print_int32(str:*char, n:int32) {
+	asm_set_reg "%r8", str;
+	asm_set_reg "%edx", n;
+	asm "movslq %edx, %rdx;\n";
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %rdx\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %rdx\n";
+	asm "addq $8, %rsp\n";
+
+	_LINE
+	
+	asm_set_reg "%rdi", "%ld\n";
+	asm "movq %rdx, %rsi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
+function _print_int64(str:*char, n:int64) {
+	asm_set_reg "%r8", str;
+	asm_set_reg "%r9", n;
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %r9\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %r9\n";
+	asm "addq $8, %rsp\n";
+
+	_LINE
+	
+	asm_set_reg "%rdi", "%ld\n";
+	asm "movq %r9, %rsi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
+function _print_uint8(str:*char, n:uint8) {
+	asm_set_reg "%r8", str;
+	asm "xorq %rdx, %rdx;\n";
+	asm_set_reg "%dl", n;
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %rdx\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %rdx\n";
+	asm "addq $8, %rsp\n";
+
+	_LINE
+	
+	asm_set_reg "%rdi", "%lu\n";
+	asm "movq %rdx, %rsi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
+function _print_uint16(str:*char, n:uint16) {
+	asm_set_reg "%r8", str;
+	asm "xorq %rdx, %rdx;\n";
+	asm_set_reg "%dx", n;
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %rdx\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %rdx\n";
+	asm "addq $8, %rsp\n";
+
+	_LINE
+	
+	asm_set_reg "%rdi", "%lu\n";
+	asm "movq %rdx, %rsi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
+function _print_uint32(str:*char, n:uint32) {
+	asm_set_reg "%r8", str;
+	asm "xorq %rdx, %rdx;\n";
+	asm_set_reg "%edx", n;
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %rdx\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %rdx\n";
+	asm "addq $8, %rsp\n";
+
+	_LINE
+	
+	asm_set_reg "%rdi", "%lu\n";
+	asm "movq %rdx, %rsi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
+function _print_uint64(str:*char, n:uint64) {
+	asm_set_reg "%r8", str;
+	asm_set_reg "%r9", n;
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "subq $8, %rsp\n";
+	asm "pushq %r9\n";
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+	asm "popq %r9\n";
+	asm "addq $8, %rsp\n";
+
+	_LINE
+	
+	asm_set_reg "%rdi", "%lu\n";
+	asm "movq %r9, %rsi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
+
+
+
+#undef	_STACK_ALIGN16_BEGIN
+#undef	_STACK_ALIGN16_END
+#undef	_LINE

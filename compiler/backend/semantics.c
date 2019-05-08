@@ -4411,6 +4411,91 @@ static void _check_stat_i_ci(
 	result->size_source = _calc_type_size(ctx, node, node_type_source);
 }
 
+typedef struct {
+	ParserASTNode *node_target;
+	ParserSymbol *symbol_target;
+	ParserASTNode *node_type_target;
+	uint8_t type_target;
+	size_t size_target;
+
+	ParserASTNode *node_source_left;
+	ParserSymbol *symbol_source_left;
+	ParserASTNode *node_type_source_left;
+	uint8_t type_source_left;
+	size_t size_source_left;
+
+	ParserASTNode *node_source_right;
+	ParserSymbol *symbol_source_right;
+	ParserASTNode *node_type_source_right;
+	uint8_t type_source_right;
+	size_t size_source_right;
+} _ResultCheckStat_I_CI_CI;
+
+static void _check_stat_i_ci_ci(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	uint32_t node_type,
+	_ResultCheckStat_I_CI_CI *result
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == node_type);
+	assert(node->nchilds == 3);
+	assert(result);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_type_source_left = NULL;
+	ParserSymbol *symbol_source_left = NULL;
+	if (node_source_left->type == BE_NODE_IDENTIFIER) {
+		symbol_source_left = _get_var_symbol_by_id_node(ctx, node_source_left);
+		node_type_source_left = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source_left);
+	} else if (node_source_left->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_source_left);
+		node_type_source_left = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_source_left);
+	} else {
+		assert(0);
+	}
+
+	ParserASTNode *node_source_right = node->childs[1];
+	ParserASTNode *node_type_source_right = NULL;
+	ParserSymbol *symbol_source_right = NULL;
+	if (node_source_right->type == BE_NODE_IDENTIFIER) {
+		symbol_source_right = _get_var_symbol_by_id_node(ctx, node_source_right);
+		node_type_source_right = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source_right);
+	} else if (node_source_right->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_source_right);
+		node_type_source_right = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_source_right);
+	} else {
+		assert(0);
+	}
+
+	result->node_target = node_target;
+	result->symbol_target = symbol_target;
+	result->node_type_target = node_type_target;
+	result->type_target = _get_type_by_type_node(ctx, node_type_target);
+	result->size_target = _calc_type_size(ctx, node, node_type_target);
+
+	result->node_source_left = node_source_left;
+	result->symbol_source_left = symbol_source_left;
+	result->node_type_source_left = node_type_source_left;
+	result->type_source_left = _get_type_by_type_node(ctx, node_type_source_left);
+	result->size_source_left = _calc_type_size(ctx, node, node_type_source_left);
+
+	result->node_source_right = node_source_right;
+	result->symbol_source_right = symbol_source_right;
+	result->node_type_source_right = node_type_source_right;
+	result->type_source_right = _get_type_by_type_node(ctx, node_type_source_right);
+	result->size_source_right = _calc_type_size(ctx, node, node_type_source_right);
+}
+
+
+
+
 static void _stat_trunc(
 	ParserContext *ctx,
 	ParserASTNode *node
@@ -4620,10 +4705,6 @@ static void _stat_bitcast(
 	}
 }
 
-
-
-
-
 static void _check_fncall_params(
 	ParserContext *ctx,
 	ParserASTNode *node,
@@ -4793,6 +4874,34 @@ static void _stat_call(
 	);
 }
 
+static void _stat_add(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_ADD, &check_result);
+
+	if (_is_pointer_type(check_result.type_target)
+			&& _is_pointer_type(check_result.type_source_left)
+			&& _is_integer_type(check_result.type_source_right)) {
+		goto ok;
+	}
+
+	if (_is_number_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source_left
+			&& check_result.type_target == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
 
 
 
@@ -4929,6 +5038,11 @@ static void _stat(
 		}
 		case BE_NODE_STAT_CALL: {
 			_stat_call(ctx, node);
+			break;
+		}
+
+		case BE_NODE_STAT_ADD: {
+			_stat_add(ctx, node);
 			break;
 		}
 
@@ -5440,4 +5554,46 @@ size_t be_sem_calc_type_size(
 	assert(node_type);
 
 	return _calc_type_size(ctx, node, node_type);
+}
+
+bool be_sem_is_signed_type(
+	uint8_t type
+) {
+	return _is_signed_type(type);
+}
+
+bool be_sem_is_unsigned_type(
+	uint8_t type
+) {
+	return _is_unsigned_type(type);
+}
+
+bool be_sem_is_integer_type(
+	uint8_t type
+) {
+	return _is_integer_type(type);
+}
+
+bool be_sem_is_float_type(
+	uint8_t type
+) {
+	return _is_float_type(type);
+}
+
+bool be_sem_is_primitive_type(
+	uint8_t type
+) {
+	return _is_primitive_type(type);
+}
+
+bool be_sem_is_pointer_type(
+	uint8_t type
+) {
+	return _is_pointer_type(type);
+}
+
+bool be_sem_is_number_type(
+	uint8_t type
+) {
+	return _is_number_type(type);
 }

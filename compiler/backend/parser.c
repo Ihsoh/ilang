@@ -203,6 +203,196 @@ _RULE_FUNC_DECL(stats_block);
 
 
 
+#define	_RULE_stat_xxx_x(stat_xxx, XXX, x)	\
+	_RULE(stat_xxx)	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_##XXX) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NODE(BE_NODE_STAT_##XXX, NULL)	\
+	\
+		ParserASTNode *node_param = _RULE_NAME(x)(_RULE_PARSER_CTX);	\
+		if (node_param != NULL) {	\
+			_RULE_ADD_CHILD(node_param)	\
+		} else {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	_RULE_END
+
+#define	_RULE_stat_xxx_x_x(stat_xxx, XXX, x1, x2)	\
+	_RULE(stat_xxx)	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_##XXX) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NODE(BE_NODE_STAT_##XXX, NULL)	\
+	\
+		ParserASTNode *node_param1 = _RULE_NAME(x1)(_RULE_PARSER_CTX);	\
+		if (node_param1 != NULL) {	\
+			_RULE_ADD_CHILD(node_param1)	\
+		} else {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		ParserASTNode *node_param2 = _RULE_NAME(x2)(_RULE_PARSER_CTX);	\
+		if (node_param2 != NULL) {	\
+			_RULE_ADD_CHILD(node_param2)	\
+		} else {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	_RULE_END
+
+#define	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, x1, x2, x3)	\
+	_RULE(stat_xxx)	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_##XXX) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NODE(BE_NODE_STAT_##XXX, NULL)	\
+	\
+		ParserASTNode *node_param1 = _RULE_NAME(x1)(_RULE_PARSER_CTX);	\
+		if (node_param1 != NULL) {	\
+			_RULE_ADD_CHILD(node_param1)	\
+		} else {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		ParserASTNode *node_param2 = _RULE_NAME(x2)(_RULE_PARSER_CTX);	\
+		if (node_param2 != NULL) {	\
+			_RULE_ADD_CHILD(node_param2)	\
+		} else {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		ParserASTNode *node_param3 = _RULE_NAME(x3)(_RULE_PARSER_CTX);	\
+		if (node_param3 != NULL) {	\
+			_RULE_ADD_CHILD(node_param3)	\
+		} else {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	\
+		_RULE_NEXT_TOKEN	\
+		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {	\
+			_RULE_NOT_MATCHED	\
+		}	\
+	_RULE_END
+
+
+
+
+#define	_RULE_stat_xxx_i(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x(stat_xxx, XXX, identifier)
+#define	_RULE_stat_xxx_c(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x(stat_xxx, XXX, expr_wrapper)
+#define	_RULE_stat_xxx_ci(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x(stat_xxx, XXX, constexpr_or_id)
+
+
+
+
+#define	_RULE_stat_xxx_i_i(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x_x(stat_xxx, XXX, identifier, identifier)
+#define	_RULE_stat_xxx_c_c(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x_x(stat_xxx, XXX, expr_wrapper, expr_wrapper)
+#define	_RULE_stat_xxx_ci_ci(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x_x(stat_xxx, XXX, constexpr_or_id, constexpr_or_id)
+#define	_RULE_stat_xxx_c_i(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x_x(stat_xxx, XXX, expr_wrapper, identifier)
+#define	_RULE_stat_xxx_ci_i(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x_x(stat_xxx, XXX, constexpr_or_id, identifier)
+#define	_RULE_stat_xxx_i_c(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x_x(stat_xxx, XXX, identifier, expr_wrapper)
+#define	_RULE_stat_xxx_i_ci(stat_xxx, XXX)	\
+	_RULE_stat_xxx_x_x(stat_xxx, XXX, identifier, constexpr_or_id)
+
+
+
+
+#define _RULE_stat_xxx_i_i_i(stat_xxx, XXX)     \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, identifier, identifier)
+#define _RULE_stat_xxx_i_i_c(stat_xxx, XXX)     \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, identifier, expr_wrapper)
+#define _RULE_stat_xxx_i_i_ci(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, identifier, constexpr_or_id)
+#define _RULE_stat_xxx_i_c_i(stat_xxx, XXX)     \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, expr_wrapper, identifier)
+#define _RULE_stat_xxx_i_c_c(stat_xxx, XXX)     \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, expr_wrapper, expr_wrapper)
+#define _RULE_stat_xxx_i_c_ci(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, expr_wrapper, constexpr_or_id)
+#define _RULE_stat_xxx_i_ci_i(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, constexpr_or_id, identifier)
+#define _RULE_stat_xxx_i_ci_c(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, constexpr_or_id, expr_wrapper)
+#define _RULE_stat_xxx_i_ci_ci(stat_xxx, XXX)   \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, identifier, constexpr_or_id, constexpr_or_id)
+#define _RULE_stat_xxx_c_i_i(stat_xxx, XXX)     \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, identifier, identifier)
+#define _RULE_stat_xxx_c_i_c(stat_xxx, XXX)     \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, identifier, expr_wrapper)
+#define _RULE_stat_xxx_c_i_ci(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, identifier, constexpr_or_id)
+#define _RULE_stat_xxx_c_c_i(stat_xxx, XXX)     \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, expr_wrapper, identifier)
+#define _RULE_stat_xxx_c_c_c(stat_xxx, XXX)     \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, expr_wrapper, expr_wrapper)
+#define _RULE_stat_xxx_c_c_ci(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, expr_wrapper, constexpr_or_id)
+#define _RULE_stat_xxx_c_ci_i(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, constexpr_or_id, identifier)
+#define _RULE_stat_xxx_c_ci_c(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, constexpr_or_id, expr_wrapper)
+#define _RULE_stat_xxx_c_ci_ci(stat_xxx, XXX)   \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, expr_wrapper, constexpr_or_id, constexpr_or_id)
+#define _RULE_stat_xxx_ci_i_i(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, identifier, identifier)
+#define _RULE_stat_xxx_ci_i_c(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, identifier, expr_wrapper)
+#define _RULE_stat_xxx_ci_i_ci(stat_xxx, XXX)   \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, identifier, constexpr_or_id)
+#define _RULE_stat_xxx_ci_c_i(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, expr_wrapper, identifier)
+#define _RULE_stat_xxx_ci_c_c(stat_xxx, XXX)    \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, expr_wrapper, expr_wrapper)
+#define _RULE_stat_xxx_ci_c_ci(stat_xxx, XXX)   \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, expr_wrapper, constexpr_or_id)
+#define _RULE_stat_xxx_ci_ci_i(stat_xxx, XXX)   \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, constexpr_or_id, identifier)
+#define _RULE_stat_xxx_ci_ci_c(stat_xxx, XXX)   \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, constexpr_or_id, expr_wrapper)
+#define _RULE_stat_xxx_ci_ci_ci(stat_xxx, XXX)  \
+	_RULE_stat_xxx_x_x_x(stat_xxx, XXX, constexpr_or_id, constexpr_or_id, constexpr_or_id)
+
+
+
 
 _RULE(identifier)
 	_RULE_NEXT_TOKEN
@@ -1467,39 +1657,6 @@ _RULE(stat_return)
 	}
 _RULE_END
 
-_RULE(stat_ref)
-	_RULE_NEXT_TOKEN
-	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_REF) {
-		_RULE_NOT_MATCHED
-	}
-
-	_RULE_NODE(BE_NODE_STAT_REF, NULL)
-
-	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
-	if (node_target != NULL) {
-		_RULE_ADD_CHILD(node_target)
-	} else {
-		_RULE_NOT_MATCHED
-	}
-
-	_RULE_NEXT_TOKEN
-	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
-		_RULE_NOT_MATCHED
-	}
-
-	ParserASTNode *node_source = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
-	if (node_source != NULL) {
-		_RULE_ADD_CHILD(node_source)
-	} else {
-		_RULE_NOT_MATCHED
-	}
-
-	_RULE_NEXT_TOKEN
-	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
-		_RULE_NOT_MATCHED
-	}
-_RULE_END
-
 _RULE(stat_store)
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_STORE) {
@@ -1565,40 +1722,6 @@ _RULE(stat_load)
 		_RULE_NOT_MATCHED
 	}
 _RULE_END
-
-#define	_RULE_stat_xxx_i_ci(stat_xxx, XXX)	\
-	_RULE(stat_xxx)	\
-		_RULE_NEXT_TOKEN	\
-		if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_##XXX) {	\
-			_RULE_NOT_MATCHED	\
-		}	\
-	\
-		_RULE_NODE(BE_NODE_STAT_##XXX, NULL)	\
-	\
-		ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);	\
-		if (node_target != NULL) {	\
-			_RULE_ADD_CHILD(node_target)	\
-		} else {	\
-			_RULE_NOT_MATCHED	\
-		}	\
-	\
-		_RULE_NEXT_TOKEN	\
-		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {	\
-			_RULE_NOT_MATCHED	\
-		}	\
-	\
-		ParserASTNode *node_source = _RULE_NAME(constexpr_or_id)(_RULE_PARSER_CTX);	\
-		if (node_source != NULL) {	\
-			_RULE_ADD_CHILD(node_source)	\
-		} else {	\
-			_RULE_NOT_MATCHED	\
-		}	\
-	\
-		_RULE_NEXT_TOKEN	\
-		if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {	\
-			_RULE_NOT_MATCHED	\
-		}	\
-	_RULE_END
 
 _RULE_stat_xxx_i_ci(stat_trunc, TRUNC)
 _RULE_stat_xxx_i_ci(stat_sext, SEXT)
@@ -1719,6 +1842,32 @@ _RULE(stat_call)
 	}
 _RULE_END
 
+_RULE_stat_xxx_i_ci_ci(stat_add, ADD)
+_RULE_stat_xxx_i_ci_ci(stat_sub, SUB)
+_RULE_stat_xxx_i_ci_ci(stat_mul, MUL)
+_RULE_stat_xxx_i_ci_ci(stat_div, DIV)
+_RULE_stat_xxx_i_ci_ci(stat_rem, REM)
+_RULE_stat_xxx_i_ci_i(stat_mbr, MBR)
+_RULE_stat_xxx_i_ci_ci(stat_idx, IDX)
+_RULE_stat_xxx_i_ci(stat_not, NOT)
+_RULE_stat_xxx_i_ci(stat_neg, NEG)
+_RULE_stat_xxx_i_ci(stat_bnot, BNOT)
+_RULE_stat_xxx_i_i(stat_ref, REF)
+_RULE_stat_xxx_i_ci_ci(stat_shl, SHL)
+_RULE_stat_xxx_i_ci_ci(stat_shr, SHR)
+
+_RULE_stat_xxx_i_ci_ci(stat_eq, EQ)
+_RULE_stat_xxx_i_ci_ci(stat_neq, NEQ)
+_RULE_stat_xxx_i_ci_ci(stat_lt, LT)
+_RULE_stat_xxx_i_ci_ci(stat_le, LE)
+_RULE_stat_xxx_i_ci_ci(stat_gt, GT)
+_RULE_stat_xxx_i_ci_ci(stat_ge, GE)
+
+_RULE_stat_xxx_i_ci_ci(stat_band, BAND)
+_RULE_stat_xxx_i_ci_ci(stat_bor, BOR)
+_RULE_stat_xxx_i_ci_ci(stat_bxor, BXOR)
+
+
 
 
 
@@ -1752,7 +1901,6 @@ _RULE(stat)
 	_A(stat_br)
 	_A(stat_cbr)
 	_A(stat_return)
-	_A(stat_ref)
 	_A(stat_store)
 	_A(stat_load)
 
@@ -1772,6 +1920,30 @@ _RULE(stat)
 	_A(stat_vcall)
 	_A(stat_call)
 
+	_A(stat_add)
+	_A(stat_sub)
+	_A(stat_mul)
+	_A(stat_div)
+	_A(stat_rem)
+	_A(stat_mbr)
+	_A(stat_idx)
+	_A(stat_not)
+	_A(stat_neg)
+	_A(stat_bnot)
+	_A(stat_ref)
+	_A(stat_shl)
+	_A(stat_shr)
+
+	_A(stat_eq)
+	_A(stat_neq)
+	_A(stat_lt)
+	_A(stat_le)
+	_A(stat_gt)
+	_A(stat_ge)
+
+	_A(stat_band)
+	_A(stat_bor)
+	_A(stat_bxor)
 
 
 

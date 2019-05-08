@@ -1,51 +1,38 @@
-function _print_i64(str:*char, n:int64) {
-	asm_set_reg "%r8", str;
-	asm_set_reg "%r9", n;
-
-	asm "pushq %rbp\n";
-	asm "movq %rsp, %rbp\n";
-	asm "subq $16, %rsp\n";
-	asm "andq $0xfffffffffffffff0, %rsp\n";
-
-	asm "\n#------------------------------\n\n";
-	
-	asm "subq $8, %rsp\n";
-	asm "pushq %r9\n";
-	asm "movq %r8, %rdi\n";
-	asm "callq _printf\n";
-	asm "popq %r9\n";
-	asm "addq $8, %rsp\n";
-
-	asm "\n#------------------------------\n\n";
-	
-	asm_set_reg "%rdi", "%ld\n";
-	asm "movq %r9, %rsi\n";
-	asm "callq _printf\n";
-
-	asm "\n#------------------------------\n\n";
-
-	asm "movq %rbp, %rsp\n";
-	asm "popq %rbp\n";
-}
+#include "test_inc.ir"
 
 function _add_i64(n1:int64, n2:int64):int64 {
-	vcall _print_i64("n1 = ", cast<int64>(100));
-	vcall _print_i64("n2 = ", cast<int64>(200));
+	vcall _print_int64("n1 = ", cast<int64>(100));
+	vcall _print_int64("n2 = ", cast<int64>(200));
 
-	return cast<int64>(30);
+	var result:int64;
+	add result, n1, n2;
+
+	return result;
 }
 
 function _main():int32 {
+	var result:int64;
+	call result, _add_i64(cast<int64>(100), cast<int64>(200));
 
-	// var value:double;
-	// assign value, cast<double>(4.14);
+	vcall _print_int64("result = ", result);
 
-	var result:uint64;
-	// TODO: FUCK, 普通的MOV不支持64位立即数。
-	assign result, cast<uint64>(0xffffffffffffffff);
-	// fptosi result, cast<double>(6.14);
+	vcall _print_int8("test_int8 = ", cast<int8>(123));
+	vcall _print_int16("test_int16 = ", cast<int16>(12345));
+	vcall _print_int32("test_int32 = ", cast<int32>(123456789));
+	vcall _print_int64("test_int64 = ", cast<int64>(1234567891012));
 
-	// vcall _print_i64("result = ", result);
+	vcall _print_int8("test_int8 = ", cast<int8>(-123));
+	vcall _print_int16("test_int16 = ", cast<int16>(-12345));
+	vcall _print_int32("test_int32 = ", cast<int32>(-123456789));
+	vcall _print_int64("test_int64 = ", cast<int64>(-1234567891012));
+
+
+
+
+	vcall _print_uint8("test_uint8 = ", cast<uint8>(234));
+	vcall _print_uint16("test_uint16 = ", cast<uint16>(65535));
+	vcall _print_uint32("test_uint32 = ", cast<uint32>(123456789));
+	vcall _print_uint64("test_uint64 = ", cast<uint64>(1234567891012));
 
 	return cast<int32>(0);
 }

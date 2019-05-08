@@ -88,7 +88,7 @@
 
 #define	BE_NODE_STAT_CBR					0x0ba0
 
-#define	BE_NODE_STAT_REF					0x0bb0
+#define	BE_NODE_STAT_XXX					0x0bb0	// TODO: XXX
 
 #define	BE_NODE_STAT_TRUNC					0x0bc0
 #define	BE_NODE_STAT_SEXT					0x0bc1
@@ -107,6 +107,32 @@
 #define	BE_NODE_STAT_VCALL					0x0bd1
 #define	BE_NODE_STAT_FUNC_CALL				0x0bd2
 #define	BE_NODE_STAT_FUNC_CALL_PARAMS		0x0bd3
+
+#define	BE_NODE_STAT_ADD					0x0be0
+#define	BE_NODE_STAT_SUB					0x0be1
+#define	BE_NODE_STAT_MUL					0x0be2
+#define	BE_NODE_STAT_DIV					0x0be3
+#define	BE_NODE_STAT_REM					0x0be4
+#define	BE_NODE_STAT_MBR					0x0be5
+#define	BE_NODE_STAT_IDX					0x0be6
+#define	BE_NODE_STAT_NOT					0x0be7
+#define	BE_NODE_STAT_NEG					0x0be8
+#define	BE_NODE_STAT_BNOT					0x0be9
+#define	BE_NODE_STAT_REF					0x0bea
+#define	BE_NODE_STAT_SHL					0x0beb
+#define	BE_NODE_STAT_SHR					0x0bec
+
+#define	BE_NODE_STAT_EQ						0x0bed
+#define	BE_NODE_STAT_NEQ					0x0bee
+#define	BE_NODE_STAT_LT						0x0bef
+#define	BE_NODE_STAT_LE						0x0bf0
+#define	BE_NODE_STAT_GT						0x0bf1
+#define	BE_NODE_STAT_GE						0x0bf2
+
+#define	BE_NODE_STAT_BAND					0x0bf3
+#define	BE_NODE_STAT_BOR					0x0bf4
+#define	BE_NODE_STAT_BXOR					0x0bf5
+
 
 
 
