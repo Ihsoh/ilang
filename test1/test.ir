@@ -16,28 +16,9 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	vcall _print_int8("test_int8 = ", cast<int8>(123));
-	vcall _print_int16("test_int16 = ", cast<int16>(12345));
-	vcall _print_int32("test_int32 = ", cast<int32>(123456789));
-	vcall _print_int64("test_int64 = ", cast<int64>(1234567891012));
-
-	vcall _print_int8("test_int8 = ", cast<int8>(-123));
-	vcall _print_int16("test_int16 = ", cast<int16>(-12345));
-	vcall _print_int32("test_int32 = ", cast<int32>(-123456789));
-	vcall _print_int64("test_int64 = ", cast<int64>(-1234567891012));
-
-
-
-
-	vcall _print_uint8("test_uint8 = ", cast<uint8>(234));
-	vcall _print_uint16("test_uint16 = ", cast<uint16>(65535));
-	vcall _print_uint32("test_uint32 = ", cast<uint32>(123456789));
-	vcall _print_uint64("test_uint64 = ", cast<uint64>(1234567891012));
-
-	vcall _print_float("test_float = ", cast<float>(123.456));
-	vcall _print_double("test_double = ", cast<double>(123.456));
-
-	vcall _print_pointer("test_pointer = ", cast<*>(0x12345678abcdef12));
+	var a:int64;
+	add a, cast<int64>(1), cast<int64>(2);
+	vcall _print_int64("a = ", a);
 
 	return cast<int32>(0);
 }

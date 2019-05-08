@@ -3715,6 +3715,7 @@ static void _asm_stat_add(
 	ParserASTNode *node_source_right = node->childs[2];
 
 	if (type_target == BE_TYPE_POINTER) {
+		// TODO: 指针加法运算时，加数要乘以被加数指针指向的类型的长度。
 		_move_id_or_constexpr_to_reg(
 			ctx,
 			_ASM_REG_AX,

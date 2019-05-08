@@ -4461,7 +4461,7 @@ static void _check_stat_i_ci_ci(
 		assert(0);
 	}
 
-	ParserASTNode *node_source_right = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
 	ParserASTNode *node_type_source_right = NULL;
 	ParserSymbol *symbol_source_right = NULL;
 	if (node_source_right->type == BE_NODE_IDENTIFIER) {
