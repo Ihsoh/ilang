@@ -20,5 +20,27 @@ function _main():int32 {
 	add a, cast<int64>(1), cast<int64>(2);
 	vcall _print_int64("a = ", a);
 
+	var b:*int64;
+	var c:*;
+	assign b, cast<*int64>(2);
+	add b, b, 3;
+	bitcast c, b;
+	vcall _print_pointer("c = ", c);
+
+	var d:*int8;
+	var e:*;
+	assign d, cast<*int8>(3);
+	add d, d, 4;
+	bitcast e, d;
+	vcall _print_pointer("e = ", e);
+
+	var f:float;
+	add f, cast<float>(1.2), cast<float>(2.3);
+	vcall _print_float("f = ", f);
+
+	var g:double;
+	add g, cast<double>(22.22), cast<double>(12.34);
+	vcall _print_double("g = ", g);
+
 	return cast<int32>(0);
 }

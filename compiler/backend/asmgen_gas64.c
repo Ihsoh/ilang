@@ -1651,6 +1651,43 @@ static void _asm_inst_cvtsd2ss_x_x(
 	);
 }
 
+/*
+	IMUL
+*/
+
+static void _asm_inst_imul_x_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source1,
+	const char *source2
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source1);
+	assert(source2);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "imul");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst3(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source2,
+		source1,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
 
 
 
@@ -2415,10 +2452,17 @@ static uint8_t _move_id_or_constexpr_to_xmm_reg(
 	}
 }
 
-static uint8_t _move_id_or_constexpr_to_reg(
+typedef struct {
+	uint8_t type;
+	size_t type_size;
+	ParserASTNode *node_type;
+} MoveIdOrConstexprToRegEx;
+
+static uint8_t _move_id_or_constexpr_to_reg_ex(
 	ASMGeneratorGas64Context *ctx,
 	int target_reg,
-	ParserASTNode *source_id_or_constexpr
+	ParserASTNode *source_id_or_constexpr,
+	MoveIdOrConstexprToRegEx *result
 ) {
 	assert(ctx);
 	assert(source_id_or_constexpr);
@@ -2434,6 +2478,11 @@ static uint8_t _move_id_or_constexpr_to_reg(
 	if (source_id_or_constexpr->type == BE_NODE_IDENTIFIER) {
 		ParserSymbol *symbol = _get_var_symbol_by_id_node(ctx, source_id_or_constexpr);
 		uint8_t symbol_type = BE_VAR_SYMBOL_GET_TYPE(symbol);
+		if (result != NULL) {
+			result->type = symbol_type;
+			result->type_size = BE_VAR_SYMBOL_GET_TYPE_SIZE(symbol);
+			result->node_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol);
+		}
 		
 		_asm_inst_mov_x_sym(
 			ctx,
@@ -2448,6 +2497,13 @@ static uint8_t _move_id_or_constexpr_to_reg(
 		rstr_init(&rstr);
 		_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
 		uint8_t type = BE_EXPR_AST_NODE_GET_TYPE(source_id_or_constexpr);
+		if (result != NULL) {
+			ParserASTNode *node_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(source_id_or_constexpr);
+
+			result->type = type;
+			result->type_size = be_sem_calc_type_size(ctx->psrctx, source_id_or_constexpr, node_type);
+			result->node_type = node_type;
+		}
 		
 		_asm_inst_mov_x_x(
 			ctx,
@@ -2462,6 +2518,14 @@ static uint8_t _move_id_or_constexpr_to_reg(
 	} else {
 		assert(0);
 	}
+}
+
+static uint8_t _move_id_or_constexpr_to_reg(
+	ASMGeneratorGas64Context *ctx,
+	int target_reg,
+	ParserASTNode *source_id_or_constexpr
+) {
+	return _move_id_or_constexpr_to_reg_ex(ctx, target_reg, source_id_or_constexpr, NULL);
 }
 
 static void _asm_stat_var(
@@ -3715,11 +3779,15 @@ static void _asm_stat_add(
 	ParserASTNode *node_source_right = node->childs[2];
 
 	if (type_target == BE_TYPE_POINTER) {
-		// TODO: 指针加法运算时，加数要乘以被加数指针指向的类型的长度。
-		_move_id_or_constexpr_to_reg(
+		MoveIdOrConstexprToRegEx result;
+		_move_id_or_constexpr_to_reg_ex(
 			ctx,
 			_ASM_REG_AX,
-			node_source_left
+			node_source_left,
+			&result
+		);
+		size_t size_target = be_sem_calc_type_size(
+			ctx->psrctx, node, result.node_type->childs[0]
 		);
 
 		_move_id_or_constexpr_to_reg(
@@ -3727,6 +3795,26 @@ static void _asm_stat_add(
 			_ASM_REG_BX,
 			node_source_right
 		);
+		if (size_target > 1) {
+			ResizableString rstr_type_size;
+			rstr_init(&rstr_type_size);
+			_asm_inst_uint_const(
+				ctx,
+				&rstr_type_size,
+				size_target
+			);
+
+			_asm_inst_imul_x_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT64,
+				_ASM_REG_NAME_RBX,
+				_ASM_REG_NAME_RBX,
+				RSTR_CSTR(&rstr_type_size)
+			);
+
+			rstr_free(&rstr_type_size);
+		}
 
 		_asm_inst_add_x_x(
 			ctx,
