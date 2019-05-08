@@ -2983,14 +2983,6 @@ static void _asm_stat_trunc(
 
 	ParserASTNode *node_source = node->childs[1];
 
-	_asm_inst_mov_x_x(
-		ctx,
-		ctx->body,
-		BE_TYPE_UINT64,
-		_ASM_REG_NAME_RAX,
-		_ASM_CONST_0
-	);
-
 	uint8_t type_source = _move_id_or_constexpr_to_reg(
 		ctx,
 		_ASM_REG_AX,
@@ -3118,14 +3110,6 @@ static uint8_t _zero_extend64(
 ) {
 	assert(ctx);
 	assert(node_source);
-
-	_asm_inst_mov_x_x(
-		ctx,
-		ctx->body,
-		BE_TYPE_UINT64,
-		_asm_inst_reg(ctx, BE_TYPE_UINT64, reg_target),
-		_ASM_CONST_0
-	);
 
 	return _move_id_or_constexpr_to_reg(
 		ctx,
@@ -3614,14 +3598,6 @@ static void _asm_stat_func_call(
 	ParserASTNode *node_func_call_params = node->childs[1];
 	for (int i = node_func_call_params->nchilds - 1; i >= 0; i--) {
 		ParserASTNode *node_func_call_param = node_func_call_params->childs[i];
-
-		_asm_inst_mov_x_x(
-			ctx,
-			ctx->body,
-			BE_TYPE_UINT64,
-			_ASM_REG_NAME_RAX,
-			_ASM_CONST_0
-		);
 
 		_move_id_or_constexpr_to_reg(
 			ctx,

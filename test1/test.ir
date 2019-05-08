@@ -34,5 +34,10 @@ function _main():int32 {
 	vcall _print_uint32("test_uint32 = ", cast<uint32>(123456789));
 	vcall _print_uint64("test_uint64 = ", cast<uint64>(1234567891012));
 
+	vcall _print_float("test_float = ", cast<float>(123.456));
+	vcall _print_double("test_double = ", cast<double>(123.456));
+
+	vcall _print_pointer("test_pointer = ", cast<*>(0x12345678abcdef12));
+
 	return cast<int32>(0);
 }
