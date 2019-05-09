@@ -1366,6 +1366,36 @@ static void _asm_inst_shl_x(
 	rstr_free(&rstr_mnemonic);
 }
 
+static void _asm_inst_shl_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "shl");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
 static void _asm_inst_shr_x(
 	ASMGeneratorGas64Context *ctx,
 	ResizableString *rstr,
@@ -1388,6 +1418,36 @@ static void _asm_inst_shr_x(
 		rstr,
 		RSTR_CSTR(&rstr_mnemonic),
 		source
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
+static void _asm_inst_shr_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "shr");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
 	);
 
 	rstr_free(&rstr_mnemonic);
@@ -5204,6 +5264,113 @@ static void _asm_stat_rem(
 
 
 
+
+static void _asm_stat_shl(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_SHL);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	uint8_t type_source_left = _get_id_or_constexpr_type(ctx, node_source_left);
+	uint8_t type_source_right = _get_id_or_constexpr_type(ctx, node_source_right);
+
+	if (be_sem_is_integer_type(type_source_left)
+			&& be_sem_is_integer_type(type_source_right)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			node_source_right
+		);
+
+		_asm_inst_shl_x_x(
+			ctx,
+			ctx->body,
+			type_target,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_CL
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_shr(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_SHR);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	uint8_t type_source_left = _get_id_or_constexpr_type(ctx, node_source_left);
+	uint8_t type_source_right = _get_id_or_constexpr_type(ctx, node_source_right);
+
+	if (be_sem_is_integer_type(type_source_left)
+			&& be_sem_is_integer_type(type_source_right)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			node_source_right
+		);
+
+		_asm_inst_shr_x_x(
+			ctx,
+			ctx->body,
+			type_target,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_CL
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else {
+		assert(0);
+	}
+}
+
 static void _asm_stat_eq(
 	ASMGeneratorGas64Context *ctx,
 	ParserASTNode *node
@@ -6596,6 +6763,14 @@ static void _asm_stat(
 
 
 
+		case BE_NODE_STAT_SHL: {
+			_asm_stat_shl(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_SHR: {
+			_asm_stat_shr(ctx, node_stat);
+			break;
+		}
 
 		case BE_NODE_STAT_EQ: {
 			_asm_stat_eq(ctx, node_stat);
