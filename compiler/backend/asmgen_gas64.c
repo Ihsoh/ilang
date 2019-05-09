@@ -407,6 +407,7 @@ static void _new_double(
 
 #define	_ASM_CONST_0					"$0"
 #define	_ASM_CONST_1					"$1"
+#define	_ASM_CONST_MINUS_1				"$-1"
 
 #define	_ASM_FUNC_RETURN_LABEL_PREFIX	"FUNC_RET"
 #define	_ASM_FUNC_RETURN_LABEL			"RET"
@@ -5256,14 +5257,104 @@ static void _asm_stat_rem(
 	}
 }
 
-// TODO: mbr, idx, not, neg, bnot, ref, shl, shr
+// TODO: mbr, idx, not
 
 
 
 
 
 
+static void _asm_stat_neg(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_NEG);
+	assert(node->nchilds == 2);
 
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source
+		);
+
+		_asm_inst_mov_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RBX,
+			_ASM_CONST_0
+		);
+
+		_asm_inst_sub_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RBX,
+			_ASM_REG_NAME_RAX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_BX)
+		);
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_bnot(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BNOT);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source = node->childs[1];
+
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source
+		);
+
+		_asm_inst_xor_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
+			_ASM_CONST_MINUS_1
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else {
+		assert(0);
+	}
+}
 
 static void _asm_stat_shl(
 	ASMGeneratorGas64Context *ctx,
@@ -5282,11 +5373,7 @@ static void _asm_stat_shl(
 	ParserASTNode *node_source_left = node->childs[1];
 	ParserASTNode *node_source_right = node->childs[2];
 
-	uint8_t type_source_left = _get_id_or_constexpr_type(ctx, node_source_left);
-	uint8_t type_source_right = _get_id_or_constexpr_type(ctx, node_source_right);
-
-	if (be_sem_is_integer_type(type_source_left)
-			&& be_sem_is_integer_type(type_source_right)) {
+	if (be_sem_is_integer_type(type_target)) {
 		_move_id_or_constexpr_to_reg(
 			ctx,
 			_ASM_REG_AX,
@@ -5302,7 +5389,7 @@ static void _asm_stat_shl(
 		_asm_inst_shl_x_x(
 			ctx,
 			ctx->body,
-			type_target,
+			BE_TYPE_UINT64,
 			_ASM_REG_NAME_RAX,
 			_ASM_REG_NAME_CL
 		);
@@ -5335,11 +5422,7 @@ static void _asm_stat_shr(
 	ParserASTNode *node_source_left = node->childs[1];
 	ParserASTNode *node_source_right = node->childs[2];
 
-	uint8_t type_source_left = _get_id_or_constexpr_type(ctx, node_source_left);
-	uint8_t type_source_right = _get_id_or_constexpr_type(ctx, node_source_right);
-
-	if (be_sem_is_integer_type(type_source_left)
-			&& be_sem_is_integer_type(type_source_right)) {
+	if (be_sem_is_integer_type(type_target)) {
 		_move_id_or_constexpr_to_reg(
 			ctx,
 			_ASM_REG_AX,
@@ -5355,7 +5438,7 @@ static void _asm_stat_shr(
 		_asm_inst_shr_x_x(
 			ctx,
 			ctx->body,
-			type_target,
+			BE_TYPE_UINT64,
 			_ASM_REG_NAME_RAX,
 			_ASM_REG_NAME_CL
 		);
@@ -6762,6 +6845,16 @@ static void _asm_stat(
 
 
 
+
+
+		case BE_NODE_STAT_NEG: {
+			_asm_stat_neg(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_BNOT: {
+			_asm_stat_bnot(ctx, node_stat);
+			break;
+		}
 
 		case BE_NODE_STAT_SHL: {
 			_asm_stat_shl(ctx, node_stat);

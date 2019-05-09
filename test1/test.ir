@@ -16,15 +16,12 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	var a:int64;
-	assign a, cast<int64>(16);
+	var a:int8;
+	assign a, cast<int8>(8);
 
-	var b:int8;
-	assign b, cast<int8>(2);
+	neg a, a;
 
-	shr a, a, b;
-
-	vcall _print_int64("a = ", a);
+	vcall _print_int8("a = ", a);
 
 	return cast<int32>(0);
 }

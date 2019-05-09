@@ -5001,7 +5001,7 @@ ok:
 	return;	
 }
 
-// TODO: mbr, idx, not, neg, bnot, ref
+// TODO: mbr, idx, not
 
 
 
@@ -5013,6 +5013,50 @@ ok:
 
 
 
+
+static void _stat_neg(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_NEG, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_bnot(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI check_result;
+	_check_stat_i_ci(ctx, node, BE_NODE_STAT_BNOT, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
 
 static void _stat_shl(
 	ParserContext *ctx,
@@ -5430,6 +5474,15 @@ static void _stat(
 		}
 
 
+
+		case BE_NODE_STAT_NEG: {
+			_stat_neg(ctx, node);
+			break;
+		} 
+		case BE_NODE_STAT_BNOT: {
+			_stat_bnot(ctx, node);
+			break;
+		} 
 
 		case BE_NODE_STAT_SHL: {
 			_stat_shl(ctx, node);
