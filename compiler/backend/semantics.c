@@ -5001,16 +5001,84 @@ ok:
 	return;	
 }
 
-// TODO: mbr, idx
+// TODO: mbr
 
 
 
 
 
 
+static bool _check_stat_idx_params(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	_ResultCheckStat_I_CI_CI *check_result
+) {
+	assert(ctx);
+	assert(node);
+	assert(check_result);
 
+	if (_get_type_by_type_node(ctx, check_result->node_type_target) != BE_TYPE_POINTER
+			|| _get_type_by_type_node(ctx, check_result->node_type_source_left) != BE_TYPE_POINTER) {
+		return false;
+	}
 
+	ParserASTNode *target = check_result->node_type_target->childs[0];
+	ParserASTNode *source = check_result->node_type_source_left->childs[0];
 
+	if (_get_type_by_type_node(ctx, target) == BE_TYPE_ARRAY
+			&& _get_type_by_type_node(ctx, source) == BE_TYPE_ARRAY) {
+		ParserASTNode *target_dims = target->childs[0];
+		ParserASTNode *target_type = target->childs[1];
+		ParserASTNode *source_dims = source->childs[0];
+		ParserASTNode *source_type = source->childs[1];
+
+		if (!_is_compatible_type(ctx, target_type, source_type, true)) {
+			return false;
+		}
+
+		if (target_dims->nchilds + 1 != source_dims->nchilds) {
+			return false;
+		}
+
+		for (int i = 0; i < target_dims->nchilds; i++) {
+			ParserASTNode *target_dim = target_dims->childs[i];
+			ParserASTNode *source_dim = source_dims->childs[1 + i];
+			if (be_parser_get_uint_val(ctx, target_dim) != be_parser_get_uint_val(ctx, source_dim)) {
+				return false;
+			}
+		}
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
+static void _stat_idx(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_IDX, &check_result);
+
+	if (_is_pointer_type(check_result.type_target)
+			&& _is_pointer_type(check_result.type_source_left)
+			&& check_result.node_type_source_left->childs[0]->type == BE_NODE_TYPE_ARRAY
+			&& _check_stat_idx_params(ctx, node, &check_result)
+			&& _is_integer_type(check_result.type_source_right)
+	) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
 
 static void _stat_not(
 	ParserContext *ctx,
@@ -5495,6 +5563,11 @@ static void _stat(
 
 
 
+
+		case BE_NODE_STAT_IDX: {
+			_stat_idx(ctx, node);
+			break;
+		} 
 		case BE_NODE_STAT_NOT: {
 			_stat_not(ctx, node);
 			break;
