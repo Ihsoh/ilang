@@ -5127,7 +5127,8 @@ static void _asm_stat_eq(
 
 	uint8_t type_source = _get_id_or_constexpr_type(ctx, node_source_left);
 
-	if (be_sem_is_integer_type(type_source)) {
+	if (be_sem_is_integer_type(type_source)
+			|| be_sem_is_pointer_type(type_source)) {
 		_move_id_or_constexpr_to_reg(
 			ctx,
 			_ASM_REG_AX,
@@ -5300,7 +5301,8 @@ static void _asm_stat_neq(
 
 	uint8_t type_source = _get_id_or_constexpr_type(ctx, node_source_left);
 
-	if (be_sem_is_integer_type(type_source)) {
+	if (be_sem_is_integer_type(type_source)
+			|| be_sem_is_pointer_type(type_source)) {
 		_move_id_or_constexpr_to_reg(
 			ctx,
 			_ASM_REG_AX,
@@ -5453,6 +5455,7 @@ static void _asm_stat_neq(
 		assert(0);
 	}
 }
+
 
 
 
