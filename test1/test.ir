@@ -16,13 +16,13 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	var a:*int64;
-	var b:*int64;
-	var c:int64;
-	assign a, cast<*int64>(1234);
-	assign b, cast<*int64>(123);
-	eq c, a, b;
-	vcall _print_int64("a == b = ", c);
+	var a:uint64;
+	var b:uint64;
+	var c:uint64;
+	assign a, cast<uint64>(2);
+	assign b, cast<uint64>(2);
+	bor c, a, b;
+	vcall _print_uint64("a & b = ", c);
 
 	return cast<int32>(0);
 }

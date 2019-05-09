@@ -2320,6 +2320,40 @@ static void _asm_inst_or_x_x(
 }
 
 /*
+	XOR
+*/
+
+static void _asm_inst_xor_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "xor");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
+/*
 	UCOMISS
 */
 
@@ -6200,9 +6234,152 @@ static void _asm_stat_ge(
 	}
 }
 
+static void _asm_stat_band(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BAND);
+	assert(node->nchilds == 3);
 
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
 
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
 
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		_asm_inst_and_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_RBX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_bor(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BOR);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		_asm_inst_or_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_RBX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_bxor(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BXOR);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		_asm_inst_xor_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_RBX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else {
+		assert(0);
+	}
+}
 
 
 
@@ -6383,9 +6560,18 @@ static void _asm_stat(
 			break;
 		}
 		
-
-
-
+		case BE_NODE_STAT_BAND: {
+			_asm_stat_band(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_BOR: {
+			_asm_stat_bor(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_BXOR: {
+			_asm_stat_bxor(ctx, node_stat);
+			break;
+		}
 
 
 

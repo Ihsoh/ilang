@@ -5145,6 +5145,80 @@ ok:
 	return;	
 }
 
+static void _stat_band(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_BAND, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source_left
+			&& check_result.type_target == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_bor(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_BOR, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source_left
+			&& check_result.type_target == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_bxor(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_BXOR, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source_left
+			&& check_result.type_target == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+
+
+
+
+
 
 
 
@@ -5331,7 +5405,18 @@ static void _stat(
 			break;
 		}
 
-
+		case BE_NODE_STAT_BAND: {
+			_stat_band(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_BOR: {
+			_stat_bor(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_BXOR: {
+			_stat_bxor(ctx, node);
+			break;
+		}
 
 
 
