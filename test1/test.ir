@@ -16,11 +16,11 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	var a:uint64;
-	var b:uint64;
+	var a:double;
+	var b:double;
 	var c:int64;
-	assign a, cast<uint64>(123);
-	assign b, cast<uint64>(1234);
+	assign a, cast<double>(123);
+	assign b, cast<double>(1234);
 	neq c, a, b;
 	vcall _print_int64("a != b = ", c);
 

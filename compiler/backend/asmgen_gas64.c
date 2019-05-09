@@ -5415,19 +5415,19 @@ static void _asm_stat_neq(
 			_ASM_REG_NAME_XMM1
 		);
 
-		_asm_inst_sete_x(
+		_asm_inst_setne_x(
 			ctx,
 			ctx->body,
 			_ASM_REG_NAME_AL
 		);
 
-		_asm_inst_setnp_x(
+		_asm_inst_setp_x(
 			ctx,
 			ctx->body,
 			_ASM_REG_NAME_BL
 		);
 
-		_asm_inst_and_x_x(
+		_asm_inst_or_x_x(
 			ctx,
 			ctx->body,
 			BE_TYPE_UINT8,
@@ -5614,7 +5614,7 @@ static void _asm_stat(
 			_asm_stat_neq(ctx, node_stat);
 			break;
 		}
-		
+
 
 
 
