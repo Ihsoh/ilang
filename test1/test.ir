@@ -16,13 +16,17 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	var a:uint64;
-	var b:uint64;
-	var c:uint64;
-	assign a, cast<uint64>(2);
-	assign b, cast<uint64>(2);
-	bor c, a, b;
-	vcall _print_uint64("a & b = ", c);
+	var offset:int8;
+	assign offset, cast<int8>(-2);
+
+	var a:*int64;
+	assign a, cast<*int64>(32);
+	add a, a, offset;
+
+	var b:*;
+	bitcast b, a;
+
+	vcall _print_pointer("b = ", b);
 
 	return cast<int32>(0);
 }

@@ -3207,53 +3207,115 @@ static uint8_t _move_id_or_constexpr_to_reg_ex(
 	assert(ctx);
 	assert(source_id_or_constexpr);
 
-	_asm_inst_mov_x_x(
-		ctx,
-		ctx->body,
-		BE_TYPE_UINT64,
-		_asm_inst_reg(ctx, BE_TYPE_UINT64, target_reg),
-		_ASM_CONST_0
-	);
-
 	if (source_id_or_constexpr->type == BE_NODE_IDENTIFIER) {
 		ParserSymbol *symbol = _get_var_symbol_by_id_node(ctx, source_id_or_constexpr);
 		uint8_t symbol_type = BE_VAR_SYMBOL_GET_TYPE(symbol);
+		size_t type_size = BE_VAR_SYMBOL_GET_TYPE_SIZE(symbol);
 		if (result != NULL) {
 			result->type = symbol_type;
-			result->type_size = BE_VAR_SYMBOL_GET_TYPE_SIZE(symbol);
+			result->type_size = type_size;
 			result->node_type = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol);
 		}
+
+		if (be_sem_is_signed_type(symbol_type)) {
+			const char *target_reg_name = _asm_inst_reg(ctx, symbol_type, target_reg);
 		
-		_asm_inst_mov_x_sym(
-			ctx,
-			ctx->body,
-			_asm_inst_reg(ctx, symbol_type, target_reg),
-			symbol
-		);
+			_asm_inst_mov_x_sym(
+				ctx,
+				ctx->body,
+				target_reg_name,
+				symbol
+			);
+
+			if (type_size < 8) {
+				_asm_inst_movsx_x_x(
+					ctx,
+					ctx->body,
+					BE_TYPE_INT64,
+					_asm_inst_reg(ctx, BE_TYPE_INT64, target_reg),
+					symbol_type,
+					target_reg_name
+				);
+			}
+		} else {
+			_asm_inst_mov_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT64,
+				_asm_inst_reg(ctx, BE_TYPE_UINT64, target_reg),
+				_ASM_CONST_0
+			);
+
+			_asm_inst_mov_x_sym(
+				ctx,
+				ctx->body,
+				_asm_inst_reg(ctx, symbol_type, target_reg),
+				symbol
+			);
+		}
 
 		return symbol_type;
 	} else if (source_id_or_constexpr->type == BE_NODE_EXPR) {
-		ResizableString rstr;
-		rstr_init(&rstr);
-		_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
 		uint8_t type = BE_EXPR_AST_NODE_GET_TYPE(source_id_or_constexpr);
+		ParserASTNode *node_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(source_id_or_constexpr);
+		size_t type_size = be_sem_calc_type_size(ctx->psrctx, source_id_or_constexpr, node_type);
 		if (result != NULL) {
-			ParserASTNode *node_type = BE_EXPR_AST_NODE_GET_TYPE_NODE(source_id_or_constexpr);
-
 			result->type = type;
-			result->type_size = be_sem_calc_type_size(ctx->psrctx, source_id_or_constexpr, node_type);
+			result->type_size = type_size;
 			result->node_type = node_type;
 		}
 		
-		_asm_inst_mov_x_x(
-			ctx,
-			ctx->body,
-			type,
-			_asm_inst_reg(ctx, type, target_reg),
-			RSTR_CSTR(&rstr)
-		);
+		if (be_sem_is_signed_type(type)) {
+			ResizableString rstr;
+			rstr_init(&rstr);
+			_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
 
-		rstr_free(&rstr);
+			const char *target_reg_name = _asm_inst_reg(ctx, type, target_reg);
+
+			_asm_inst_mov_x_x(
+				ctx,
+				ctx->body,
+				type,
+				target_reg_name,
+				RSTR_CSTR(&rstr)
+			);
+
+			if (type_size < 8) {
+				_asm_inst_movsx_x_x(
+					ctx,
+					ctx->body,
+					BE_TYPE_INT64,
+					_asm_inst_reg(ctx, BE_TYPE_INT64, target_reg),
+					type,
+					target_reg_name
+				);
+			}
+
+			rstr_free(&rstr);
+		} else {
+			_asm_inst_mov_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT64,
+				_asm_inst_reg(ctx, BE_TYPE_UINT64, target_reg),
+				_ASM_CONST_0
+			);
+
+			ResizableString rstr;
+			rstr_init(&rstr);
+			_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
+
+			_asm_inst_mov_x_x(
+				ctx,
+				ctx->body,
+				type,
+				_asm_inst_reg(ctx, type, target_reg),
+				RSTR_CSTR(&rstr)
+			);
+
+			rstr_free(&rstr);
+		}
+
 		return type;
 	} else {
 		assert(0);
