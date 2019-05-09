@@ -52,4 +52,8 @@ extern bool be_sem_is_number_type(
 	uint8_t type
 );
 
+extern size_t be_sem_get_primitive_type_size(
+	uint8_t type
+);
+
 #endif

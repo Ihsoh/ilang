@@ -4978,6 +4978,172 @@ ok:
 	return;	
 }
 
+static void _stat_rem(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_REM, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source_left
+			&& check_result.type_target == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+// TODO: mbr, idx, not, neg, bnot, ref, shl, shr
+
+
+
+
+
+static void _stat_eq(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_EQ, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& (_is_number_type(check_result.type_source_left) || _is_pointer_type(check_result.type_source_left))
+			&& check_result.type_source_left == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_neq(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_NEQ, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& (_is_number_type(check_result.type_source_left) || _is_pointer_type(check_result.type_source_left))
+			&& check_result.type_source_left == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_lt(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_LT, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& _is_number_type(check_result.type_source_left)
+			&& check_result.type_source_left == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_le(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_LE, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& _is_number_type(check_result.type_source_left)
+			&& check_result.type_source_left == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_gt(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_GT, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& _is_number_type(check_result.type_source_left)
+			&& check_result.type_source_left == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_ge(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_GE, &check_result);
+
+	if (_is_integer_type(check_result.type_target)
+			&& _is_number_type(check_result.type_source_left)
+			&& check_result.type_source_left == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
 
 
 
@@ -5131,6 +5297,41 @@ static void _stat(
 			_stat_div(ctx, node);
 			break;
 		}
+		case BE_NODE_STAT_REM: {
+			_stat_rem(ctx, node);
+			break;
+		}
+
+
+
+
+
+		case BE_NODE_STAT_EQ: {
+			_stat_eq(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_NEQ: {
+			_stat_neq(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_LT: {
+			_stat_lt(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_LE: {
+			_stat_le(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_GT: {
+			_stat_gt(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_GE: {
+			_stat_ge(ctx, node);
+			break;
+		}
+
+
 
 
 
@@ -5682,4 +5883,10 @@ bool be_sem_is_number_type(
 	uint8_t type
 ) {
 	return _is_number_type(type);
+}
+
+size_t be_sem_get_primitive_type_size(
+	uint8_t type
+) {
+	return _get_primitive_type_size(type);
 }

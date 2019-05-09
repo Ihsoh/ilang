@@ -16,13 +16,13 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	var a:double;
-	var b:double;
-	var c:double;
-	assign a, cast<double>(4.6);
-	assign b, cast<double>(2);
-	div c, a, b;
-	vcall _print_double("a / b = ", c);
+	var a:uint64;
+	var b:uint64;
+	var c:int64;
+	assign a, cast<uint64>(123);
+	assign b, cast<uint64>(1234);
+	neq c, a, b;
+	vcall _print_int64("a != b = ", c);
 
 	return cast<int32>(0);
 }
