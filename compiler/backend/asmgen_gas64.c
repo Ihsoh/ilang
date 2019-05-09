@@ -567,6 +567,22 @@ static void _asm_inst_uint_const(
 	构建指令工具函数。
 */
 
+static void _asm_inst(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *mnemonic
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(mnemonic);
+
+	rstr_appendf(
+		rstr,
+		"%s\n",
+		mnemonic
+	);
+}
+
 static void _asm_inst1(
 	ASMGeneratorGas64Context *ctx,
 	ResizableString *rstr,
@@ -1655,6 +1671,36 @@ static void _asm_inst_cvtsd2ss_x_x(
 	IMUL
 */
 
+static void _asm_inst_imul_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "imul");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
 static void _asm_inst_imul_x_x_x(
 	ASMGeneratorGas64Context *ctx,
 	ResizableString *rstr,
@@ -1773,6 +1819,194 @@ static void _asm_inst_subsd_x_x(
 		target
 	);
 }
+
+/*
+	MULSS
+*/
+
+static void _asm_inst_mulss_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "mulss";
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+/*
+	MULSD
+*/
+
+static void _asm_inst_mulsd_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "mulsd";
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+/*
+	DIV
+*/
+
+static void _asm_inst_div_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "div");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst1(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
+/*
+	IDIV
+*/
+
+static void _asm_inst_idiv_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "idiv");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst1(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
+/*
+	DIVSS
+*/
+
+static void _asm_inst_divss_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "divss";
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+/*
+	DIVSD
+*/
+
+static void _asm_inst_divsd_x_x(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	const char *mnemonic = "divsd";
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		mnemonic,
+		source,
+		target
+	);
+}
+
+/*
+	CQO
+*/
+
+static void _asm_inst_cqo(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr
+) {
+	assert(ctx);
+	assert(rstr);
+
+	const char *mnemonic = "cqto";
+
+	_asm_inst(
+		ctx,
+		rstr,
+		mnemonic
+	);
+}
+
+
 
 
 
@@ -4152,6 +4386,249 @@ static void _asm_stat_sub(
 	}
 }
 
+static void _asm_stat_mul(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_MUL);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		_asm_inst_imul_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_RBX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else if (type_target == BE_TYPE_FLOAT) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_mulss_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_movss_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_ASM_REG_NAME_XMM0
+		);
+	} else if (type_target == BE_TYPE_DOUBLE) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_mulsd_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_movsd_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_ASM_REG_NAME_XMM0
+		);
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_div(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_DIV);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	if (be_sem_is_unsigned_type(type_target)) {
+		_asm_inst_mov_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RDX,
+			_ASM_CONST_0
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		_asm_inst_div_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RBX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else if (be_sem_is_signed_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
+
+		_asm_inst_cqo(
+			ctx,
+			ctx->body
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		_asm_inst_idiv_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RBX
+		);
+
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+		);
+	} else if (type_target == BE_TYPE_FLOAT) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_divss_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_movss_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_ASM_REG_NAME_XMM0
+		);
+	} else if (type_target == BE_TYPE_DOUBLE) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_divsd_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_movsd_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_ASM_REG_NAME_XMM0
+		);
+	} else {
+		assert(0);
+	}
+}
+
+
+
+
 
 
 
@@ -4282,6 +4759,14 @@ static void _asm_stat(
 		}
 		case BE_NODE_STAT_SUB: {
 			_asm_stat_sub(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_MUL: {
+			_asm_stat_mul(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_DIV: {
+			_asm_stat_div(ctx, node_stat);
 			break;
 		}
 

@@ -4932,6 +4932,52 @@ ok:
 	return;	
 }
 
+static void _stat_mul(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_MUL, &check_result);
+
+	if (_is_number_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source_left
+			&& check_result.type_target == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
+static void _stat_div(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	_ResultCheckStat_I_CI_CI check_result;
+	_check_stat_i_ci_ci(ctx, node, BE_NODE_STAT_DIV, &check_result);
+
+	if (_is_number_type(check_result.type_target)
+			&& check_result.type_target == check_result.type_source_left
+			&& check_result.type_target == check_result.type_source_right) {
+		goto ok;
+	}
+
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+
+ok:
+	return;	
+}
+
 
 
 
@@ -5075,6 +5121,14 @@ static void _stat(
 		}
 		case BE_NODE_STAT_SUB: {
 			_stat_sub(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_MUL: {
+			_stat_mul(ctx, node);
+			break;
+		}
+		case BE_NODE_STAT_DIV: {
+			_stat_div(ctx, node);
 			break;
 		}
 

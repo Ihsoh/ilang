@@ -61,27 +61,27 @@
 #define	BE_TOKEN_KEYWORD_ADD			0x3022	// add
 #define	BE_TOKEN_KEYWORD_SUB			0x3023	// sub
 #define	BE_TOKEN_KEYWORD_MUL			0x3024	// mul
-#define	BE_TOKEN_KEYWORD_DIV			0x3024	// div
-#define	BE_TOKEN_KEYWORD_REM			0x3025	// rem
-#define	BE_TOKEN_KEYWORD_MBR			0x3026	// mbr
-#define	BE_TOKEN_KEYWORD_IDX			0x3027	// idx
-#define	BE_TOKEN_KEYWORD_NOT			0x3028	// not
-#define	BE_TOKEN_KEYWORD_NEG			0x3029	// neg
-#define	BE_TOKEN_KEYWORD_BNOT			0x302a	// bnot
-#define	BE_TOKEN_KEYWORD_REF			0x302b	// ref
-#define	BE_TOKEN_KEYWORD_SHL			0x302c	// shl
-#define	BE_TOKEN_KEYWORD_SHR			0x302d	// shr
+#define	BE_TOKEN_KEYWORD_DIV			0x3025	// div
+#define	BE_TOKEN_KEYWORD_REM			0x3026	// rem
+#define	BE_TOKEN_KEYWORD_MBR			0x3027	// mbr
+#define	BE_TOKEN_KEYWORD_IDX			0x3028	// idx
+#define	BE_TOKEN_KEYWORD_NOT			0x3029	// not
+#define	BE_TOKEN_KEYWORD_NEG			0x302a	// neg
+#define	BE_TOKEN_KEYWORD_BNOT			0x302b	// bnot
+#define	BE_TOKEN_KEYWORD_REF			0x302c	// ref
+#define	BE_TOKEN_KEYWORD_SHL			0x302d	// shl
+#define	BE_TOKEN_KEYWORD_SHR			0x302e	// shr
 
-#define	BE_TOKEN_KEYWORD_EQ				0x302e	// eq
-#define	BE_TOKEN_KEYWORD_NEQ			0x302f	// neq
-#define	BE_TOKEN_KEYWORD_LT				0x3030	// lt
-#define	BE_TOKEN_KEYWORD_LE				0x3031	// le
-#define	BE_TOKEN_KEYWORD_GT				0x3032	// gt
-#define	BE_TOKEN_KEYWORD_GE				0x3033	// ge
+#define	BE_TOKEN_KEYWORD_EQ				0x302f	// eq
+#define	BE_TOKEN_KEYWORD_NEQ			0x3030	// neq
+#define	BE_TOKEN_KEYWORD_LT				0x3031	// lt
+#define	BE_TOKEN_KEYWORD_LE				0x3032	// le
+#define	BE_TOKEN_KEYWORD_GT				0x3033	// gt
+#define	BE_TOKEN_KEYWORD_GE				0x3034	// ge
 
-#define	BE_TOKEN_KEYWORD_BAND			0x3034	// band
-#define	BE_TOKEN_KEYWORD_BOR			0x3035	// bor
-#define	BE_TOKEN_KEYWORD_BXOR			0x3036	// bxor
+#define	BE_TOKEN_KEYWORD_BAND			0x3035	// band
+#define	BE_TOKEN_KEYWORD_BOR			0x3036	// bor
+#define	BE_TOKEN_KEYWORD_BXOR			0x3037	// bxor
 
 
 
