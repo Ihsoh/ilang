@@ -16,13 +16,48 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	var arr:[2][3][4]int64;
+	var ptr:*;
+
+	var arr:[2][3][4]int8;
 	
-	var a:*[2][3][4]int64;
+	var a:*[2][3][4]int8;
 	ref a, arr;
 
-	var b:*[3][4]int64;
+	var b:*[3][4]int8;
 	idx b, a, 0;
+	bitcast ptr, b;
+	vcall _print_pointer("&(arr[0]) = ", ptr);
+
+	var b1:*[4]int8;
+	idx b1, b, 0;
+	bitcast ptr, b1;
+	vcall _print_pointer("&(arr[0][0]) = ", ptr);
+
+	var b2:*[4]int8;
+	idx b2, b, 1;
+	bitcast ptr, b2;
+	vcall _print_pointer("&(arr[0][1]) = ", ptr);
+
+	var c:*[3][4]int8;
+	idx c, a, 1;
+	bitcast ptr, c;
+	vcall _print_pointer("&(arr[1]) = ", ptr);
+
+	var c1:*[4]int8;
+	idx c1, c, 0;
+	bitcast ptr, c1;
+	vcall _print_pointer("&(arr[1][0]) = ", ptr);
+
+	var c2:*[4]int8;
+	idx c2, c, 1;
+	bitcast ptr, c2;
+	vcall _print_pointer("&(arr[1][1]) = ", ptr);
+
+	var d:*int8;
+	idx d, c2, 2;
+	bitcast ptr, d;
+	vcall _print_pointer("&(arr[1][1][2]) = ", ptr);
+
 
 	return cast<int32>(0);
 }

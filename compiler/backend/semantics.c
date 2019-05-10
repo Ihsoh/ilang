@@ -5025,8 +5025,10 @@ static bool _check_stat_idx_params(
 	ParserASTNode *target = check_result->node_type_target->childs[0];
 	ParserASTNode *source = check_result->node_type_source_left->childs[0];
 
-	if (_get_type_by_type_node(ctx, target) == BE_TYPE_ARRAY
-			&& _get_type_by_type_node(ctx, source) == BE_TYPE_ARRAY) {
+	uint8_t type_target = _get_type_by_type_node(ctx, target);
+	uint8_t type_source = _get_type_by_type_node(ctx, source);
+
+	if (type_target == BE_TYPE_ARRAY && type_source == BE_TYPE_ARRAY) {
 		ParserASTNode *target_dims = target->childs[0];
 		ParserASTNode *target_type = target->childs[1];
 		ParserASTNode *source_dims = source->childs[0];
@@ -5046,6 +5048,19 @@ static bool _check_stat_idx_params(
 			if (be_parser_get_uint_val(ctx, target_dim) != be_parser_get_uint_val(ctx, source_dim)) {
 				return false;
 			}
+		}
+
+		return true;
+	} else if (type_target != BE_TYPE_ARRAY && type_source == BE_TYPE_ARRAY) {
+		ParserASTNode *source_dims = source->childs[0];
+		ParserASTNode *source_type = source->childs[1];
+
+		if (!_is_compatible_type(ctx, target, source_type, true)) {
+			return false;
+		}
+
+		if (source_dims->nchilds != 1) {
+			return false;
 		}
 
 		return true;

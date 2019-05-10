@@ -5257,7 +5257,7 @@ static void _asm_stat_rem(
 	}
 }
 
-// TODO: mbr, idx
+// TODO: mbr
 
 
 
@@ -5275,16 +5275,58 @@ static void _asm_stat_idx(
 	assert(node_target->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
 	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
 
 	ParserASTNode *node_source_left = node->childs[1];
 	ParserASTNode *node_source_right = node->childs[2];
 
-	assert(0);
-
 	if (be_sem_is_pointer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_source_left
+		);
 
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_BX,
+			node_source_right
+		);
+
+		size_t size = be_sem_calc_type_size(
+			ctx->psrctx, node, node_type_target->childs[0]
+		);
+		ResizableString rstr_size;
+		rstr_init(&rstr_size);
+		_asm_inst_uint_const(
+			ctx,
+			&rstr_size,
+			size
+		);
+		_asm_inst_imul_x_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RBX,
+			_ASM_REG_NAME_RBX,
+			RSTR_CSTR(&rstr_size)
+		);
+		rstr_free(&rstr_size);
 		
+		_asm_inst_add_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
+			_ASM_REG_NAME_RBX
+		);
 
+		_asm_inst_mov_sym_x(
+			ctx,
+			ctx->body,
+			symbol_target,
+			_ASM_REG_NAME_RAX
+		);
 	} else {
 		assert(0);
 	}
