@@ -7210,7 +7210,6 @@ static void _asm_func(
 			if (ctx->local_var_address_counter % align > 0) {
 				size_t align_padding = align - ctx->local_var_address_counter % align;
 				ctx->local_var_address_counter += align_padding;
-				ctx->local_var_size += align_padding;
 			}
 
 			BE_VAR_SYMBOL_SET_ADDRESS(symbol, ctx->local_var_address_counter);
@@ -7221,7 +7220,7 @@ static void _asm_func(
 			rstr_appendf(
 				code_gen_name,
 				"%d(%%rbp)",
-				-8 * ctx->local_var_index_counter
+				16 + 8 * i
 			);
 
 			rstr_appendf(
@@ -7244,7 +7243,6 @@ static void _asm_func(
 			);
 
 			ctx->local_var_address_counter += type_size;
-			ctx->local_var_size += type_size;
 			ctx->local_var_index_counter++;
 		}
 
@@ -7265,44 +7263,6 @@ static void _asm_func(
 			"subq $%zu, %%rsp\n\n",
 			ctx->local_var_size
 		);
-
-		for (int i = 0; i < node_func_params->nchilds; i++) {
-			ParserASTNode *node_param = node_func_params->childs[i];
-			if (node_param->type == BE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM) {
-				continue;
-			}
-
-			ParserASTNode *node_param_type = node_param->childs[1];
-			ParserSymbol *symbol = BE_FUNC_PARAM_AST_NODE_GET_SYMBOL(node_param);
-
-			ResizableString *code_gen_name = BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol);
-
-			ResizableString rstr_source;
-			rstr_init(&rstr_source);
-			rstr_appendf(
-				&rstr_source,
-				"%d(%%rbp)",
-				16 + 8 * i
-			);
-
-			_asm_inst_mov_x_x(
-				ctx,
-				ctx->local_var_defs,
-				BE_TYPE_UINT64,
-				_ASM_REG_NAME_RAX,
-				RSTR_CSTR(&rstr_source)
-			);
-
-			_asm_inst_mov_x_x(
-				ctx,
-				ctx->local_var_defs,
-				BE_TYPE_UINT64,
-				RSTR_CSTR(code_gen_name),
-				_ASM_REG_NAME_RAX
-			);
-
-			rstr_free(&rstr_source);
-		}
 
 		rstr_append_with_rstr(body, ctx->local_var_defs);
 		rstr_append_with_cstr(body, "\n# code:\n");
