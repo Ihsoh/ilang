@@ -22,21 +22,17 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	var ptr:*;
+	var a:int32;
+	assign a, cast<int32>(1);
 
-	var a:struct A;
-	
-	var b:*struct A;
-	ref b, a;
+	var b:uint32;
+	assign b, cast<uint32>(2);
 
-	var a_a:*int64;
-	mbr a_a, b, a;
+	var c:int64;
+	assign c, cast<int64>(3);
 
-	var a_b:*int64;
-	mbr a_b, b, b;
-
-	var a_c:*int64;
-	mbr a_c, b, c;
+	var d:uint64;
+	assign d, cast<uint64>(4);
 
 	return cast<int32>(0);
 }

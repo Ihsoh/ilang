@@ -667,38 +667,36 @@ static void _asm_inst_mov_x_x(
 	assert(target);
 	assert(source);
 
-	const char *mnemonic = "";
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "mov");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
 
-	switch (type) {
-		case BE_TYPE_CHAR:
-		case BE_TYPE_INT8:
-		case BE_TYPE_UINT8: {
-			mnemonic = "movb";
-			break;
-		}
-		case BE_TYPE_INT16:
-		case BE_TYPE_UINT16: {
-			mnemonic = "movw";
-			break;
-		}
-		case BE_TYPE_INT32:
-		case BE_TYPE_UINT32:
-		case BE_TYPE_FLOAT: {
-			mnemonic = "movl";
-			break;
-		}
-		case BE_TYPE_INT64:
-		case BE_TYPE_UINT64:
-		case BE_TYPE_DOUBLE:
-		case BE_TYPE_POINTER: {
-			mnemonic = "movq";
-			break;
-		}
-		default: {
-			assert(0);
-			break;
-		}
-	}
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
+static void _asm_inst_mov_reg64_imm64(
+	ASMGeneratorGas64Context *ctx,
+	ResizableString *rstr,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+	
+	const char *mnemonic = "movabsq";
 
 	_asm_inst2(
 		ctx,
@@ -868,44 +866,22 @@ static void _asm_inst_add_x_x(
 	assert(target);
 	assert(source);
 
-	const char *mnemonic = "";
-
-	switch (type) {
-		case BE_TYPE_CHAR:
-		case BE_TYPE_INT8:
-		case BE_TYPE_UINT8: {
-			mnemonic = "addb";
-			break;
-		}
-		case BE_TYPE_INT16:
-		case BE_TYPE_UINT16: {
-			mnemonic = "addw";
-			break;
-		}
-		case BE_TYPE_INT32:
-		case BE_TYPE_UINT32: {
-			mnemonic = "addl";
-			break;
-		}
-		case BE_TYPE_INT64:
-		case BE_TYPE_UINT64:
-		case BE_TYPE_POINTER: {
-			mnemonic = "addq";
-			break;
-		}
-		default: {
-			assert(0);
-			break;
-		}
-	}
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "add");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
 
 	_asm_inst2(
 		ctx,
 		rstr,
-		mnemonic,
+		RSTR_CSTR(&rstr_mnemonic),
 		source,
 		target
 	);
+
+	rstr_free(&rstr_mnemonic);
 }
 
 /*
@@ -985,44 +961,22 @@ static void _asm_inst_cmp_x_x(
 	assert(target);
 	assert(source);
 
-	const char *mnemonic = "";
-
-	switch (type) {
-		case BE_TYPE_CHAR:
-		case BE_TYPE_INT8:
-		case BE_TYPE_UINT8: {
-			mnemonic = "cmpb";
-			break;
-		}
-		case BE_TYPE_INT16:
-		case BE_TYPE_UINT16: {
-			mnemonic = "cmpw";
-			break;
-		}
-		case BE_TYPE_INT32:
-		case BE_TYPE_UINT32: {
-			mnemonic = "cmpl";
-			break;
-		}
-		case BE_TYPE_INT64:
-		case BE_TYPE_UINT64:
-		case BE_TYPE_POINTER: {
-			mnemonic = "cmpq";
-			break;
-		}
-		default: {
-			assert(0);
-			break;
-		}
-	}
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "cmp");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
 
 	_asm_inst2(
 		ctx,
 		rstr,
-		mnemonic,
+		RSTR_CSTR(&rstr_mnemonic),
 		source,
 		target
 	);
+
+	rstr_free(&rstr_mnemonic);
 }
 
 static void _asm_inst_cmp_sym_x(
@@ -3331,17 +3285,24 @@ static uint8_t _move_id_or_constexpr_to_reg_ex(
 			rstr_init(&rstr);
 			_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
 
-			const char *target_reg_name = _asm_inst_reg(ctx, type, target_reg);
+			if (type == BE_TYPE_INT64) {
+				_asm_inst_mov_reg64_imm64(
+					ctx,
+					ctx->body,
+					_asm_inst_reg(ctx, BE_TYPE_INT64, target_reg),
+					RSTR_CSTR(&rstr)
+				);
+			} else {
+				const char *target_reg_name = _asm_inst_reg(ctx, type, target_reg);
 
-			_asm_inst_mov_x_x(
-				ctx,
-				ctx->body,
-				type,
-				target_reg_name,
-				RSTR_CSTR(&rstr)
-			);
+				_asm_inst_mov_x_x(
+					ctx,
+					ctx->body,
+					type,
+					target_reg_name,
+					RSTR_CSTR(&rstr)
+				);
 
-			if (type_size < 8) {
 				_asm_inst_movsx_x_x(
 					ctx,
 					ctx->body,
@@ -3354,27 +3315,42 @@ static uint8_t _move_id_or_constexpr_to_reg_ex(
 
 			rstr_free(&rstr);
 		} else {
-			_asm_inst_mov_x_x(
-				ctx,
-				ctx->body,
-				BE_TYPE_UINT64,
-				_asm_inst_reg(ctx, BE_TYPE_UINT64, target_reg),
-				_ASM_CONST_0
-			);
+			if (type == BE_TYPE_UINT64) {
+				ResizableString rstr;
+				rstr_init(&rstr);
+				_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
 
-			ResizableString rstr;
-			rstr_init(&rstr);
-			_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
+				_asm_inst_mov_reg64_imm64(
+					ctx,
+					ctx->body,
+					_asm_inst_reg(ctx, BE_TYPE_UINT64, target_reg),
+					RSTR_CSTR(&rstr)
+				);
 
-			_asm_inst_mov_x_x(
-				ctx,
-				ctx->body,
-				type,
-				_asm_inst_reg(ctx, type, target_reg),
-				RSTR_CSTR(&rstr)
-			);
+				rstr_free(&rstr);
+			} else {
+				_asm_inst_mov_x_x(
+					ctx,
+					ctx->body,
+					BE_TYPE_UINT64,
+					_asm_inst_reg(ctx, BE_TYPE_UINT64, target_reg),
+					_ASM_CONST_0
+				);
 
-			rstr_free(&rstr);
+				ResizableString rstr;
+				rstr_init(&rstr);
+				_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
+
+				_asm_inst_mov_x_x(
+					ctx,
+					ctx->body,
+					type,
+					_asm_inst_reg(ctx, type, target_reg),
+					RSTR_CSTR(&rstr)
+				);
+
+				rstr_free(&rstr);
+			}
 		}
 
 		return type;
@@ -3424,12 +3400,10 @@ static void _asm_stat_assign(
 		_asm_constexpr_param(ctx, &rstr_source, node_source);
 		
 		uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
-		_asm_inst_mov_x_x(
+		_move_id_or_constexpr_to_reg(
 			ctx,
-			ctx->body,
-			type_target,
-			_asm_inst_reg(ctx, type_target, _ASM_REG_AX),
-			RSTR_CSTR(&rstr_source)
+			_ASM_REG_AX,
+			node_source
 		);
 
 		_asm_inst_mov_sym_x(
@@ -3519,21 +3493,13 @@ static void _asm_stat_asm_set_reg(
 		_asm_constexpr_param(ctx, &rstr_source, node_source);
 
 		uint8_t type_source = BE_EXPR_AST_NODE_GET_TYPE(node_source);
-		const char *tmp_reg = _asm_inst_reg(ctx, type_source, _ASM_REG_AX);
-		_asm_inst_mov_x_x(
-			ctx,
-			ctx->body,
-			type_source,
-			tmp_reg,
-			RSTR_CSTR(&rstr_source)
-		);
 
 		_asm_inst_mov_x_x(
 			ctx,
 			ctx->body,
 			type_source,
 			RSTR_CSTR(&rstr_reg_target),
-			tmp_reg
+			RSTR_CSTR(&rstr_source)
 		);
 
 		rstr_free(&rstr_source);
@@ -3692,7 +3658,6 @@ static void _asm_stat_cbr(
 	rstr_init(&rstr_label_false);
 	_out_label(ctx, &rstr_label_false, NULL, node_label_false);
 
-
 	if (node_id_cond->type == BE_NODE_IDENTIFIER) {
 		ParserSymbol *symbol_id_cond = _get_var_symbol_by_id_node(ctx, node_id_cond);
 		_asm_inst_cmp_sym_x(ctx, ctx->body, symbol_id_cond, _ASM_CONST_0);
@@ -3702,20 +3667,18 @@ static void _asm_stat_cbr(
 		_asm_constexpr_param(ctx, &rstr_id_cond, node_id_cond);
 
 		uint8_t type_id_cond = BE_EXPR_AST_NODE_GET_TYPE(node_id_cond);
-		const char *tmp_reg = _asm_inst_reg(ctx, type_id_cond, _ASM_REG_AX);
-		_asm_inst_mov_x_x(
+		
+		_move_id_or_constexpr_to_reg(
 			ctx,
-			ctx->body,
-			type_id_cond,
-			tmp_reg,
-			RSTR_CSTR(&rstr_id_cond)
+			_ASM_REG_AX,
+			node_id_cond
 		);
 
 		_asm_inst_cmp_x_x(
 			ctx,
 			ctx->body,
-			type_id_cond,
-			tmp_reg,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX,
 			_ASM_CONST_0
 		);
 
@@ -3743,33 +3706,11 @@ static void _asm_stat_return(
 
 	if (node->nchilds == 1) {
 		ParserASTNode *node_ret_val =  node->childs[0];
-		if (node_ret_val->type == BE_NODE_IDENTIFIER) {
-			ParserSymbol *symbol_ret_val = _get_var_symbol_by_id_node(ctx, node_ret_val);
-			uint8_t type_ret_val = BE_VAR_SYMBOL_GET_TYPE(symbol_ret_val);
-			_asm_inst_mov_x_sym(
-				ctx,
-				ctx->body,
-				_asm_inst_reg(ctx, type_ret_val, _ASM_REG_AX),
-				symbol_ret_val
-			);
-		} else if (node_ret_val->type == BE_NODE_EXPR) {
-			ResizableString rstr_ret_val;
-			rstr_init(&rstr_ret_val);
-			_asm_constexpr_param(ctx, &rstr_ret_val, node_ret_val);
-
-			uint8_t type_ret_val = BE_EXPR_AST_NODE_GET_TYPE(node_ret_val);
-			_asm_inst_mov_x_x(
-				ctx,
-				ctx->body,
-				type_ret_val,
-				_asm_inst_reg(ctx, type_ret_val, _ASM_REG_AX),
-				RSTR_CSTR(&rstr_ret_val)
-			);
-
-			rstr_free(&rstr_ret_val);
-		} else {
-			assert(0);
-		}
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			node_ret_val
+		);
 	}
 
 	ResizableString rstr_ret;
@@ -7084,9 +7025,6 @@ static void _asm_stat(
 			_asm_stat_bxor(ctx, node_stat);
 			break;
 		}
-
-
-
 
 		case BE_NODE_STAT_DUMMY: {
 			
