@@ -56,4 +56,10 @@ extern size_t be_sem_get_primitive_type_size(
 	uint8_t type
 );
 
+extern ParserSymbol * be_sem_get_struct_member_symbol(
+	ParserContext *ctx,
+	ParserASTNode *node_struct_id,
+	ParserASTNode *node_struct_member_id
+);
+
 #endif

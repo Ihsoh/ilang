@@ -10,6 +10,12 @@ function _add_i64(n1:int64, n2:int64):int64 {
 	return result;
 }
 
+struct A {
+	var a:int64;
+	var b:int64;
+	var c:int64;
+}
+
 function _main():int32 {
 	var result:int64;
 	call result, _add_i64(cast<int64>(100), cast<int64>(200));
@@ -18,46 +24,19 @@ function _main():int32 {
 
 	var ptr:*;
 
-	var arr:[2][3][4]int8;
+	var a:struct A;
 	
-	var a:*[2][3][4]int8;
-	ref a, arr;
+	var b:*struct A;
+	ref b, a;
 
-	var b:*[3][4]int8;
-	idx b, a, 0;
-	bitcast ptr, b;
-	vcall _print_pointer("&(arr[0]) = ", ptr);
+	var a_a:*int64;
+	mbr a_a, b, a;
 
-	var b1:*[4]int8;
-	idx b1, b, 0;
-	bitcast ptr, b1;
-	vcall _print_pointer("&(arr[0][0]) = ", ptr);
+	var a_b:*int64;
+	mbr a_b, b, b;
 
-	var b2:*[4]int8;
-	idx b2, b, 1;
-	bitcast ptr, b2;
-	vcall _print_pointer("&(arr[0][1]) = ", ptr);
-
-	var c:*[3][4]int8;
-	idx c, a, 1;
-	bitcast ptr, c;
-	vcall _print_pointer("&(arr[1]) = ", ptr);
-
-	var c1:*[4]int8;
-	idx c1, c, 0;
-	bitcast ptr, c1;
-	vcall _print_pointer("&(arr[1][0]) = ", ptr);
-
-	var c2:*[4]int8;
-	idx c2, c, 1;
-	bitcast ptr, c2;
-	vcall _print_pointer("&(arr[1][1]) = ", ptr);
-
-	var d:*int8;
-	idx d, c2, 2;
-	bitcast ptr, d;
-	vcall _print_pointer("&(arr[1][1][2]) = ", ptr);
-
+	var a_c:*int64;
+	mbr a_c, b, c;
 
 	return cast<int32>(0);
 }

@@ -5257,10 +5257,62 @@ static void _asm_stat_rem(
 	}
 }
 
-// TODO: mbr
+static void _asm_stat_mbr(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_MBR);
+	assert(node->nchilds == 3);
 
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+	assert(type_target == BE_TYPE_POINTER);
 
+	ParserASTNode *node_source_left = node->childs[1];
+	MoveIdOrConstexprToRegEx result;
+	_move_id_or_constexpr_to_reg_ex(
+		ctx,
+		_ASM_REG_AX,
+		node_source_left,
+		&result
+	);
+	assert(result.node_type->type == BE_NODE_TYPE_POINTER);
+	assert(result.node_type->childs[0]->type == BE_NODE_TYPE_STRUCT);
+	ParserASTNode *node_struct_id = result.node_type->childs[0]->childs[0];
 
+	ParserASTNode *node_source_right = node->childs[2];
+	assert(node_source_right->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_struct_member = be_sem_get_struct_member_symbol(
+		ctx->psrctx, node_struct_id, node_source_right
+	);
+	size_t offset = BE_STRUCT_MEMBER_VAR_SYMBOL_GET_OFFSET(symbol_struct_member);
+	ResizableString rstr_offset;
+	rstr_init(&rstr_offset);
+	_asm_inst_uint_const(
+		ctx,
+		&rstr_offset,
+		offset
+	);
+	_asm_inst_add_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RAX,
+		RSTR_CSTR(&rstr_offset)
+	);
+	rstr_free(&rstr_offset);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_ASM_REG_NAME_RAX
+	);
+}
 
 static void _asm_stat_idx(
 	ASMGeneratorGas64Context *ctx,
@@ -6965,11 +7017,10 @@ static void _asm_stat(
 			break;
 		}
 
-
-
-
-
-
+		case BE_NODE_STAT_MBR: {
+			_asm_stat_mbr(ctx, node_stat);
+			break;
+		}
 		case BE_NODE_STAT_IDX: {
 			_asm_stat_idx(ctx, node_stat);
 			break;

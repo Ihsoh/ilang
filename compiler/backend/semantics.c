@@ -3715,6 +3715,9 @@ static void _process_struct_member(
 	assert(node_struct_body->type == BE_NODE_STRUCT_BODY);
 	assert(symbol_struct);
 
+	size_t max_align = 1;
+	size_t size = 0;
+
 	for (int i = 0; i < node_struct_body->nchilds; i++) {
 		ParserASTNode *child = node_struct_body->childs[i];
 		assert(child);
@@ -3731,13 +3734,33 @@ static void _process_struct_member(
 					uint8_t var_type = 0;
 					_type(ctx, node_var_type, &var_type);
 
+					size_t align = 1;
+					if (BE_STRUCT_AST_NODE_GET_PACKED(node)) {
+						align = 1;
+					} else {
+						align = _calc_type_align(ctx, node, node_var_type);
+					}
+
+					size_t offset = size;
+
 					be_parser_add_struct_member_var_symbol_to_symbol(
 						ctx,
 						symbol_struct,
 						node_var_id->token,
 						var_type,
-						node_var_type
+						node_var_type,
+						offset
 					);
+
+					if (align > max_align) {
+						max_align = align;
+					}
+
+					if (size % align > 0) {
+						size += align - size % align;
+					}
+
+					size += _calc_type_size(ctx, node, node_var_type);
 				} else if (node_var_item->nchilds == 3) {
 					_SYNERR_NODE(
 						ctx,
@@ -3848,6 +3871,49 @@ static ParserSymbol * _get_func_symbol_by_id_node(
 	}
 
 	return symbol;
+}
+
+static ParserSymbol * _get_struct_symbol_by_id_node(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_IDENTIFIER);
+
+	ParserSymbol *symbol = parser_get_symbol_from_node(
+		ctx, node, BE_SYM_STRUCT, node->token
+	);
+	if (symbol == NULL) {
+		_SYNERR_TOKEN(ctx, node->token, "invalid identifier.");
+	}
+
+	return symbol;
+}
+
+static ParserSymbol * _get_struct_member_symbol(
+	ParserContext *ctx,
+	ParserASTNode *node_struct_id,
+	ParserASTNode *node_struct_member_id
+) {
+	assert(ctx);
+	assert(node_struct_id);
+	assert(node_struct_id->type == BE_NODE_IDENTIFIER);
+	assert(node_struct_member_id);
+	assert(node_struct_member_id->type == BE_NODE_IDENTIFIER);
+
+	ParserSymbol *symbol_struct = _get_struct_symbol_by_id_node(
+		ctx, node_struct_id
+	);
+
+	ParserSymbol *symbol_struct_member = parser_get_symbol_from_symbol(
+		ctx, symbol_struct, BE_SYM_STRUCT_MEMBER_VAR, node_struct_member_id->token
+	);
+	if (symbol_struct_member == NULL) {
+		_SYNERR_TOKEN(ctx, node_struct_member_id->token, "invalid identifier.");
+	}
+
+	return symbol_struct_member;
 }
 
 static ParserSymbol * _get_symbol_by_id_node(
@@ -5001,12 +5067,60 @@ ok:
 	return;	
 }
 
-// TODO: mbr
+static void _stat_mbr(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_MBR);
+	assert(node->nchilds == 3);
 
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
+	if (node_type_target->type != BE_NODE_TYPE_POINTER) {
+		goto err;
+	}
 
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_type_source_left = NULL;
+	if (node_source_left->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_source_left = _get_var_symbol_by_id_node(ctx, node_source_left);
+		node_type_source_left = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source_left);
+	} else if (node_source_left->type == BE_NODE_EXPR) {
+		_expr_wrapper(ctx, node_source_left);
+		node_type_source_left = BE_EXPR_AST_NODE_GET_TYPE_NODE(node_source_left);
+	} else {
+		assert(0);
+	}
+	if (node_type_source_left->type != BE_NODE_TYPE_POINTER) {
+		goto err;
+	}
+	if (node_type_source_left->childs[0]->type != BE_NODE_TYPE_STRUCT) {
+		goto err;
+	}
+	ParserASTNode *node_struct_id = node_type_source_left->childs[0]->childs[0];
 
+	ParserASTNode *node_source_right = node->childs[2];
+	assert(node_source_right->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_struct_member = _get_struct_member_symbol(
+		ctx, node_struct_id, node_source_right
+	);
+	ParserASTNode *node_type_struct_member = BE_STRUCT_MEMBER_VAR_SYMBOL_GET_TYPE_NODE(symbol_struct_member);
+	if (!_is_compatible_type(ctx, node_type_target->childs[0], node_type_struct_member, true)) {
+		goto err;
+	}
 
-
+	return;
+err:
+	_SYNERR_NODE(
+		ctx,
+		node,
+		"invalid parameter combination."
+	);
+}
 
 static bool _check_stat_idx_params(
 	ParserContext *ctx,
@@ -5576,9 +5690,10 @@ static void _stat(
 			break;
 		}
 
-
-
-
+		case BE_NODE_STAT_MBR: {
+			_stat_mbr(ctx, node);
+			break;
+		} 
 		case BE_NODE_STAT_IDX: {
 			_stat_idx(ctx, node);
 			break;
@@ -6199,4 +6314,12 @@ size_t be_sem_get_primitive_type_size(
 	uint8_t type
 ) {
 	return _get_primitive_type_size(type);
+}
+
+ParserSymbol * be_sem_get_struct_member_symbol(
+	ParserContext *ctx,
+	ParserASTNode *node_struct_id,
+	ParserASTNode *node_struct_member_id
+) {
+	return _get_struct_member_symbol(ctx, node_struct_id, node_struct_member_id);
 }

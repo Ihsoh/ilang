@@ -611,17 +611,20 @@ extern ParserSymbol * be_parser_add_var_symbol_to_node(
 typedef struct {
 	uint8_t			type;
 	ParserASTNode	*type_node;
+	size_t			offset;
 } BeParserStructMemberVarSymbolData;
 
 #define	BE_STRUCT_MEMBER_VAR_SYMBOL_GET_TYPE(symbol)		(((BeParserStructMemberVarSymbolData *)&((symbol)->data[0]))->type)
 #define	BE_STRUCT_MEMBER_VAR_SYMBOL_GET_TYPE_NODE(symbol)	(((BeParserStructMemberVarSymbolData *)&((symbol)->data[0]))->type_node)
+#define	BE_STRUCT_MEMBER_VAR_SYMBOL_GET_OFFSET(symbol)		(((BeParserStructMemberVarSymbolData *)&((symbol)->data[0]))->offset)
 
 extern ParserSymbol * be_parser_add_struct_member_var_symbol_to_symbol(
 	ParserContext *ctx,
 	ParserSymbol *symbol,
 	LexerToken *token,
 	uint8_t var_type,
-	ParserASTNode *var_type_node
+	ParserASTNode *var_type_node,
+	size_t offset
 );
 
 

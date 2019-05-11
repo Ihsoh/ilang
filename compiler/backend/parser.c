@@ -2221,7 +2221,8 @@ ParserSymbol * be_parser_add_struct_member_var_symbol_to_symbol(
 	ParserSymbol *symbol,
 	LexerToken *token,
 	uint8_t var_type,
-	ParserASTNode *var_type_node
+	ParserASTNode *var_type_node,
+	size_t offset
 ) {
 	assert(ctx);
 	assert(symbol);
@@ -2232,6 +2233,7 @@ ParserSymbol * be_parser_add_struct_member_var_symbol_to_symbol(
 	BeParserStructMemberVarSymbolData data;
 	data.type = var_type;
 	data.type_node = var_type_node;
+	data.offset = offset;
 
 	return parser_add_symbol_to_symbol(
 		ctx,
