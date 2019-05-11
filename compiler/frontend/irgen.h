@@ -2,14 +2,25 @@
 #define	__COMPILER_FRONTEND_IRGEN__
 
 #include <stdio.h>
+#include <stddef.h>
 
 #include "../../parser.h"
+#include "../../string.h"
 
 typedef struct {
 	ParserContext 		*psrctx;
 	FILE 				*out;
 
-	int					lblctr;
+	ResizableString 	*global;
+	ResizableString		*head;
+	ResizableString		*body;
+	ResizableString		*foot;
+
+	ResizableString		*local_var_defs;
+
+	size_t				counter;
+
+	ParserSymbol		*func_symbol;
 } IRGeneratorContext;
 
 
