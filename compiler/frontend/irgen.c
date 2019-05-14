@@ -102,7 +102,15 @@ static void _expr_result_set_result(
 	rstr_append_with_cstr(&(result->rstr_result), val);
 }
 
+static void _expr_result_set_result_ptr(
+	_ExprResult *result,
+	const char *val
+) {
+	assert(result);
+	assert(val);
 
+	rstr_append_with_cstr(&(result->rstr_result_ptr), val);
+}
 
 
 
@@ -365,6 +373,52 @@ static size_t _generate_func_tmp(
 #define	_TMP_LABEL_FREE(name)	\
 	rstr_free(&_TMP_LABEL(name));
 
+static size_t _generate_func_tmp_var_cstr(
+	IRGeneratorContext *ctx,
+	ParserSymbol *func_symbol,
+	ResizableString *rstr,
+	const char *type
+) {
+	assert(ctx);
+	assert(func_symbol);
+	assert(rstr);
+	assert(type);
+
+	size_t no = _generate_func_tmp(ctx, func_symbol, rstr);
+
+	rstr_appendf(
+		ctx->local_var_defs,
+		"var %s:%s;\n",
+		RSTR_CSTR(rstr),
+		type
+	);
+
+	return no;
+}
+
+static size_t _generate_func_tmp_ptr_var_cstr(
+	IRGeneratorContext *ctx,
+	ParserSymbol *func_symbol,
+	ResizableString *rstr,
+	const char *type
+) {
+	assert(ctx);
+	assert(func_symbol);
+	assert(rstr);
+	assert(type);
+
+	size_t no = _generate_func_tmp(ctx, func_symbol, rstr);
+
+	rstr_appendf(
+		ctx->local_var_defs,
+		"var %s:*%s;\n",
+		RSTR_CSTR(rstr),
+		type
+	);
+
+	return no;
+}
+
 static size_t _generate_func_tmp_var(
 	IRGeneratorContext *ctx,
 	ParserSymbol *func_symbol,
@@ -376,288 +430,37 @@ static size_t _generate_func_tmp_var(
 	assert(rstr);
 	assert(node_type);
 
-	size_t no = _generate_func_tmp(ctx, func_symbol, rstr);
-
 	ResizableString rstr_type;
 	rstr_init(&rstr_type);
 	_ir_type(ctx, &rstr_type, node_type);
 
-	rstr_appendf(
-		ctx->local_var_defs,
-		"var %s:%s;\n",
-		RSTR_CSTR(rstr),
-		RSTR_CSTR(&rstr_type)
-	);
+	size_t no = _generate_func_tmp_var_cstr(ctx, func_symbol, rstr, RSTR_CSTR(&rstr_type));
 
 	rstr_free(&rstr_type);
 
 	return no;
 }
 
-
-
-
-static void _ir_constexpr(
+static size_t _generate_func_tmp_ptr_var(
 	IRGeneratorContext *ctx,
-	ResizableString *rstr_val,
-	ParserASTNode *node_constexpr
-) {
-	assert(ctx);
-	assert(rstr_val);
-	assert(node_constexpr);
-	assert(FE_EXPR_AST_NODE_GET_CONSTANT(node_constexpr));
-
-	switch (FE_EXPR_AST_NODE_GET_CONSTANT_TYPE(node_constexpr)) {
-		case FE_TYPE_CHAR: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<char>(%d)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_CHAR_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_INT8: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<int8>(%d)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT8_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_INT16: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<int16>(%d)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT16_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_INT32: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<int32>(%d)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT32_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_INT64: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<int64>(%lld)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT64_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_UINT8: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<uint8>(%u)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT8_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_UINT16: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<uint16>(%u)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT16_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_UINT32: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<uint32>(%u)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT32_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_UINT64: {
-			char str[128];
-			snprintf(
-				str, sizeof(str), "cast<uint64>(%llu)",
-				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT64_VAL(node_constexpr)
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_FLOAT: {
-			char str[128];
-			float val = FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_FLOAT_VAL(node_constexpr);
-			snprintf(
-				str, sizeof(str), "cast<float>(%f)",
-				val
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_DOUBLE: {
-			char str[128];
-			double val = FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_DOUBLE_VAL(node_constexpr);
-			snprintf(
-				str, sizeof(str), "cast<double>(%lf)",
-				val
-			);
-			rstr_append_with_cstr(rstr_val, str);
-			break;
-		}
-		case FE_TYPE_POINTER: {
-			if (FE_EXPR_AST_NODE_GET_HAS_CONSTSTR(node_constexpr)) {
-				FeParserConstexprString *conststr = FE_EXPR_AST_NODE_GET_CONSTSTR(node_constexpr);
-				uint64_t ptr_val = FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
-
-				ResizableString rstr_string;
-				rstr_init(&rstr_string);
-				rstr_append_with_char(&rstr_string, '"');
-				rstr_append_with_raw(&rstr_string, conststr->str, conststr->len);
-				rstr_append_with_char(&rstr_string, '"');
-
-				ResizableString target_type;
-				rstr_init(&target_type);
-				_ir_type(ctx, &target_type, FE_EXPR_AST_NODE_GET_TYPE_NODE(node_constexpr));
-
-				char str[1024];
-				if (ptr_val == 0) {
-					snprintf(
-						str, sizeof(str), "cast<%s>(%s)",
-						RSTR_CSTR(&target_type),
-						RSTR_CSTR(&rstr_string)
-					);
-				} else {
-					snprintf(
-						str, sizeof(str), "cast<%s>(%s + %llu)",
-						RSTR_CSTR(&target_type),
-						RSTR_CSTR(&rstr_string),
-						ptr_val
-					);
-				}
-
-				rstr_append_with_cstr(rstr_val, str);
-
-				rstr_free(&rstr_string);
-				rstr_free(&target_type);
-			} else {
-				ResizableString target_type;
-				rstr_init(&target_type);
-				_ir_type(ctx, &target_type, FE_EXPR_AST_NODE_GET_TYPE_NODE(node_constexpr));
-
-				char str[1024];
-				snprintf(
-					str, sizeof(str), "cast<%s>(%llu)",
-					RSTR_CSTR(&target_type),
-					FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr)
-				);
-				rstr_append_with_cstr(rstr_val, str);
-
-				rstr_free(&target_type);
-			}
-			break;
-		}
-		default: {
-			assert(0);
-		}
-	}
-}
-
-static bool _ir_expr_constexpr(
-	IRGeneratorContext *ctx,
+	ParserSymbol *func_symbol,
 	ResizableString *rstr,
-	_ExprResult *expr_result,
-	ParserASTNode *node
+	ParserASTNode *node_type
 ) {
 	assert(ctx);
+	assert(func_symbol);
 	assert(rstr);
-	assert(expr_result);
-	assert(node);
+	assert(node_type);
 
-	if (!FE_EXPR_AST_NODE_GET_CONSTANT(node)) {
-		return false;
-	}
+	ResizableString rstr_type;
+	rstr_init(&rstr_type);
+	_ir_type(ctx, &rstr_type, node_type);
 
-	ResizableString rstr_val;
-	rstr_init(&rstr_val);
+	size_t no = _generate_func_tmp_ptr_var_cstr(ctx, func_symbol, rstr, RSTR_CSTR(&rstr_type));
 
-	_ir_constexpr(ctx, &rstr_val, node);
+	rstr_free(&rstr_type);
 
-	_expr_result_set_result(expr_result, RSTR_CSTR(&rstr_val));
-
-	rstr_free(&rstr_val);
-
-	return true;
-}
-
-
-
-
-static void _ir_expr(
-	IRGeneratorContext *ctx,
-	ResizableString *rstr,
-	_ExprResult *expr_result,
-	ParserASTNode *node
-) {
-	assert(ctx);
-	assert(rstr);
-	assert(expr_result);
-	assert(node);
-
-	#define	_A(fn)	\
-		if (fn(ctx, rstr, expr_result, node)) {	\
-			return;	\
-		}
-
-	_A(_ir_expr_constexpr)
-
-	assert(0);
-
-	#undef	_A
-}
-
-static void _ir_expr_wrapper(
-	IRGeneratorContext *ctx,
-	ResizableString *rstr,
-	_ExprResult *expr_result,
-	ParserASTNode *node
-) {
-	assert(ctx);
-	assert(rstr);
-	assert(expr_result);
-	assert(node);
-	assert(node->type == FE_NODE_EXPR);
-	assert(node->nchilds == 1);
-
-	ParserASTNode *child = node->childs[0];
-	_ir_expr(ctx, rstr, expr_result, child);
-}
-
-static void _ir_expr_wrapper_val(
-	IRGeneratorContext *ctx,
-	ResizableString *rstr,
-	_ExprResult *expr_result,
-	ParserASTNode *node
-) {
-	_ir_expr_wrapper(ctx, rstr, expr_result, node);
-
-	rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result_ptr));
-	rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result));
-}
-
-static void _ir_expr_wrapper_ptr(
-	IRGeneratorContext *ctx,
-	ResizableString *rstr,
-	_ExprResult *expr_result,
-	ParserASTNode *node
-) {
-	_ir_expr_wrapper(ctx, rstr, expr_result, node);
-
-	rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result_ptr));
+	return no;
 }
 
 
@@ -836,13 +639,710 @@ static void _expr_result_cast(
 	return;
 
 not_need_to_cast:
-	_expr_result_copy(target_result, source_result);
+	_expr_result_set_result(target_result, RSTR_CSTR(&(source_result->rstr_result)));
+	_expr_result_set_result_ptr(target_result, RSTR_CSTR(&(source_result->rstr_result_ptr)));
 
 	#undef	_A
 }
 
 
 
+
+static void _ir_constexpr(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr_val,
+	ParserASTNode *node_constexpr
+) {
+	assert(ctx);
+	assert(rstr_val);
+	assert(node_constexpr);
+	assert(FE_EXPR_AST_NODE_GET_CONSTANT(node_constexpr));
+
+	switch (FE_EXPR_AST_NODE_GET_CONSTANT_TYPE(node_constexpr)) {
+		case FE_TYPE_CHAR: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<char>(%d)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_CHAR_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_INT8: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<int8>(%d)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT8_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_INT16: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<int16>(%d)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT16_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_INT32: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<int32>(%d)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT32_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_INT64: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<int64>(%lld)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT64_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_UINT8: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<uint8>(%u)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT8_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_UINT16: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<uint16>(%u)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT16_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_UINT32: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<uint32>(%u)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT32_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_UINT64: {
+			char str[128];
+			snprintf(
+				str, sizeof(str), "cast<uint64>(%llu)",
+				FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT64_VAL(node_constexpr)
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_FLOAT: {
+			char str[128];
+			float val = FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_FLOAT_VAL(node_constexpr);
+			snprintf(
+				str, sizeof(str), "cast<float>(%f)",
+				val
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_DOUBLE: {
+			char str[128];
+			double val = FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_DOUBLE_VAL(node_constexpr);
+			snprintf(
+				str, sizeof(str), "cast<double>(%lf)",
+				val
+			);
+			rstr_append_with_cstr(rstr_val, str);
+			break;
+		}
+		case FE_TYPE_POINTER: {
+			if (FE_EXPR_AST_NODE_GET_HAS_CONSTSTR(node_constexpr)) {
+				FeParserConstexprString *conststr = FE_EXPR_AST_NODE_GET_CONSTSTR(node_constexpr);
+				uint64_t ptr_val = FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
+
+				ResizableString rstr_string;
+				rstr_init(&rstr_string);
+				rstr_append_with_char(&rstr_string, '"');
+				rstr_append_with_raw(&rstr_string, conststr->str, conststr->len);
+				rstr_append_with_char(&rstr_string, '"');
+
+				ResizableString target_type;
+				rstr_init(&target_type);
+				_ir_type(ctx, &target_type, FE_EXPR_AST_NODE_GET_TYPE_NODE(node_constexpr));
+
+				char str[1024];
+				if (ptr_val == 0) {
+					snprintf(
+						str, sizeof(str), "cast<%s>(%s)",
+						RSTR_CSTR(&target_type),
+						RSTR_CSTR(&rstr_string)
+					);
+				} else {
+					snprintf(
+						str, sizeof(str), "cast<%s>(%s + %llu)",
+						RSTR_CSTR(&target_type),
+						RSTR_CSTR(&rstr_string),
+						ptr_val
+					);
+				}
+
+				rstr_append_with_cstr(rstr_val, str);
+
+				rstr_free(&rstr_string);
+				rstr_free(&target_type);
+			} else {
+				ResizableString target_type;
+				rstr_init(&target_type);
+				_ir_type(ctx, &target_type, FE_EXPR_AST_NODE_GET_TYPE_NODE(node_constexpr));
+
+				char str[1024];
+				snprintf(
+					str, sizeof(str), "cast<%s>(%llu)",
+					RSTR_CSTR(&target_type),
+					FE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr)
+				);
+				rstr_append_with_cstr(rstr_val, str);
+
+				rstr_free(&target_type);
+			}
+			break;
+		}
+		default: {
+			assert(0);
+		}
+	}
+}
+
+static void _ir_expr(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+);
+
+static bool _ir_expr_constexpr(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(expr_result);
+	assert(node);
+
+	if (!FE_EXPR_AST_NODE_GET_CONSTANT(node)) {
+		return false;
+	}
+
+	ResizableString rstr_val;
+	rstr_init(&rstr_val);
+
+	_ir_constexpr(ctx, &rstr_val, node);
+
+	_expr_result_set_result(expr_result, RSTR_CSTR(&rstr_val));
+
+	rstr_free(&rstr_val);
+
+	return true;
+}
+
+static bool _ir_expr_identifier(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(expr_result);
+	assert(node);
+
+	if (node->type != FE_NODE_EXPR_ATOM) {
+		return false;
+	}
+
+	ParserASTNode *child = node->childs[0];
+	if (child->type != FE_NODE_IDENTIFIER) {
+		return false;
+	}
+
+	ParserSymbol *func_symbol = ctx->func_symbol;
+	assert(func_symbol);
+
+	ParserSymbol *symbol = parser_get_symbol_from_node(ctx->psrctx, node, 0, child->token);
+	assert(symbol);
+
+	if (symbol->type == FE_SYM_VAR) {
+		assert(FE_VAR_SYMBOL_GET_HAS_CODE_GEN_NAME(symbol));
+		ResizableString *code_gen_name = FE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol);
+
+		_expr_result_set_result(expr_result, RSTR_CSTR(code_gen_name));
+
+		ParserASTNode *node_type = FE_VAR_SYMBOL_GET_TYPE_NODE(symbol);
+
+		ResizableString rstr_tmp_label;
+		rstr_init(&rstr_tmp_label);
+		_generate_func_tmp_ptr_var(ctx, func_symbol, &rstr_tmp_label, node_type);
+
+		rstr_appendf(
+			&(expr_result->rstr_for_result_ptr),
+			"ref %s, %s;\n",
+			RSTR_CSTR(&rstr_tmp_label),
+			RSTR_CSTR(code_gen_name)
+		);
+
+		_expr_result_set_result_ptr(expr_result, RSTR_CSTR(&rstr_tmp_label));
+
+		rstr_free(&rstr_tmp_label);
+	} else if (symbol->type == FE_SYM_FUNC) {
+		ResizableString rstr_id;
+		rstr_init(&rstr_id);
+		_ir_identifier_name(ctx, &rstr_id, child);
+
+		_expr_result_set_result(expr_result, RSTR_CSTR(&rstr_id));
+		_expr_result_set_result_ptr(expr_result, RSTR_CSTR(&rstr_id));
+
+		rstr_free(&rstr_id);
+	} else {
+		assert(0);
+	}
+
+	return true;
+}
+
+static bool _ir_expr_member_arridx_fncall(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(expr_result);
+	assert(node);
+
+	switch (node->type) {
+		case FE_NODE_EXPR_MEMBER: {
+			assert(node->nchilds == 2);
+
+			ParserASTNode *node_expr = node->childs[0];
+			ParserASTNode *node_id = node->childs[1];
+			
+			_ExprResult result;
+			_expr_result_init(&result);
+
+			_ir_expr(ctx, rstr, &result, node_expr);
+			rstr_append_with_rstr(rstr, &(result.rstr_for_result_ptr));
+
+			ResizableString rstr_id;
+			rstr_init(&rstr_id);
+			_ir_identifier_name(ctx, &rstr_id, node_id);
+
+			ParserASTNode *node_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr);
+			assert(node_type->type == FE_NODE_TYPE_STRUCT);
+			ParserASTNode *node_struct_id = node_type->childs[0];
+			assert(node_struct_id->type == FE_NODE_IDENTIFIER);
+			ResizableString rstr_struct_name;
+			rstr_init_with_raw(
+				&rstr_struct_name, node_struct_id->token->content, node_struct_id->token->len
+			);
+
+			ParserASTNode *node_struct_member_type = fe_sem_get_struct_member_type_node(
+				ctx->psrctx, node, node_struct_id->token, node_id->token
+			);
+
+			ParserSymbol *func_symbol = ctx->func_symbol;
+			assert(func_symbol);
+
+			ResizableString rstr_tmp_label0;
+			rstr_init(&rstr_tmp_label0);
+			_generate_func_tmp_ptr_var(
+				ctx,
+				func_symbol,
+				&rstr_tmp_label0,
+				node_struct_member_type
+			);
+			rstr_appendf(
+				&(expr_result->rstr_for_result_ptr),
+				"mbr %s, %s, %s;\n",
+				RSTR_CSTR(&rstr_tmp_label0),
+				RSTR_CSTR(&(result.rstr_result_ptr)),
+				RSTR_CSTR(&rstr_id)
+			);
+			_expr_result_set_result_ptr(expr_result, RSTR_CSTR(&rstr_tmp_label0));
+
+			ResizableString rstr_tmp_label1;
+			rstr_init(&rstr_tmp_label1);
+			_generate_func_tmp_var(
+				ctx,
+				func_symbol,
+				&rstr_tmp_label1,
+				node_struct_member_type
+			);
+			rstr_appendf(
+				&(expr_result->rstr_for_result),
+				"load %s, %s;\n",
+				RSTR_CSTR(&rstr_tmp_label1),
+				RSTR_CSTR(&(expr_result->rstr_result_ptr))
+			);
+			_expr_result_set_result(expr_result, RSTR_CSTR(&rstr_tmp_label1));
+
+			_expr_result_free(&result);
+
+			rstr_free(&rstr_id);
+
+			rstr_free(&rstr_struct_name);
+			rstr_free(&rstr_tmp_label0);
+			rstr_free(&rstr_tmp_label1);
+
+			return true;
+		}
+		case FE_NODE_EXPR_PMEMBER: {
+			assert(node->nchilds == 2);
+
+			ParserASTNode *node_expr = node->childs[0];
+			ParserASTNode *node_id = node->childs[1];
+			
+			_ExprResult result;
+			_expr_result_init(&result);
+
+			_ir_expr(ctx, rstr, &result, node_expr);
+			rstr_append_with_rstr(rstr, &(result.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result.rstr_for_result));
+
+			ResizableString rstr_id;
+			rstr_init(&rstr_id);
+			_ir_identifier_name(ctx, &rstr_id, node_id);
+
+			ParserASTNode *node_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr);
+			assert(node_type->type == FE_NODE_TYPE_POINTER);
+			assert(node_type->childs[0]->type == FE_NODE_TYPE_STRUCT);
+			ParserASTNode *node_struct_id = node_type->childs[0]->childs[0];
+			assert(node_struct_id->type == FE_NODE_IDENTIFIER);
+			ResizableString rstr_struct_name;
+			rstr_init_with_raw(
+				&rstr_struct_name, node_struct_id->token->content, node_struct_id->token->len
+			);
+
+			ParserASTNode *node_struct_member_type = fe_sem_get_struct_member_type_node(
+				ctx->psrctx, node, node_struct_id->token, node_id->token
+			);
+
+			ParserSymbol *func_symbol = ctx->func_symbol;
+			assert(func_symbol);
+
+			ResizableString rstr_tmp_label0;
+			rstr_init(&rstr_tmp_label0);
+			_generate_func_tmp_ptr_var(
+				ctx,
+				func_symbol,
+				&rstr_tmp_label0,
+				node_struct_member_type
+			);
+			rstr_appendf(
+				&(expr_result->rstr_for_result_ptr),
+				"mbr %s, %s, %s;\n",
+				RSTR_CSTR(&rstr_tmp_label0),
+				RSTR_CSTR(&(result.rstr_result)),
+				RSTR_CSTR(&rstr_id)
+			);
+			_expr_result_set_result_ptr(expr_result, RSTR_CSTR(&rstr_tmp_label0));
+
+			ResizableString rstr_tmp_label1;
+			rstr_init(&rstr_tmp_label1);
+			_generate_func_tmp_var(
+				ctx,
+				func_symbol,
+				&rstr_tmp_label1,
+				node_struct_member_type
+			);
+			rstr_appendf(
+				&(expr_result->rstr_for_result),
+				"load %s, %s;\n",
+				RSTR_CSTR(&rstr_tmp_label1),
+				RSTR_CSTR(&(expr_result->rstr_result_ptr))
+			);
+			_expr_result_set_result(expr_result, RSTR_CSTR(&rstr_tmp_label1));
+
+			_expr_result_free(&result);
+
+			rstr_free(&rstr_id);
+
+			rstr_free(&rstr_struct_name);
+			rstr_free(&rstr_tmp_label0);
+			rstr_free(&rstr_tmp_label1);
+
+			return true;
+		}
+		case FE_NODE_EXPR_ARRAY_INDEX: {
+			assert(node->nchilds == 2);
+
+			ParserASTNode *node_base = node->childs[0];
+			uint8_t node_base_type = FE_EXPR_AST_NODE_GET_TYPE(node_base);
+			assert(node_base_type == FE_TYPE_ARRAY
+					|| node_base_type == FE_TYPE_POINTER);
+			
+			ParserASTNode *node_index = node->childs[1];
+
+			_ExprResult result_base;
+			_expr_result_init(&result_base);
+			_ir_expr(ctx, rstr, &result_base, node_base);
+			rstr_append_with_rstr(rstr, &(result_base.rstr_for_result_ptr));
+			if (node_base_type == FE_TYPE_POINTER) {
+				rstr_append_with_rstr(rstr, &(result_base.rstr_for_result));
+			}
+
+			_ExprResult result_index;
+			_expr_result_init(&result_index);
+			_ir_expr(ctx, rstr, &result_index, node_index);
+			rstr_append_with_rstr(rstr, &(result_index.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_index.rstr_for_result));
+
+			ParserSymbol *func_symbol = ctx->func_symbol;
+			assert(func_symbol);
+
+			ResizableString rstr_tmp_label_ptr;
+			rstr_init(&rstr_tmp_label_ptr);
+			_generate_func_tmp_ptr_var(
+				ctx,
+				func_symbol,
+				&rstr_tmp_label_ptr,
+				FE_EXPR_AST_NODE_GET_TYPE_NODE(node)
+			);
+
+			ResizableString rstr_tmp_label_val;
+			rstr_init(&rstr_tmp_label_val);
+			_generate_func_tmp_var(
+				ctx,
+				func_symbol,
+				&rstr_tmp_label_val,
+				FE_EXPR_AST_NODE_GET_TYPE_NODE(node)
+			);
+
+			if (node_base_type == FE_TYPE_ARRAY) {
+				rstr_appendf(
+					&(expr_result->rstr_for_result_ptr),
+					"idx %s, %s, %s;\n",
+					RSTR_CSTR(&rstr_tmp_label_ptr),
+					RSTR_CSTR(&(result_base.rstr_result_ptr)),
+					RSTR_CSTR(&(result_index.rstr_result))
+				);
+				_expr_result_set_result_ptr(expr_result, RSTR_CSTR(&rstr_tmp_label_ptr));
+
+				rstr_appendf(
+					&(expr_result->rstr_for_result),
+					"load %s, %s;\n",
+					RSTR_CSTR(&rstr_tmp_label_val),
+					RSTR_CSTR(&(expr_result->rstr_result_ptr))
+				);
+				_expr_result_set_result(expr_result, RSTR_CSTR(&rstr_tmp_label_val));
+			} else if (node_base_type == FE_TYPE_POINTER) {
+				rstr_appendf(
+					&(expr_result->rstr_for_result_ptr),
+					"add %s, %s, %s;\n",
+					RSTR_CSTR(&rstr_tmp_label_ptr),
+					RSTR_CSTR(&(result_base.rstr_result_ptr)),
+					RSTR_CSTR(&(result_index.rstr_result))
+				);
+				_expr_result_set_result_ptr(expr_result, RSTR_CSTR(&rstr_tmp_label_ptr));
+
+				rstr_appendf(
+					&(expr_result->rstr_for_result),
+					"load %s, %s;\n",
+					RSTR_CSTR(&rstr_tmp_label_val),
+					RSTR_CSTR(&(expr_result->rstr_result_ptr))
+				);
+				_expr_result_set_result(expr_result, RSTR_CSTR(&rstr_tmp_label_val));
+			} else {
+				assert(0);
+			}
+
+			_expr_result_free(&result_base);
+			_expr_result_free(&result_index);
+			rstr_free(&rstr_tmp_label_ptr);
+			rstr_free(&rstr_tmp_label_val);
+
+			return true;
+		}
+		case FE_NODE_EXPR_FUNC_CALL: {
+			assert(node->nchilds == 2);
+
+			ParserSymbol *func_symbol = ctx->func_symbol;
+			assert(func_symbol);
+			
+			_ExprResult result_func_expr;
+			_expr_result_init(&result_func_expr);
+
+			ParserASTNode *node_func_expr = node->childs[0];
+			ParserASTNode *node_func_expr_func_ptr_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_func_expr);
+			assert(node_func_expr_func_ptr_type->type == FE_NODE_TYPE_POINTER);
+			ParserASTNode *node_func_expr_func_type = node_func_expr_func_ptr_type->childs[0];
+			assert(node_func_expr_func_type->type == FE_NODE_TYPE_FUNC);
+
+			ResizableString rstr_func_type;
+			rstr_init(&rstr_func_type);
+			_ir_type(ctx, &rstr_func_type, node_func_expr_func_type);
+
+			_ir_expr(ctx, rstr, &result_func_expr, node_func_expr);
+			rstr_append_with_rstr(rstr, &(result_func_expr.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_func_expr.rstr_for_result));
+
+			ParserASTNode *node_func_type_params = node_func_expr_func_type->childs[0];
+			ParserASTNode *node_func_type_return_type = NULL;
+			if (node_func_expr_func_type->nchilds == 2) {
+				node_func_type_return_type = node_func_expr_func_type->childs[1];
+			}
+
+			ParserASTNode *node_func_params = node->childs[1];
+
+			
+
+			return true;
+		}
+		default: {
+			return false;
+		}
+	}
+}
+
+
+
+
+
+
+static bool _ir_expr_unary(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(expr_result);
+	assert(node);
+
+	switch (node->type) {
+		case FE_NODE_EXPR_CAST: {
+			assert(node->nchilds == 2);
+
+			_ExprResult result_expr;
+			_expr_result_init(&result_expr);
+
+			_ExprResult casted_result;
+			_expr_result_init(&casted_result);
+
+			ParserASTNode *node_type = node->childs[0];
+			ParserASTNode *node_expr = node->childs[1];
+
+			_ir_expr(ctx, rstr, &result_expr, node_expr);
+			rstr_append_with_rstr(rstr, &(result_expr.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_expr.rstr_for_result));
+
+			_expr_result_cast(
+				ctx,
+				&casted_result,
+				node_type,
+				&result_expr,
+				FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr)
+			);
+			rstr_append_with_rstr(rstr, &(casted_result.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(casted_result.rstr_for_result));
+
+			_expr_result_set_result(
+				expr_result,
+				RSTR_CSTR(&(casted_result.rstr_result))
+			);
+
+			_expr_result_free(&result_expr);
+			_expr_result_free(&casted_result);
+
+			return true;
+		}
+		default: {
+			return false;
+		}
+	}
+}
+
+
+
+
+
+
+
+static void _ir_expr(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(expr_result);
+	assert(node);
+
+	#define	_A(fn)	\
+		if (fn(ctx, rstr, expr_result, node)) {	\
+			return;	\
+		}
+
+	_A(_ir_expr_constexpr)
+	_A(_ir_expr_identifier)
+	_A(_ir_expr_member_arridx_fncall)
+
+	_A(_ir_expr_unary)
+
+	printf("TYPE: %x, %s\n", node->type, node->type_name);
+	assert(0);
+
+	#undef	_A
+}
+
+static void _ir_expr_wrapper(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(expr_result);
+	assert(node);
+	assert(node->type == FE_NODE_EXPR);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *child = node->childs[0];
+	_ir_expr(ctx, rstr, expr_result, child);
+}
+
+static void _ir_expr_wrapper_val(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	_ir_expr_wrapper(ctx, rstr, expr_result, node);
+
+	rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result_ptr));
+	rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result));
+}
+
+static void _ir_expr_wrapper_ptr(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	_ir_expr_wrapper(ctx, rstr, expr_result, node);
+
+	rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result_ptr));
+}
 
 
 

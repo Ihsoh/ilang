@@ -51,12 +51,25 @@ struct A {
 }
 var g_A:struct A;
 
+struct B {
+	var c:struct A;
+	var d:*struct A;
+}
+
 function func_a() dummy
 function func_b(a:int64, b:int64):int64 dummy
 function func_c(a:int64, ...):int64 dummy
+
+function func_add(n1:int64, n2:int64):int64 {
+
+}
 
 function func_test() {
 	var a:int64, b:int64 = 1;
 	var c:*char = "abc";
 	var d:*char = "def" + 2;
+	var e:struct B;
+	var f:int64 = e.d->b;
+	var g:[2][3]int64;
+	var h:int64 = g[1][2];
 }
