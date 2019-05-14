@@ -1185,10 +1185,6 @@ static bool _ir_expr_member_arridx_fncall(
 			ParserASTNode *node_func_expr_func_type = node_func_expr_func_ptr_type->childs[0];
 			assert(node_func_expr_func_type->type == FE_NODE_TYPE_FUNC);
 
-			ResizableString rstr_func_type;
-			rstr_init(&rstr_func_type);
-			_ir_type(ctx, &rstr_func_type, node_func_expr_func_type);
-
 			_ir_expr(ctx, rstr, &result_func_expr, node_func_expr);
 			rstr_append_with_rstr(rstr, &(result_func_expr.rstr_for_result_ptr));
 			rstr_append_with_rstr(rstr, &(result_func_expr.rstr_for_result));
@@ -1201,7 +1197,88 @@ static bool _ir_expr_member_arridx_fncall(
 
 			ParserASTNode *node_func_params = node->childs[1];
 
-			
+			ResizableString rstr_tmp_label_val;
+
+			if (node_func_type_return_type != NULL) {
+				rstr_init(&rstr_tmp_label_val);
+				_generate_func_tmp_var(
+					ctx,
+					func_symbol,
+					&rstr_tmp_label_val,
+					node_func_type_return_type
+				);
+
+				rstr_appendf(
+					&(expr_result->rstr_for_result),
+					"call %s, ",
+					RSTR_CSTR(&rstr_tmp_label_val)
+				);
+			} else {
+				rstr_append_with_cstr(
+					&(expr_result->rstr_for_result),
+					"vcall "
+				);
+			}
+
+			ResizableString rstr_func_params;
+			rstr_init(&rstr_func_params);
+			for (int i = 0; i < node_func_params->nchilds; i++) {
+				ParserASTNode *node_func_param = node_func_params->childs[i];
+
+				_ExprResult result_func_param;
+				_expr_result_init(&result_func_param);
+
+				_ir_expr(ctx, rstr, &result_func_param, node_func_param);
+				rstr_append_with_rstr(rstr, &(result_func_param.rstr_for_result_ptr));
+				rstr_append_with_rstr(rstr, &(result_func_param.rstr_for_result));
+
+				if (i < node_func_type_params->nchilds
+						&& node_func_type_params->childs[i]->type == FE_NODE_FUNC_PARAMS_ITEM) {
+					ParserASTNode *node_func_type_param = node_func_type_params->childs[i];
+					ParserASTNode *node_func_type_param_type = node_func_type_param->childs[1];
+
+					_ExprResult result_casted_func_param;
+					_expr_result_init(&result_casted_func_param);
+
+					_expr_result_cast(
+						ctx,
+						&result_casted_func_param,
+						node_func_type_param_type,
+						&result_func_param,
+						FE_EXPR_AST_NODE_GET_TYPE_NODE(node_func_param)
+					);
+					rstr_append_with_rstr(rstr, &(result_casted_func_param.rstr_for_result_ptr));
+					rstr_append_with_rstr(rstr, &(result_casted_func_param.rstr_for_result));
+
+					rstr_append_with_rstr(&rstr_func_params, &(result_casted_func_param.rstr_result));
+
+					_expr_result_free(&result_casted_func_param);
+				} else {
+					rstr_append_with_rstr(&rstr_func_params, &(result_func_param.rstr_result));
+				}
+
+				_expr_result_free(&result_func_param);
+
+				if (i + 1 < node_func_params->nchilds) {
+					rstr_append_with_cstr(&rstr_func_params, ", ");
+				}
+			}
+
+			rstr_appendf(
+				&(expr_result->rstr_for_result),
+				"%s(%s);\n",
+				RSTR_CSTR(&(result_func_expr.rstr_result)),
+				RSTR_CSTR(&rstr_func_params)
+			);
+
+			if (node_func_type_return_type != NULL) {
+				_expr_result_set_result(expr_result, RSTR_CSTR(&rstr_tmp_label_val));
+
+				rstr_free(&rstr_tmp_label_val);
+			}
+
+			_expr_result_free(&result_func_expr);
+			rstr_free(&rstr_func_params);
 
 			return true;
 		}

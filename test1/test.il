@@ -72,4 +72,7 @@ function func_test() {
 	var f:int64 = e.d->b;
 	var g:[2][3]int64;
 	var h:int64 = g[1][2];
+	var i:int64 = func_add(1, 2);
+	var j:*function(n1:int64, n2:int64):int64 = 0;
+	var k:int64 = j(3, 4);
 }
