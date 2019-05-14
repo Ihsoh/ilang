@@ -50,3 +50,13 @@ struct A {
 	var b:int64;
 }
 var g_A:struct A;
+
+function func_a() dummy
+function func_b(a:int64, b:int64):int64 dummy
+function func_c(a:int64, ...):int64 dummy
+
+function func_test() {
+	var a:int64, b:int64 = 1;
+	var c:*char = "abc";
+	var d:*char = "def" + 2;
+}

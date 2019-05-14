@@ -229,7 +229,7 @@ LEXER_MATCHER(keyword)
 
 	char chr = lexer_next_char(ctx);
 
-	if (isalpha(chr) || chr == '_' || chr == '.' || chr == '$') {
+	if (isalpha(chr) || chr == '_' || chr == '$') {
 		lexer_init_token(ctx, &token, BE_TOKEN_IDENTIFIER);
 
 		for (;;) {

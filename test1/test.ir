@@ -16,6 +16,8 @@ struct A {
 	var c:int64;
 }
 
+function func_c(a:int64, ...):int64 dummy
+
 function _main():int32 {
 	var result:int64;
 	call result, _add_i64(cast<int64>(100), cast<int64>(200));
