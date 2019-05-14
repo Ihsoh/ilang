@@ -164,6 +164,11 @@ _RULE_FUNC_DECL(literal_real);
 _RULE_FUNC_DECL(literal_char);
 _RULE_FUNC_DECL(literal_string);
 
+
+
+
+
+
 _RULE_FUNC_DECL(expr_atom);
 _RULE_FUNC_DECL(expr_parenthesis);
 _RULE_FUNC_DECL(expr_unary);
@@ -446,6 +451,159 @@ _RULE(literal_string)
 	}
 _RULE_END
 
+_RULE(u8const)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_U8CONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_U8CONST, NULL)
+
+	ParserASTNode *node_literal_uint = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
+	if (node_literal_uint == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_uint)
+_RULE_END
+
+_RULE(u16const)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_U16CONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_U16CONST, NULL)
+
+	ParserASTNode *node_literal_uint = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
+	if (node_literal_uint == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_uint)
+_RULE_END
+
+_RULE(u32const)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_U32CONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_U32CONST, NULL)
+
+	ParserASTNode *node_literal_uint = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
+	if (node_literal_uint == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_uint)
+_RULE_END
+
+_RULE(u64const)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_U64CONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_U64CONST, NULL)
+
+	ParserASTNode *node_literal_uint = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
+	if (node_literal_uint == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_uint)
+_RULE_END
+
+_RULE(i8const)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_I8CONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_I8CONST, NULL)
+
+	ParserASTNode *node_literal_uint = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
+	if (node_literal_uint == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_uint)
+_RULE_END
+
+_RULE(i16const)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_I16CONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_I16CONST, NULL)
+
+	ParserASTNode *node_literal_uint = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
+	if (node_literal_uint == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_uint)
+_RULE_END
+
+_RULE(i32const)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_I32CONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_I32CONST, NULL)
+
+	ParserASTNode *node_literal_uint = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
+	if (node_literal_uint == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_uint)
+_RULE_END
+
+_RULE(i64const)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_I64CONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_I64CONST, NULL)
+
+	ParserASTNode *node_literal_uint = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
+	if (node_literal_uint == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_uint)
+_RULE_END
+
+_RULE(fconst)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_FCONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_FCONST, NULL)
+
+	ParserASTNode *node_literal_real = _RULE_NAME(literal_real)(_RULE_PARSER_CTX);
+	if (node_literal_real == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_real)
+_RULE_END
+
+_RULE(dconst)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_DCONST) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_DCONST, NULL)
+
+	ParserASTNode *node_literal_real = _RULE_NAME(literal_real)(_RULE_PARSER_CTX);
+	if (node_literal_real == NULL) {
+		_RULE_NOT_MATCHED
+	}
+	_RULE_ADD_CHILD(node_literal_real)
+_RULE_END
+
+
+
+
 _RULE(expr_atom)
 	ParserASTNode *node = _RULE_NAME(literal_uint)(_RULE_PARSER_CTX);
 
@@ -459,6 +617,46 @@ _RULE(expr_atom)
 
 	if (node == NULL) {
 		node = _RULE_NAME(literal_string)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(u8const)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(u16const)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(u32const)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(u64const)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(i8const)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(i16const)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(i32const)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(i64const)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(fconst)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(dconst)(_RULE_PARSER_CTX);
 	}
 
 	if (node != NULL) {

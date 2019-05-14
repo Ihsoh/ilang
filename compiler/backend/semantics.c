@@ -2356,6 +2356,136 @@ static void _expr_atom(
 			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
 			break;
 		}
+		case BE_NODE_U8CONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_uint = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_UINT8);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_UINT8);
+
+			uint64_t val = be_parser_get_uint64_val(ctx, node_literal_uint);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT8_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_U16CONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_uint = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_UINT16);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_UINT16);
+
+			uint64_t val = be_parser_get_uint64_val(ctx, node_literal_uint);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT16_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_U32CONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_uint = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_UINT32);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_UINT32);
+
+			uint64_t val = be_parser_get_uint64_val(ctx, node_literal_uint);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT32_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_U64CONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_uint = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_UINT64);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_UINT64);
+
+			uint64_t val = be_parser_get_uint64_val(ctx, node_literal_uint);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT64_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_I8CONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_uint = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT8);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT8);
+
+			uint64_t val = be_parser_get_uint64_val(ctx, node_literal_uint);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT8_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_I16CONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_uint = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT16);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT16);
+
+			uint64_t val = be_parser_get_uint64_val(ctx, node_literal_uint);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT16_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_I32CONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_uint = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT32);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+
+			uint64_t val = be_parser_get_uint64_val(ctx, node_literal_uint);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT32_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_I64CONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_uint = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT64);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+
+			uint64_t val = be_parser_get_uint64_val(ctx, node_literal_uint);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT64_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_FCONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_real = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_FLOAT);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_FLOAT);
+
+			float val = be_parser_get_float_val(ctx, node_literal_real);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_FLOAT_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
+		case BE_NODE_DCONST: {
+			assert(child->nchilds == 1);
+			ParserASTNode *node_literal_real = child->childs[0];
+
+			BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_DOUBLE);
+			BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_DOUBLE);
+
+			double val = be_parser_get_float_val(ctx, node_literal_real);
+			BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_DOUBLE_VAL(node, val);
+
+			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+			break;
+		}
 		default: {
 			assert(0);
 			break;
@@ -3810,6 +3940,7 @@ static void _struct(
 			_process_struct_member(ctx, node, node_struct_body, symbol);
 
 			BE_STRUCT_SYMBOL_SET_DUMMY(symbol, false);
+			BE_STRUCT_SYMBOL_SET_STRUCT_NODE(symbol, node);
 			BE_STRUCT_SYMBOL_SET_BODY_NODE(symbol, node_struct_body);
 		} else {
 			ParserSymbol *symbol_struct = be_parser_new_struct_symbol(

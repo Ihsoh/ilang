@@ -5057,6 +5057,7 @@ static void _process_struct_member(
 		ParserASTNode *child = node_struct_body->childs[i];
 		assert(child);
 		if (child->type == FE_NODE_VAR) {
+			FE_VAR_AST_NODE_SET_TYPE(child, FE_VAR_TYPE_STRUCT_MEMBER);
 			for (int j = 0; j < child->nchilds; j++) {
 				ParserASTNode *node_var_item = child->childs[j];
 				assert(node_var_item->type == FE_NODE_VAR_ITEM);
@@ -5125,6 +5126,7 @@ static void _struct(
 			_process_struct_member(ctx, node, node_struct_body, symbol);
 
 			FE_STRUCT_SYMBOL_SET_DUMMY(symbol, false);
+			FE_STRUCT_SYMBOL_SET_STRUCT_NODE(symbol, node);
 			FE_STRUCT_SYMBOL_SET_BODY_NODE(symbol, node_struct_body);
 		} else {
 			ParserSymbol *symbol_struct = fe_parser_new_struct_symbol(

@@ -83,6 +83,19 @@
 #define	BE_TOKEN_KEYWORD_BOR			0x3036	// bor
 #define	BE_TOKEN_KEYWORD_BXOR			0x3037	// bxor
 
+#define	BE_TOKEN_KEYWORD_U8CONST		0x3038	// u8const
+#define	BE_TOKEN_KEYWORD_U16CONST		0x3039	// u16const
+#define	BE_TOKEN_KEYWORD_U32CONST		0x303a	// u32const
+#define	BE_TOKEN_KEYWORD_U64CONST		0x303b	// u64const
+#define	BE_TOKEN_KEYWORD_I8CONST		0x303c	// i8const
+#define	BE_TOKEN_KEYWORD_I16CONST		0x303d	// i16const
+#define	BE_TOKEN_KEYWORD_I32CONST		0x303e	// i32const
+#define	BE_TOKEN_KEYWORD_I64CONST		0x303f	// i64const
+#define	BE_TOKEN_KEYWORD_FCONST			0x3040	// fconst
+#define	BE_TOKEN_KEYWORD_DCONST			0x3041	// dconst
+
+
+
 
 
 #define	BE_TOKEN_KEYWORD_CHAR			0x3100	// char

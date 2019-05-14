@@ -207,6 +207,18 @@ LEXER_MATCHER(keyword)
 		_KEYWORD("bor", BE_TOKEN_KEYWORD_BOR),
 		_KEYWORD("bxor", BE_TOKEN_KEYWORD_BXOR),
 
+		_KEYWORD("u8const", BE_TOKEN_KEYWORD_U8CONST),
+		_KEYWORD("u16const", BE_TOKEN_KEYWORD_U16CONST),
+		_KEYWORD("u32const", BE_TOKEN_KEYWORD_U32CONST),
+		_KEYWORD("u64const", BE_TOKEN_KEYWORD_U64CONST),
+		_KEYWORD("i8const", BE_TOKEN_KEYWORD_I8CONST),
+		_KEYWORD("i16const", BE_TOKEN_KEYWORD_I16CONST),
+		_KEYWORD("i32const", BE_TOKEN_KEYWORD_I32CONST),
+		_KEYWORD("i64const", BE_TOKEN_KEYWORD_I64CONST),
+		_KEYWORD("fconst", BE_TOKEN_KEYWORD_FCONST),
+		_KEYWORD("dconst", BE_TOKEN_KEYWORD_DCONST),
+
+
 
 
 
@@ -221,7 +233,7 @@ LEXER_MATCHER(keyword)
 		lexer_init_token(ctx, &token, BE_TOKEN_IDENTIFIER);
 
 		for (;;) {
-			LEXER_MATCH_CHAR(ctx, &chr, &token, isalnum(chr) || chr == '_' || chr == '.' || chr == '@', {
+			LEXER_MATCH_CHAR(ctx, &chr, &token, isalnum(chr) || chr == '_' || chr == '.' || chr == '$', {
 				// MATCHED
 			}, {
 				// NOT MATCHED
