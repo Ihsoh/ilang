@@ -1,8 +1,8 @@
 #include "test_inc.ir"
 
 function _add_i64(n1:int64, n2:int64):int64 {
-	vcall _print_int64("n1 = ", cast<int64>(100));
-	vcall _print_int64("n2 = ", cast<int64>(200));
+	vcall _print_int64("n1 = ", n1);
+	vcall _print_int64("n2 = ", n2);
 
 	var result:int64;
 	add result, n1, n2;
@@ -16,7 +16,13 @@ struct A {
 	var c:int64;
 }
 
-function func_c(a:int64, ...):int64 dummy
+function _test() {
+	vcall _print_int64("test = ", i64const 233333333);
+}
+
+function _get_func_ptr():*function() {
+	return _test;
+}
 
 function _main():int32 {
 	var result:int64;
@@ -24,45 +30,9 @@ function _main():int32 {
 
 	vcall _print_int64("result = ", result);
 
-	var v_uint8:uint8;
-	add v_uint8, u8const 10, u8const 20;
-	vcall _print_uint8("v_uint8 = ", v_uint8);
-
-	var v_uint16:uint16;
-	add v_uint16, u16const 30, u16const 40;
-	vcall _print_uint16("v_uint16 = ", v_uint16);
-
-	var v_uint32:uint32;
-	add v_uint32, u32const 50, u32const 60;
-	vcall _print_uint32("v_uint32 = ", v_uint32);
-
-	var v_uint64:uint64;
-	add v_uint64, u64const 70, u64const 80;
-	vcall _print_uint64("v_uint64 = ", v_uint64);
-
-	var v_int8:int8;
-	add v_int8, i8const 1, i8const 2;
-	vcall _print_int8("v_int8 = ", v_int8);
-
-	var v_int16:int16;
-	add v_int16, i16const 3, i16const 4;
-	vcall _print_int16("v_int16 = ", v_int16);
-
-	var v_int32:int32;
-	add v_int32, i32const 5, i32const 6;
-	vcall _print_int32("v_int32 = ", v_int32);
-
-	var v_int64:int64;
-	add v_int64, i64const 7, i64const 8;
-	vcall _print_int64("v_int64 = ", v_int64);
-
-	var v_float:float;
-	add v_float, fconst 1.2, fconst 2.3;
-	vcall _print_float("v_float = ", v_float);
-
-	var v_double:double;
-	add v_double, dconst 10.2, dconst 20.3;
-	vcall _print_double("v_double = ", v_double);
+	var fptr:*function();
+	call fptr, _get_func_ptr();
+	vcall fptr();
 
 	return cast<int32>(0);
 }
