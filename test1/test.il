@@ -11,12 +11,11 @@ function print_double(str:*char, n:double) dummy
 function print_pointer(str:*char, ptr:*) dummy
 
 function func_test() {
-	var a:int64 = 2;
-	var b:int64 = 3;
-	var c:int64 = 4;
-	var d:int64 = ((a * b * c * 2) / 4) % 5;
+	var a:int64 = 1;
+	var b:int64 = 4;
+	var c:int64 = (a << b) >> 1;
 
-	print_int64("d = ", d);
+	print_int64("c = ", c);
 }
 
 function main():int32 {
