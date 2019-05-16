@@ -25,7 +25,9 @@ function func_b():int64 {
 function func_test() {
 	var a:int64= 100;
 	var b:int32 = 300;
-	var c:int64 = func_a() || func_b();
+	var c:int64 = 2333;
+	c = func_a() || func_b();
+	c += 2;
 
 	print_int64("c = ", c);
 }

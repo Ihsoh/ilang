@@ -3355,12 +3355,164 @@ static bool _ir_expr_cond(
 	}
 }
 
+static bool _ir_expr_assign(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(expr_result);
+	assert(node);
 
+	#define	_A(func)	\
+		assert(node->nchilds == 2);	\
+			\
+		ResizableString rstr_result_lhs_ptr;	\
+		rstr_init(&rstr_result_lhs_ptr);	\
+			\
+		_ExprResult result;	\
+		_expr_result_init(&result);	\
+			\
+		(func)(ctx, rstr, &rstr_result_lhs_ptr, &result, node);	\
+		rstr_append_with_rstr(rstr, &(result.rstr_for_result_ptr));	\
+		rstr_append_with_rstr(rstr, &(result.rstr_for_result));	\
+			\
+		rstr_appendf(	\
+			&(expr_result->rstr_for_result),	\
+			"store %s, %s;\n",	\
+			RSTR_CSTR(&rstr_result_lhs_ptr),	\
+			RSTR_CSTR(&(result.rstr_result))	\
+		);	\
+		_expr_result_set_result(	\
+			expr_result,	\
+			RSTR_CSTR(&(result.rstr_result))	\
+		);	\
+			\
+		rstr_free(&rstr_result_lhs_ptr);	\
+			\
+		_expr_result_free(&result);
 
+	switch (node->type) {
+		case FE_NODE_EXPR_ASSIGN: {
+			assert(node->nchilds == 2);
 
+			ParserASTNode *node_lhs = node->childs[0];
+			ParserASTNode *node_rhs = node->childs[1];
 
+			ParserASTNode *node_lhs_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_lhs);
+			ParserASTNode *ndoe_rhs_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_rhs);
 
+			_ExprResult result_lhs;
+			_ExprResult result_rhs;
+			_ExprResult result_rhs_casted;
 
+			_expr_result_init(&result_lhs);
+			_expr_result_init(&result_rhs);
+			_expr_result_init(&result_rhs_casted);
+
+			_ir_expr(ctx, rstr, &result_lhs, node_lhs);
+			rstr_append_with_rstr(rstr, &(result_lhs.rstr_for_result_ptr));
+
+			_ir_expr(ctx, rstr, &result_rhs, node_rhs);
+			rstr_append_with_rstr(rstr, &(result_rhs.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_rhs.rstr_for_result));
+
+			_expr_result_cast(
+				ctx,
+				&result_rhs_casted,
+				node_lhs_type,
+				&result_rhs,
+				ndoe_rhs_type
+			);
+			rstr_append_with_rstr(rstr, &(result_rhs_casted.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_rhs_casted.rstr_for_result));
+
+			rstr_appendf(
+				&(expr_result->rstr_for_result),
+				"store %s, %s;\n",
+				RSTR_CSTR(&(result_lhs.rstr_result_ptr)),
+				RSTR_CSTR(&(result_rhs_casted.rstr_result))
+			);
+			_expr_result_set_result(
+				expr_result,
+				RSTR_CSTR(&(result_rhs_casted.rstr_result))
+			);
+
+			_expr_result_free(&result_lhs);
+			_expr_result_free(&result_rhs);
+			_expr_result_free(&result_rhs_casted);
+
+			return true;
+		}
+		case FE_NODE_EXPR_ADD_ASSIGN: {
+
+			_A(_ir_expr_add)
+
+			return true;
+		}
+		case FE_NODE_EXPR_SUB_ASSIGN: {
+
+			_A(_ir_expr_sub)
+
+			return true;
+		}
+		case FE_NODE_EXPR_MUL_ASSIGN: {
+
+			_A(_ir_expr_mul)
+
+			return true;
+		}
+		case FE_NODE_EXPR_DIV_ASSIGN: {
+			
+			_A(_ir_expr_div)
+			
+			return true;
+		}
+		case FE_NODE_EXPR_MOD_ASSIGN: {
+
+			_A(_ir_expr_mod)
+			
+			return true;
+		}
+		case FE_NODE_EXPR_BAND_ASSIGN: {
+			
+			_A(_ir_expr_bitwise)
+
+			return true;
+		}
+		case FE_NODE_EXPR_BOR_ASSIGN: {
+
+			_A(_ir_expr_bitwise)
+			
+			return true;
+		}
+		case FE_NODE_EXPR_BXOR_ASSIGN: {
+
+			_A(_ir_expr_bitwise)
+			
+			return true;
+		}
+		case FE_NODE_EXPR_SHIFT_LEFT_ASSIGN: {
+			
+			_A(_ir_expr_shift_left)
+
+			return true;
+		}
+		case FE_NODE_EXPR_SHIFT_RIGHT_ASSIGN: {
+			
+			_A(_ir_expr_shift_right)
+
+			return true;
+		}
+		default: {
+			return false;
+		}
+	}
+
+	#undef	_A
+}
 
 static void _ir_expr(
 	IRGeneratorContext *ctx,
@@ -3389,6 +3541,7 @@ static void _ir_expr(
 	_A(_ir_expr_band_bxor_bor)
 	_A(_ir_expr_logic)
 	_A(_ir_expr_cond)
+	_A(_ir_expr_assign)
 
 	printf("TYPE: %x, %s\n", node->type, node->type_name);
 	assert(0);
