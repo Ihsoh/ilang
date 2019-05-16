@@ -16,7 +16,6 @@ function func_test(n:int64, ...) {
 	var b:__va_list;
 
 	__va_start(a);
-	__va_arg(a, int64);
 
 	__va_copy(b, a);
 

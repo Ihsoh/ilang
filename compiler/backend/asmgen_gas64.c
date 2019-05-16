@@ -409,6 +409,7 @@ static void _new_double(
 #define	_ASM_CONST_1					"$1"
 #define	_ASM_CONST_8					"$8"
 #define	_ASM_CONST_16					"$16"
+#define	_ASM_CONST_24					"$24"
 #define	_ASM_CONST_MINUS_1				"$-1"
 
 #define	_ASM_FUNC_RETURN_LABEL_PREFIX	"FUNC_RET"
@@ -6972,12 +6973,13 @@ static void _asm_stat_va_start(
 		_ASM_REG_NAME_RBP
 	);
 
+	// +16为第一个参数的位子，再+8后跳过第一个参数，所以+24。
 	_asm_inst_add_x_x(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT64,
 		_ASM_REG_NAME_RAX,
-		_ASM_CONST_16
+		_ASM_CONST_24
 	);
 
 	_asm_inst_mov_x_x(
