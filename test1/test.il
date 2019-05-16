@@ -13,19 +13,19 @@ function print_pointer(str:*char, ptr:*) dummy
 function func_a():int64 {
 	var v:int64 = 1000;
 	print_int64("a = ", v);
-	return v;
+	return 0;
 }
 
 function func_b():int64 {
 	var v:int64 = 2000;
 	print_int64("b = ", v);
-	return v;
+	return 1;
 }
 
 function func_test() {
 	var a:int64= 100;
 	var b:int32 = 300;
-	var c:int64 = 1 ? func_a() : func_b();
+	var c:int64 = func_a() || func_b();
 
 	print_int64("c = ", c);
 }

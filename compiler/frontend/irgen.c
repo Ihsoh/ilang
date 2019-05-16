@@ -462,6 +462,37 @@ static size_t _generate_func_tmp_ptr_var(
 	return no;
 }
 
+static void _const_int(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	ParserASTNode *type,
+	int v
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(type);
+
+	ResizableString rstr_type;
+	rstr_init(&rstr_type);
+	_ir_type(ctx, &rstr_type, type);
+
+	rstr_appendf(
+		rstr,
+		"cast<%s>(%d)",
+		RSTR_CSTR(&rstr_type),
+		v
+	);
+
+	rstr_free(&rstr_type);
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -2887,9 +2918,284 @@ static void _ir_cond_expr(
 	);
 }
 
+static bool _ir_expr_logic(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	_ExprResult *expr_result,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(expr_result);
+	assert(node);
 
+	switch (node->type) {
+		case FE_NODE_EXPR_AND: {
+			assert(node->nchilds == 2);
 
+			ParserASTNode *node_lhs = node->childs[0];
+			ParserASTNode *node_rhs = node->childs[1];
 
+			ParserASTNode *node_target_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node);
+
+			ResizableString rstr_zero;
+			rstr_init(&rstr_zero);
+			_const_int(ctx, &rstr_zero, node_target_type, 0);
+
+			ResizableString rstr_one;
+			rstr_init(&rstr_one);
+			_const_int(ctx, &rstr_one, node_target_type, 1);
+
+			ResizableString rstr_result;
+			rstr_init(&rstr_result);
+			_generate_func_tmp_var(
+				ctx,
+				ctx->func_symbol,
+				&rstr_result,
+				node_target_type
+			);
+
+			rstr_appendf(
+				rstr,
+				"assign %s, %s;\n",
+				RSTR_CSTR(&rstr_result),
+				RSTR_CSTR(&rstr_zero)
+			);
+
+			_ExprResult result_lhs;
+			_expr_result_init(&result_lhs);
+
+			_ir_expr(ctx, rstr, &result_lhs, node_lhs);
+			rstr_append_with_rstr(rstr, &(result_lhs.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_lhs.rstr_for_result));
+
+			ResizableString rstr_cond_expr_lhs;
+			rstr_init(&rstr_cond_expr_lhs);
+			_ir_cond_expr_with_rstr(ctx, rstr, &rstr_cond_expr_lhs, &result_lhs, node_lhs);
+
+			_TMP_LABEL_DEF(ctx, lhs_true)
+			_TMP_LABEL_DEF(ctx, rhs_true)
+			_TMP_LABEL_DEF(ctx, end)
+
+			rstr_appendf(
+				rstr,
+				"cbr %s, %s, %s;\n",
+				RSTR_CSTR(&rstr_cond_expr_lhs),
+				_TMP_LABEL_CSTR(lhs_true),
+				_TMP_LABEL_CSTR(end)
+			);
+
+			rstr_appendf(
+				rstr,
+				"%s:\n",
+				_TMP_LABEL_CSTR(lhs_true)
+			);
+
+			_ExprResult result_rhs;
+			_expr_result_init(&result_rhs);
+
+			_ir_expr(ctx, rstr, &result_rhs, node_rhs);
+			rstr_append_with_rstr(rstr, &(result_rhs.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_rhs.rstr_for_result));
+
+			ResizableString rstr_cond_expr_rhs;
+			rstr_init(&rstr_cond_expr_rhs);
+			_ir_cond_expr_with_rstr(ctx, rstr, &rstr_cond_expr_rhs, &result_rhs, node_rhs);
+
+			rstr_appendf(
+				rstr,
+				"cbr %s, %s, %s;\n",
+				RSTR_CSTR(&rstr_cond_expr_rhs),
+				_TMP_LABEL_CSTR(rhs_true),
+				_TMP_LABEL_CSTR(end)
+			);
+
+			rstr_appendf(
+				rstr,
+				"%s:\n",
+				_TMP_LABEL_CSTR(rhs_true)
+			);
+
+			rstr_appendf(
+				rstr,
+				"assign %s, %s;\n",
+				RSTR_CSTR(&rstr_result),
+				RSTR_CSTR(&rstr_one)
+			);
+
+			rstr_appendf(
+				rstr,
+				"%s:\n",
+				_TMP_LABEL_CSTR(end)
+			);
+
+			_expr_result_set_result(
+				expr_result,
+				RSTR_CSTR(&rstr_result)
+			);
+
+			rstr_free(&rstr_zero);
+			rstr_free(&rstr_one);
+			rstr_free(&rstr_result);
+
+			_expr_result_free(&result_lhs);
+			rstr_free(&rstr_cond_expr_lhs);
+
+			_TMP_LABEL_FREE(lhs_true)
+			_TMP_LABEL_FREE(rhs_true)
+			_TMP_LABEL_FREE(end)
+
+			_expr_result_free(&result_rhs);
+			rstr_free(&rstr_cond_expr_rhs);
+
+			return true;
+		}
+		case FE_NODE_EXPR_OR: {
+			assert(node->nchilds == 2);
+
+			ParserASTNode *node_lhs = node->childs[0];
+			ParserASTNode *node_rhs = node->childs[1];
+
+			ParserASTNode *node_target_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node);
+
+			ResizableString rstr_zero;
+			rstr_init(&rstr_zero);
+			_const_int(ctx, &rstr_zero, node_target_type, 0);
+
+			ResizableString rstr_one;
+			rstr_init(&rstr_one);
+			_const_int(ctx, &rstr_one, node_target_type, 1);
+
+			ResizableString rstr_result;
+			rstr_init(&rstr_result);
+			_generate_func_tmp_var(
+				ctx,
+				ctx->func_symbol,
+				&rstr_result,
+				node_target_type
+			);
+
+			rstr_appendf(
+				rstr,
+				"assign %s, %s;\n",
+				RSTR_CSTR(&rstr_result),
+				RSTR_CSTR(&rstr_zero)
+			);
+
+			_ExprResult result_lhs;
+			_expr_result_init(&result_lhs);
+
+			_ir_expr(ctx, rstr, &result_lhs, node_lhs);
+			rstr_append_with_rstr(rstr, &(result_lhs.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_lhs.rstr_for_result));
+
+			ResizableString rstr_cond_expr_lhs;
+			rstr_init(&rstr_cond_expr_lhs);
+			_ir_cond_expr_with_rstr(ctx, rstr, &rstr_cond_expr_lhs, &result_lhs, node_lhs);
+
+			_TMP_LABEL_DEF(ctx, lhs_true)
+			_TMP_LABEL_DEF(ctx, lhs_false)
+			_TMP_LABEL_DEF(ctx, rhs_true)
+			_TMP_LABEL_DEF(ctx, end)
+
+			rstr_appendf(
+				rstr,
+				"cbr %s, %s, %s;\n",
+				RSTR_CSTR(&rstr_cond_expr_lhs),
+				_TMP_LABEL_CSTR(lhs_true),
+				_TMP_LABEL_CSTR(lhs_false)
+			);
+
+			rstr_appendf(
+				rstr,
+				"%s:\n",
+				_TMP_LABEL_CSTR(lhs_true)
+			);
+
+			rstr_appendf(
+				rstr,
+				"assign %s, %s;\n",
+				RSTR_CSTR(&rstr_result),
+				RSTR_CSTR(&rstr_one)
+			);
+
+			rstr_appendf(
+				rstr,
+				"br %s;\n",
+				_TMP_LABEL_CSTR(end)
+			);
+
+			rstr_appendf(
+				rstr,
+				"%s:\n",
+				_TMP_LABEL_CSTR(lhs_false)
+			);
+
+			_ExprResult result_rhs;
+			_expr_result_init(&result_rhs);
+
+			_ir_expr(ctx, rstr, &result_rhs, node_rhs);
+			rstr_append_with_rstr(rstr, &(result_rhs.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_rhs.rstr_for_result));
+
+			ResizableString rstr_cond_expr_rhs;
+			rstr_init(&rstr_cond_expr_rhs);
+			_ir_cond_expr_with_rstr(ctx, rstr, &rstr_cond_expr_rhs, &result_rhs, node_rhs);
+
+			rstr_appendf(
+				rstr,
+				"cbr %s, %s, %s;\n",
+				RSTR_CSTR(&rstr_cond_expr_rhs),
+				_TMP_LABEL_CSTR(rhs_true),
+				_TMP_LABEL_CSTR(end)
+			);
+
+			rstr_appendf(
+				rstr,
+				"%s:\n",
+				_TMP_LABEL_CSTR(rhs_true)
+			);
+
+			rstr_appendf(
+				rstr,
+				"assign %s, %s;\n",
+				RSTR_CSTR(&rstr_result),
+				RSTR_CSTR(&rstr_one)
+			);
+
+			rstr_appendf(
+				rstr,
+				"%s:\n",
+				_TMP_LABEL_CSTR(end)
+			);
+
+			_expr_result_set_result(
+				expr_result,
+				RSTR_CSTR(&rstr_result)
+			);
+
+			rstr_free(&rstr_zero);
+			rstr_free(&rstr_one);
+			rstr_free(&rstr_result);
+
+			_expr_result_free(&result_lhs);
+			rstr_free(&rstr_cond_expr_lhs);
+
+			_TMP_LABEL_FREE(lhs_true)
+			_TMP_LABEL_FREE(lhs_false)
+			_TMP_LABEL_FREE(rhs_true)
+			_TMP_LABEL_FREE(end)
+
+			_expr_result_free(&result_rhs);
+			rstr_free(&rstr_cond_expr_rhs);
+
+			return true;
+		}
+		default: {
+			return false;
+		}
+	}
+}
 
 static bool _ir_expr_cond(
 	IRGeneratorContext *ctx,
@@ -3081,9 +3387,7 @@ static void _ir_expr(
 	_A(_ir_expr_shift)
 	_A(_ir_expr_comparison)
 	_A(_ir_expr_band_bxor_bor)
-
-
-
+	_A(_ir_expr_logic)
 	_A(_ir_expr_cond)
 
 	printf("TYPE: %x, %s\n", node->type, node->type_name);
