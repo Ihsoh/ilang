@@ -6963,7 +6963,6 @@ static void _asm_stat_va_start(
 	ParserASTNode *node_target = node->childs[0];
 	assert(node_target->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
-	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_target) == BE_TYPE_VA_LIST);
 
 	_asm_inst_mov_x_x(
 		ctx,
@@ -6985,9 +6984,27 @@ static void _asm_stat_va_start(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT64,
-		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target)),
+		_ASM_REG_NAME_RBX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target))
+	);
+
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(
+		ctx,
+		&rstr_memref,
+		_ASM_REG_NAME_RBX
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		RSTR_CSTR(&rstr_memref),
 		_ASM_REG_NAME_RAX
 	);
+
+	rstr_free(&rstr_memref);
 }
 
 static void _asm_stat_va_end(
@@ -7002,15 +7019,32 @@ static void _asm_stat_va_end(
 	ParserASTNode *node_target = node->childs[0];
 	assert(node_target->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
-	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_target) == BE_TYPE_VA_LIST);
 
 	_asm_inst_mov_x_x(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT64,
-		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target)),
+		_ASM_REG_NAME_RAX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target))
+	);
+
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(
+		ctx,
+		&rstr_memref,
+		_ASM_REG_NAME_RAX
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		RSTR_CSTR(&rstr_memref),
 		_ASM_CONST_0
 	);
+
+	rstr_free(&rstr_memref);
 }
 
 static void _asm_stat_va_copy(
@@ -7025,28 +7059,61 @@ static void _asm_stat_va_copy(
 	ParserASTNode *node_target = node->childs[0];
 	assert(node_target->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
-	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_target) == BE_TYPE_VA_LIST);
 
 	ParserASTNode *node_source = node->childs[1];
 	assert(node_source->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
-	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_source) == BE_TYPE_VA_LIST);
 
 	_asm_inst_mov_x_x(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT64,
 		_ASM_REG_NAME_RAX,
-		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source))
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target))
 	);
 
 	_asm_inst_mov_x_x(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT64,
-		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target)),
+		_ASM_REG_NAME_RBX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source))
+	);
+
+	ResizableString rstr_memref_target;
+	rstr_init(&rstr_memref_target);
+	_asm_inst_memref_base(
+		ctx,
+		&rstr_memref_target,
 		_ASM_REG_NAME_RAX
 	);
+
+	ResizableString rstr_memref_source;
+	rstr_init(&rstr_memref_source);
+	_asm_inst_memref_base(
+		ctx,
+		&rstr_memref_source,
+		_ASM_REG_NAME_RBX
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RCX,
+		RSTR_CSTR(&rstr_memref_source)
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		RSTR_CSTR(&rstr_memref_target),
+		_ASM_REG_NAME_RCX
+	);
+
+	rstr_free(&rstr_memref_target);
+	rstr_free(&rstr_memref_source);
 }
 
 static void _asm_stat_va_arg(
@@ -7069,7 +7136,6 @@ static void _asm_stat_va_arg(
 	ParserASTNode *node_source = node->childs[2];
 	assert(node_source->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
-	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_source) == BE_TYPE_VA_LIST);
 
 	_asm_inst_mov_x_x(
 		ctx,
@@ -7079,32 +7145,44 @@ static void _asm_stat_va_arg(
 		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source))
 	);
 
-	ResizableString rstr_memref;
-	rstr_init(&rstr_memref);
-	_asm_inst_memref_base(ctx, &rstr_memref, _ASM_REG_NAME_RAX);
+	ResizableString rstr_memref_source;
+	rstr_init(&rstr_memref_source);
+	_asm_inst_memref_base(ctx, &rstr_memref_source, _ASM_REG_NAME_RAX);
 
 	_asm_inst_mov_x_x(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT64,
 		_ASM_REG_NAME_RBX,
+		RSTR_CSTR(&rstr_memref_source)
+	);
+
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(ctx, &rstr_memref, _ASM_REG_NAME_RBX);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RCX,
 		RSTR_CSTR(&rstr_memref)
 	);
+
+	rstr_free(&rstr_memref);
 
 	_asm_inst_mov_sym_x(
 		ctx,
 		ctx->body,
 		symbol_target,
-		_asm_inst_reg(ctx, type_target, _ASM_REG_BX)
+		_asm_inst_reg(ctx, type_target, _ASM_REG_CX)
 	);
-
-	rstr_free(&rstr_memref);
 
 	_asm_inst_add_x_x(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT64,
-		_ASM_REG_NAME_RAX,
+		_ASM_REG_NAME_RBX,
 		_ASM_CONST_8
 	);
 
@@ -7112,9 +7190,11 @@ static void _asm_stat_va_arg(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT64,
-		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source)),
-		_ASM_REG_NAME_RAX
+		RSTR_CSTR(&rstr_memref_source),
+		_ASM_REG_NAME_RBX
 	);
+
+	rstr_free(&rstr_memref_source);
 }
 
 

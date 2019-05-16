@@ -115,6 +115,31 @@ static void _expr_result_set_result_ptr(
 
 
 
+static void _ir_identifier_name(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	ParserASTNode *node_identifier
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(node_identifier);
+
+	rstr_append_with_char(rstr, '_');
+	rstr_append_with_raw(rstr, node_identifier->token->content, node_identifier->token->len);
+}
+
+static void _ir_identifier_name_tk(
+	IRGeneratorContext *ctx,
+	ResizableString *rstr,
+	LexerToken *tk_identifier
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(tk_identifier);
+
+	rstr_append_with_char(rstr, '_');
+	rstr_append_with_raw(rstr, tk_identifier->content, tk_identifier->len);
+}
 
 
 
@@ -150,7 +175,7 @@ static void _ir_func_type_params(
 					ParserASTNode *node_id = node_param->childs[0];	\
 					ParserASTNode *node_type = node_param->childs[1];	\
 						\
-					rstr_append_with_raw(rstr, node_id->token->content, node_id->token->len);	\
+					_ir_identifier_name_tk(ctx, rstr, node_id->token);	\
 						\
 					rstr_append_with_char(rstr, ':');	\
 						\
@@ -182,25 +207,6 @@ static void _ir_func_type_params(
 		#undef	_NODE_PARAM
 	}
 }
-
-static void _ir_identifier_name(
-	IRGeneratorContext *ctx,
-	ResizableString *rstr,
-	ParserASTNode *node_identifier
-) {
-	assert(ctx);
-	assert(rstr);
-	assert(node_identifier);
-
-	rstr_append_with_char(rstr, '_');
-	rstr_append_with_raw(rstr, node_identifier->token->content, node_identifier->token->len);
-}
-
-
-
-
-
-
 
 
 
@@ -1670,8 +1676,49 @@ static bool _ir_expr_unary(
 		case FE_NODE_EXPR_VA_ARG: {
 			assert(node->nchilds == 2);
 
-			// TODO: ...
-			assert(0);
+			ParserSymbol *func_symbol = ctx->func_symbol;
+			assert(func_symbol);
+
+			ParserASTNode *node_expr = node->childs[0];
+			ParserASTNode *node_type = node->childs[1];
+
+			_ExprResult result_expr;
+			_expr_result_init(&result_expr);
+
+			_ir_expr(ctx, rstr, &result_expr, node_expr);
+			rstr_append_with_rstr(rstr, &(result_expr.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_expr.rstr_for_result));
+
+			ResizableString rstr_type;
+			rstr_init(&rstr_type);
+			_ir_type(ctx, &rstr_type, node_type);
+
+			ResizableString rstr_tmp_label_val;
+			rstr_init(&rstr_tmp_label_val);
+			_generate_func_tmp_var(
+				ctx,
+				func_symbol,
+				&rstr_tmp_label_val,
+				node_type
+			);
+
+			rstr_appendf(
+				&(expr_result->rstr_for_result),
+				"__va_arg %s, %s, %s;\n",
+				RSTR_CSTR(&rstr_tmp_label_val),
+				RSTR_CSTR(&rstr_type),
+				RSTR_CSTR(&(result_expr.rstr_result_ptr))
+			);
+
+			_expr_result_set_result(
+				expr_result,
+				RSTR_CSTR(&rstr_tmp_label_val)
+			);
+
+			_expr_result_free(&result_expr);
+
+			rstr_free(&rstr_type);
+			rstr_free(&rstr_tmp_label_val);
 
 			return true;
 		}
@@ -3681,6 +3728,8 @@ static void _ir_var(
 				ResizableString rstr_id;
 				rstr_init(&rstr_id);
 				_ir_identifier_name(ctx, &rstr_id, node_identifier);
+				size_t no = FE_FUNC_SYMBOL_NEXT_NO(ctx->func_symbol);
+				rstr_appendf(&rstr_id, ".%zu__", no);
 
 				ResizableString rstr;
 				rstr_init(&rstr);
@@ -4417,6 +4466,88 @@ static void _ir_stat_expr(
 	rstr_free(&rstr);
 }
 
+static void _ir_stat_va_start(
+	IRGeneratorContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_START);
+
+	ParserASTNode *node_expr = node->childs[0];
+
+	_ExprResult result_expr;
+	_expr_result_init(&result_expr);
+
+	_ir_expr_wrapper_ptr(ctx, ctx->body, &result_expr, node_expr);
+
+	rstr_appendf(
+		ctx->body,
+		"__va_start %s;\n",
+		RSTR_CSTR(&(result_expr.rstr_result_ptr))
+	);
+
+	_expr_result_free(&result_expr);
+}
+
+static void _ir_stat_va_end(
+	IRGeneratorContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_END);
+
+	ParserASTNode *node_expr = node->childs[0];
+
+	_ExprResult result_expr;
+	_expr_result_init(&result_expr);
+
+	_ir_expr_wrapper_ptr(ctx, ctx->body, &result_expr, node_expr);
+
+	rstr_appendf(
+		ctx->body,
+		"__va_end %s;\n",
+		RSTR_CSTR(&(result_expr.rstr_result_ptr))
+	);
+
+	_expr_result_free(&result_expr);
+}
+
+static void _ir_stat_va_copy(
+	IRGeneratorContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_STAT_VA_COPY);
+
+	ParserASTNode *node_target = node->childs[0];
+	ParserASTNode *node_source = node->childs[1];
+
+	_ExprResult result_target;
+	_expr_result_init(&result_target);
+	_ir_expr_wrapper_ptr(ctx, ctx->body, &result_target, node_target);
+
+	_ExprResult result_source;
+	_expr_result_init(&result_source);
+	_ir_expr_wrapper_ptr(ctx, ctx->body, &result_source, node_source);
+
+	rstr_appendf(
+		ctx->body,
+		"__va_copy %s, %s;\n",
+		RSTR_CSTR(&(result_target.rstr_result_ptr)),
+		RSTR_CSTR(&(result_source.rstr_result_ptr))
+	);
+
+	_expr_result_free(&result_target);
+	_expr_result_free(&result_source);
+}
+
+
+
+
+
 static void _ir_stat(
 	IRGeneratorContext *ctx,
 	ParserASTNode *node_stat
@@ -4475,6 +4606,19 @@ static void _ir_stat(
 		}
 		case FE_NODE_STAT_DUMMY: {
 			// 什么也不做。
+			break;
+		}
+
+		case FE_NODE_STAT_VA_START: {
+			_ir_stat_va_start(ctx, node_stat);
+			break;
+		}
+		case FE_NODE_STAT_VA_END: {
+			_ir_stat_va_end(ctx, node_stat);
+			break;
+		}
+		case FE_NODE_STAT_VA_COPY: {
+			_ir_stat_va_copy(ctx, node_stat);
 			break;
 		}
 		
@@ -4568,6 +4712,22 @@ static void _ir_func(
 
 	if (node_body->type == FE_NODE_STATS_BLOCK) {
 		rstr_append_with_cstr(ctx->body, " {\n");
+
+		for (int i = 0; i < node_func_params->nchilds; i++) {
+			ParserASTNode *node_param = node_func_params->childs[i];
+			if (node_param->type == FE_NODE_FUNC_PARAMS_ELLIPSIS_ITEM) {
+				continue;
+			}
+
+			ParserSymbol *symbol = FE_FUNC_PARAM_AST_NODE_GET_SYMBOL(node_param);
+
+			assert(!FE_VAR_SYMBOL_GET_HAS_CODE_GEN_NAME(symbol));
+
+			FE_VAR_SYMBOL_SET_HAS_CODE_GEN_NAME(symbol, true);	
+			ResizableString *code_gen_name = FE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol);
+			rstr_init(code_gen_name);
+			_ir_identifier_name_tk(ctx, code_gen_name, symbol->token);
+		}
 
 		ResizableString *body = ctx->body;
 		ctx->body = rstr_new();

@@ -214,6 +214,9 @@ static uint8_t _get_type_by_type_node(
 		case FE_NODE_TYPE_DOUBLE: {
 			return FE_TYPE_DOUBLE;
 		}
+		case FE_NODE_TYPE_VA_LIST: {
+			return FE_TYPE_VA_LIST;
+		}
 		case FE_NODE_TYPE_STRUCT: {
 			return FE_TYPE_STRUCT;
 		}
@@ -729,6 +732,24 @@ static bool _is_compatible_pointer_type(
 	}
 }
 
+static bool _is_compatible_va_list_type(
+	ParserContext *ctx,
+	ParserASTNode *target,
+	ParserASTNode *source,
+	bool same
+) {
+	assert(ctx);
+	assert(target);
+	assert(source);
+
+	if (_get_type_by_type_node(ctx, target) == FE_TYPE_VA_LIST
+			&& _get_type_by_type_node(ctx, source) == FE_TYPE_VA_LIST) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 static bool _is_compatible_type(
 	ParserContext *ctx,
 	ParserASTNode *target,
@@ -752,6 +773,9 @@ static bool _is_compatible_type(
 		return true;
 	}
 	if (_is_compatible_pointer_type(ctx, target, source, same)) {
+		return true;
+	}
+	if (_is_compatible_va_list_type(ctx, target, source, same)) {
 		return true;
 	}
 	return false;

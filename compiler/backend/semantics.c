@@ -214,6 +214,9 @@ static uint8_t _get_type_by_type_node(
 		case BE_NODE_TYPE_DOUBLE: {
 			return BE_TYPE_DOUBLE;
 		}
+		case BE_NODE_TYPE_VA_LIST: {
+			return BE_TYPE_VA_LIST;
+		}
 		case BE_NODE_TYPE_STRUCT: {
 			return BE_TYPE_STRUCT;
 		}
@@ -755,6 +758,24 @@ static bool _is_compatible_pointer_type(
 	}
 }
 
+static bool _is_compatible_va_list_type(
+	ParserContext *ctx,
+	ParserASTNode *target,
+	ParserASTNode *source,
+	bool same
+) {
+	assert(ctx);
+	assert(target);
+	assert(source);
+
+	if (_get_type_by_type_node(ctx, target) == BE_TYPE_VA_LIST
+			&& _get_type_by_type_node(ctx, source) == BE_TYPE_VA_LIST) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 static bool _is_compatible_type(
 	ParserContext *ctx,
 	ParserASTNode *target,
@@ -781,6 +802,9 @@ static bool _is_compatible_type(
 		return true;
 	}
 	if (_is_compatible_pointer_type(ctx, target, source, same)) {
+		return true;
+	}
+	if (_is_compatible_va_list_type(ctx, target, source, same)) {
 		return true;
 	}
 	return false;
@@ -5567,6 +5591,15 @@ ok:
 	return;	
 }
 
+static bool _is_va_list_pointer(
+	ParserASTNode *type_node
+) {
+	assert(type_node);
+
+	return type_node->type == BE_NODE_TYPE_POINTER
+			&& type_node->childs[0]->type == BE_NODE_TYPE_VA_LIST;
+}
+
 static void _stat_va_start(
 	ParserContext *ctx,
 	ParserASTNode *node
@@ -5580,7 +5613,7 @@ static void _stat_va_start(
 	assert(node_target->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
 	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
-	if (node_type_target->type != BE_NODE_TYPE_VA_LIST) {
+	if (!_is_va_list_pointer(node_type_target)) {
 		goto err;
 	}
 
@@ -5606,7 +5639,7 @@ static void _stat_va_end(
 	assert(node_target->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
 	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
-	if (node_type_target->type != BE_NODE_TYPE_VA_LIST) {
+	if (!_is_va_list_pointer(node_type_target)) {
 		goto err;
 	}
 
@@ -5632,7 +5665,7 @@ static void _stat_va_copy(
 	assert(node_target->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
 	ParserASTNode *node_type_target = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_target);
-	if (node_type_target->type != BE_NODE_TYPE_VA_LIST) {
+	if (!_is_va_list_pointer(node_type_target)) {
 		goto err;
 	}
 
@@ -5640,7 +5673,7 @@ static void _stat_va_copy(
 	assert(node_source->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
 	ParserASTNode *node_type_source = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source);
-	if (node_type_source->type != BE_NODE_TYPE_VA_LIST) {
+	if (!_is_va_list_pointer(node_type_source)) {
 		goto err;
 	}
 
@@ -5681,7 +5714,7 @@ static void _stat_va_arg(
 	assert(node_source->type == BE_NODE_IDENTIFIER);
 	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
 	ParserASTNode *node_type_source = BE_VAR_SYMBOL_GET_TYPE_NODE(symbol_source);
-	if (node_type_source->type != BE_NODE_TYPE_VA_LIST) {
+	if (!_is_va_list_pointer(node_type_source)) {
 		goto err;
 	}
 
@@ -5693,10 +5726,6 @@ err:
 		"invalid parameter combination."
 	);
 }
-
-
-
-
 
 
 

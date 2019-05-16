@@ -5,19 +5,41 @@ function _test(a:int64, ...) {
 	assign n, i64const 0;
 
 	var va:__va_list;
-	__va_start va;
+	var va_ptr:*__va_list;
+	ref va_ptr, va;
 
-	__va_arg n, int64, va;
-	vcall _print_int64("[0] = ", n);
+	var va1:__va_list;
+	var va1_ptr:*__va_list;
+	ref va1_ptr, va1;
 
-	__va_arg n, int64, va;
-	vcall _print_int64("[1] = ", n);
+	__va_start va_ptr;
 
-	__va_arg n, int64, va;
-	vcall _print_int64("[2] = ", n);
+	__va_copy va1_ptr, va_ptr;
+
+	__va_arg n, int64, va_ptr;
+	vcall _print_int64("va[0] = ", n);
+
+	__va_arg n, int64, va_ptr;
+	vcall _print_int64("va[1] = ", n);
+
+	__va_arg n, int64, va_ptr;
+	vcall _print_int64("va[2] = ", n);
 
 
-	__va_end va;
+
+	__va_arg n, int64, va1_ptr;
+	vcall _print_int64("va1[0] = ", n);
+
+	__va_arg n, int64, va1_ptr;
+	vcall _print_int64("va1[1] = ", n);
+
+	__va_arg n, int64, va1_ptr;
+	vcall _print_int64("va1[2] = ", n);
+
+	
+
+	__va_end va_ptr;
+	__va_end va1_ptr;
 }
 
 function _main():int32 {
