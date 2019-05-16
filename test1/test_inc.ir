@@ -283,6 +283,21 @@ function _print_double(str:*char, n:double) {
 	_STACK_ALIGN16_END
 }
 
+function _print_string(str:*char) {
+	asm_set_reg "%r8", str;
+
+	_STACK_ALIGN16_BEGIN
+
+	_LINE
+	
+	asm "movq %r8, %rdi\n";
+	asm "callq _printf\n";
+
+	_LINE
+
+	_STACK_ALIGN16_END
+}
+
 function _print_pointer(str:*char, ptr:*) {
 	asm_set_reg "%r8", str;
 	asm_set_reg "%r9", ptr;

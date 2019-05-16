@@ -9,27 +9,18 @@ function print_uint64(str:*char, n:uint64) dummy
 function print_float(str:*char, n:float) dummy
 function print_double(str:*char, n:double) dummy
 function print_pointer(str:*char, ptr:*) dummy
-
-function func_a():int64 {
-	var v:int64 = 1000;
-	print_int64("a = ", v);
-	return 0;
-}
-
-function func_b():int64 {
-	var v:int64 = 2000;
-	print_int64("b = ", v);
-	return 1;
-}
+function print_string(str:*char) dummy
 
 function func_test() {
-	var a:int64= 100;
-	var b:int32 = 300;
-	var c:int64 = 2333;
-	c = func_a() || func_b();
-	c += 2;
-
-	print_int64("c = ", c);
+	var i:int64 = 0;
+lbl_tmp:
+	if (i >= 10) {
+		goto lbl_end;
+	}
+	print_int64("i = ", i);
+	i++;
+	goto lbl_tmp;
+lbl_end:
 }
 
 function main():int32 {
