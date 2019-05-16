@@ -2065,8 +2065,125 @@ _RULE_stat_xxx_i_ci_ci(stat_band, BAND)
 _RULE_stat_xxx_i_ci_ci(stat_bor, BOR)
 _RULE_stat_xxx_i_ci_ci(stat_bxor, BXOR)
 
+_RULE(stat_va_start)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_VA_START) {
+		_RULE_NOT_MATCHED
+	}
 
+	_RULE_NODE(BE_NODE_STAT_VA_START, _RULE_TOKEN)
 
+	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_target != NULL) {
+		_RULE_ADD_CHILD(node_target)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+_RULE(stat_va_end)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_VA_END) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_VA_END, _RULE_TOKEN)
+
+	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_target != NULL) {
+		_RULE_ADD_CHILD(node_target)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+_RULE(stat_va_copy)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_VA_COPY) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_VA_COPY, _RULE_TOKEN)
+
+	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_target != NULL) {
+		_RULE_ADD_CHILD(node_target)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_source = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_source != NULL) {
+		_RULE_ADD_CHILD(node_source)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
+
+_RULE(stat_va_arg)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_KEYWORD_VA_ARG) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(BE_NODE_STAT_VA_ARG, _RULE_TOKEN)
+
+	ParserASTNode *node_target = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_target != NULL) {
+		_RULE_ADD_CHILD(node_target)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_type = _RULE_NAME(type)(_RULE_PARSER_CTX);
+	if (node_type != NULL) {
+		_RULE_ADD_CHILD(node_type)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_COMMA) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_source = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+	if (node_source != NULL) {
+		_RULE_ADD_CHILD(node_source)
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != BE_TOKEN_PNCT_SEMICOLON) {
+		_RULE_NOT_MATCHED
+	}
+_RULE_END
 
 
 
@@ -2142,6 +2259,11 @@ _RULE(stat)
 	_A(stat_band)
 	_A(stat_bor)
 	_A(stat_bxor)
+
+	_A(stat_va_start)
+	_A(stat_va_end)
+	_A(stat_va_copy)
+	_A(stat_va_arg)
 
 
 

@@ -96,6 +96,7 @@
 #define	BE_NODE_STAT_VA_START				0x0b70
 #define	BE_NODE_STAT_VA_END					0x0b71
 #define	BE_NODE_STAT_VA_COPY				0x0b72
+#define	BE_NODE_STAT_VA_ARG					0x0b73
 
 #define	BE_NODE_STAT_STORE					0x0b80
 #define	BE_NODE_STAT_LOAD					0x0b81

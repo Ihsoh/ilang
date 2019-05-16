@@ -1,38 +1,27 @@
 #include "test_inc.ir"
 
-function _add_i64(n1:int64, n2:int64):int64 {
-	vcall _print_int64("n1 = ", n1);
-	vcall _print_int64("n2 = ", n2);
+function _test(a:int64, ...) {
+	var n:int64;
+	assign n, i64const 0;
 
-	var result:int64;
-	add result, n1, n2;
+	var va:__va_list;
+	__va_start va;
 
-	return result;
-}
+	__va_arg n, int64, va;
+	vcall _print_int64("[0] = ", n);
 
-struct A {
-	var a:int64;
-	var b:int64;
-	var c:int64;
-}
+	__va_arg n, int64, va;
+	vcall _print_int64("[1] = ", n);
 
-function _test() {
-	vcall _print_int64("test = ", i64const 233333333);
-}
+	__va_arg n, int64, va;
+	vcall _print_int64("[2] = ", n);
 
-function _get_func_ptr():*function() {
-	return _test;
+
+	__va_end va;
 }
 
 function _main():int32 {
-	var result:int64;
-	call result, _add_i64(cast<int64>(100), cast<int64>(200));
-
-	vcall _print_int64("result = ", result);
-
-	var fptr:*function();
-	call fptr, _get_func_ptr();
-	vcall fptr();
+	vcall _test(1, 2, 3);
 
 	return cast<int32>(0);
 }

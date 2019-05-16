@@ -407,6 +407,8 @@ static void _new_double(
 
 #define	_ASM_CONST_0					"$0"
 #define	_ASM_CONST_1					"$1"
+#define	_ASM_CONST_8					"$8"
+#define	_ASM_CONST_16					"$16"
 #define	_ASM_CONST_MINUS_1				"$-1"
 
 #define	_ASM_FUNC_RETURN_LABEL_PREFIX	"FUNC_RET"
@@ -3014,6 +3016,11 @@ static void _asm_var(
 						break;
 					}
 					case BE_NODE_TYPE_POINTER: {
+						rstr_append_with_cstr(ctx->body, ".8byte ");
+						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
+						break;
+					}
+					case BE_NODE_TYPE_VA_LIST: {
 						rstr_append_with_cstr(ctx->body, ".8byte ");
 						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
@@ -6944,6 +6951,173 @@ static void _asm_stat_bxor(
 
 
 
+static void _asm_stat_va_start(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VA_START);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_target) == BE_TYPE_VA_LIST);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RAX,
+		_ASM_REG_NAME_RBP
+	);
+
+	_asm_inst_add_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RAX,
+		_ASM_CONST_16
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target)),
+		_ASM_REG_NAME_RAX
+	);
+}
+
+static void _asm_stat_va_end(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VA_END);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_target) == BE_TYPE_VA_LIST);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target)),
+		_ASM_CONST_0
+	);
+}
+
+static void _asm_stat_va_copy(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VA_COPY);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_target) == BE_TYPE_VA_LIST);
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_source) == BE_TYPE_VA_LIST);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RAX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source))
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target)),
+		_ASM_REG_NAME_RAX
+	);
+}
+
+static void _asm_stat_va_arg(
+	ASMGeneratorGas64Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VA_ARG);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+	assert(be_sem_is_primitive_type(type_target) || be_sem_is_pointer_type(type_target));
+
+	ParserASTNode *node_type = node->childs[1];
+
+	ParserASTNode *node_source = node->childs[2];
+	assert(node_source->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+	assert(BE_VAR_SYMBOL_GET_TYPE(symbol_source) == BE_TYPE_VA_LIST);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RAX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source))
+	);
+
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(ctx, &rstr_memref, _ASM_REG_NAME_RAX);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RBX,
+		RSTR_CSTR(&rstr_memref)
+	);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target,
+		_asm_inst_reg(ctx, type_target, _ASM_REG_BX)
+	);
+
+	rstr_free(&rstr_memref);
+
+	_asm_inst_add_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		_ASM_REG_NAME_RAX,
+		_ASM_CONST_8
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT64,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source)),
+		_ASM_REG_NAME_RAX
+	);
+}
+
+
 
 
 
@@ -7157,6 +7331,26 @@ static void _asm_stat(
 			break;
 		}
 
+		case BE_NODE_STAT_VA_START: {
+			_asm_stat_va_start(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_VA_END: {
+			_asm_stat_va_end(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_VA_COPY: {
+			_asm_stat_va_copy(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_VA_ARG: {
+			_asm_stat_va_arg(ctx, node_stat);
+			break;
+		}
+
+
+
+
 		case BE_NODE_STAT_DUMMY: {
 			
 			break;
@@ -7276,12 +7470,12 @@ static void _asm_func(
 			size_t type_size = 8;
 			assert(type_size != 0);
 
-			if (ctx->local_var_address_counter % align > 0) {
-				size_t align_padding = align - ctx->local_var_address_counter % align;
-				ctx->local_var_address_counter += align_padding;
-			}
+			// if (ctx->local_var_address_counter % align > 0) {
+			// 	size_t align_padding = align - ctx->local_var_address_counter % align;
+			// 	ctx->local_var_address_counter += align_padding;
+			// }
 
-			BE_VAR_SYMBOL_SET_ADDRESS(symbol, ctx->local_var_address_counter);
+			// BE_VAR_SYMBOL_SET_ADDRESS(symbol, ctx->local_var_address_counter);
 
 			BE_VAR_SYMBOL_SET_HAS_CODE_GEN_NAME(symbol, true);	
 			ResizableString *code_gen_name = BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol);
@@ -7311,7 +7505,7 @@ static void _asm_func(
 				'\n'
 			);
 
-			ctx->local_var_address_counter += type_size;
+			// ctx->local_var_address_counter += type_size;
 			ctx->local_var_index_counter++;
 		}
 

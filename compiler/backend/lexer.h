@@ -94,6 +94,10 @@
 #define	BE_TOKEN_KEYWORD_FCONST			0x3040	// fconst
 #define	BE_TOKEN_KEYWORD_DCONST			0x3041	// dconst
 
+#define	BE_TOKEN_KEYWORD_VA_START		0x3050	// __va_start
+#define	BE_TOKEN_KEYWORD_VA_COPY		0x3051	// __va_copy
+#define	BE_TOKEN_KEYWORD_VA_END			0x3052	// __va_end
+#define	BE_TOKEN_KEYWORD_VA_ARG			0x3053	// __va_arg
 
 
 
