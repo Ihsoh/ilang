@@ -10,10 +10,22 @@ function print_float(str:*char, n:float) dummy
 function print_double(str:*char, n:double) dummy
 function print_pointer(str:*char, ptr:*) dummy
 
+function func_a():int64 {
+	var v:int64 = 1000;
+	print_int64("a = ", v);
+	return v;
+}
+
+function func_b():int64 {
+	var v:int64 = 2000;
+	print_int64("b = ", v);
+	return v;
+}
+
 function func_test() {
-	var a:int64 = 1;
-	var b:int64 = 4;
-	var c:int64 = (a << b) >> 1;
+	var a:int64= 100;
+	var b:int32 = 300;
+	var c:int64 = 1 ? func_a() : func_b();
 
 	print_int64("c = ", c);
 }

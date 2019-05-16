@@ -4066,16 +4066,6 @@ static void _asm_stat_sitofp(
 		_ASM_REG_AX,
 		node_source
 	);
-	const char *reg_source = _asm_inst_reg(ctx, type_source, _ASM_REG_AX);
-	
-	_asm_inst_movsx_x_x(
-		ctx,
-		ctx->body,
-		BE_TYPE_INT64,
-		_ASM_REG_NAME_RAX,
-		type_source,
-		reg_source
-	);
 
 	if (type_target == BE_TYPE_FLOAT) {
 		_asm_inst_cvtsi2ss_x_x(
