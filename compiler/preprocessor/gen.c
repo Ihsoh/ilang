@@ -165,7 +165,6 @@ static bool _include_file(
 error:
 
 	rstr_free(&path);
-	rstr_free(&rstr_line_concated);
 	return false;
 }
 
