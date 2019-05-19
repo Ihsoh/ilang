@@ -9,6 +9,19 @@
 #define	FE_SEM_NODE_CATEGORY_TYPE		1
 #define	FE_SEM_NODE_CATAGORY_EXPR		2
 
+
+
+
+extern ParserASTNode __fe_sem_node_type_int32;
+extern ParserASTNode __fe_sem_node_type_int64;
+
+#define	FE_SEM_NODE_TYPE_INT32	(&__fe_sem_node_type_int32)
+#define	FE_SEM_NODE_TYPE_INT64	(&__fe_sem_node_type_int64)
+
+
+
+
+
 extern void fe_sem_process(
 	ParserContext *ctx
 );

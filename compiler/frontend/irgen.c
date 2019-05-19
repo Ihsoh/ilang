@@ -522,12 +522,6 @@ static void _expr_result_cast(
 	uint8_t target_type = fe_sem_get_type_by_type_node(ctx->psrctx, target_type_node);
 	uint8_t source_type = fe_sem_get_type_by_type_node(ctx->psrctx, source_type_node);
 
-	if (fe_sem_is_integer_type(target_type)
-			&& fe_sem_is_integer_type(source_type)
-			&& fe_sem_get_primitive_type_size(target_type) == fe_sem_get_primitive_type_size(source_type)) {
-		goto not_need_to_cast;
-	}
-
 	ParserSymbol *func_symbol = ctx->func_symbol;
 	assert(func_symbol);
 
@@ -553,20 +547,30 @@ static void _expr_result_cast(
 
 	if (fe_sem_is_signed_type(source_type)) {
 		if (fe_sem_is_signed_type(target_type)) {
-			if (fe_sem_get_primitive_type_size(target_type) < fe_sem_get_primitive_type_size(source_type)) {
+			size_t sz_target_type = fe_sem_get_primitive_type_size(target_type);
+			size_t sz_source_type = fe_sem_get_primitive_type_size(source_type);
+
+			if (sz_target_type < sz_source_type) {
 				// 小的有符号整数 <- 大的有符号整数。
 				_A("trunc")
-			} else {
+			} else if (sz_target_type > sz_source_type) {
 				// 大的有符号整数 <- 小的有符号整数。
 				_A("sext")
+			} else {
+				_A("bitcast")
 			}
 		} else if (fe_sem_is_unsigned_type(target_type)) {
-			if (fe_sem_get_primitive_type_size(target_type) < fe_sem_get_primitive_type_size(source_type)) {
+			size_t sz_target_type = fe_sem_get_primitive_type_size(target_type);
+			size_t sz_source_type = fe_sem_get_primitive_type_size(source_type);
+
+			if (sz_target_type < sz_source_type) {
 				// 小的无符号整数 <- 大的有符号整数。
 				_A("trunc")
-			} else {
+			} else if (sz_target_type > sz_source_type) {
 				// 大的无符号整数 <- 小的有符号整数。
 				_A("sext")
+			} else {
+				_A("bitcast")
 			}
 		} else if (target_type == FE_TYPE_FLOAT) {
 			// float <- 有符号整数。
@@ -582,20 +586,30 @@ static void _expr_result_cast(
 		}
 	} else if (fe_sem_is_unsigned_type(source_type)) {
 		if (fe_sem_is_signed_type(target_type)) {
-			if (fe_sem_get_primitive_type_size(target_type) < fe_sem_get_primitive_type_size(source_type)) {
+			size_t sz_target_type = fe_sem_get_primitive_type_size(target_type);
+			size_t sz_source_type = fe_sem_get_primitive_type_size(source_type);
+
+			if (sz_target_type < sz_source_type) {
 				// 小的有符号整数 <- 大的无符号整数。
 				_A("trunc")
-			} else {
+			} else if (sz_target_type > sz_source_type) {
 				// 大的有符号整数 <- 小的无符号整数。
 				_A("zext")
+			} else {
+				_A("bitcast")
 			}
 		} else if (fe_sem_is_unsigned_type(target_type)) {
-			if (fe_sem_get_primitive_type_size(target_type) < fe_sem_get_primitive_type_size(source_type)) {
+			size_t sz_target_type = fe_sem_get_primitive_type_size(target_type);
+			size_t sz_source_type = fe_sem_get_primitive_type_size(source_type);
+
+			if (sz_target_type < sz_source_type) {
 				// 小的无符号整数 <- 大的无符号整数。
 				_A("trunc")
-			} else {
+			} else if (sz_target_type > sz_source_type) {
 				// 大的无符号整数 <- 小的无符号整数。
 				_A("zext")
+			} else {
+				_A("bitcast")
 			}
 		} else if (target_type == FE_TYPE_FLOAT) {
 			// float <- 无符号整数。
@@ -2933,7 +2947,7 @@ static void _ir_cond_expr_with_rstr(
 		ctx,
 		ctx->func_symbol,
 		&rstr_tmp,
-		node_type
+		FE_SEM_NODE_TYPE_INT64
 	);
 
 	rstr_appendf(

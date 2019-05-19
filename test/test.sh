@@ -4,11 +4,14 @@
 base_path=$(cd `dirname $0`; pwd)
 
 ilcfe=$base_path/../bin/ilcfe
+ilcbe=$base_path/../bin/ilcbe
 
 build_32_llc=0
 build_64_llc=1
 build_32_clang=0
 build_64_clang=1
+build_32_ilcbe=0
+build_64_ilcbe=1
 
 totalCount=0
 successCount=0
@@ -35,6 +38,14 @@ fi
 
 if [ $build_64_clang != 0 ]; then
 	$ilcfe $base_path/test.il -arch 64 -incpath "$base_path/" -action compile -target c > $bin_path/test_64.c
+fi
+
+if [ $build_32_ilcbe != 0 ]; then
+	echo -e 'wow'
+fi
+
+if [ $build_64_ilcbe != 0 ]; then
+	echo -e 'wow'
 fi
 
 # 获取所有测试例子的目录。
@@ -66,6 +77,48 @@ for example_path in $base_path/$1*; do
 
 			# 使用ILCFE输出预处理后的代码。
 			$ilcfe $example_path/main.il -incpath "$example_path/../;$example_path/" -action preprocess -output $bin_path/main_pp.il
+
+			# 使用ILCFE输出IL IR（32位）。
+			if [ $build_32_llc != 0 ]; then
+				echo "===> IL IR(arch32)"
+				startTime=$(date +%s)
+				$ilcfe $example_path/main.il -arch 32 -incpath "$example_path/../;$example_path/" -action compile -target ilir -output $bin_path/main_32.ir
+				ilcfe_rval=$?
+				if [ $ilcfe_rval != 0 ]; then
+					if [ $ignore_ilcfe_pp_error != 0 ] && [ $ilcfe_rval == 234 ]; then
+						echo -e "\033[33m ILCFE COMPILE ERROR, BUT IGNORED \033[0m"
+					else
+						echo -e "\033[31m ILCFE COMPILE ERROR \033[0m"
+						continue
+					fi
+				else
+					echo -e 'wow'
+				fi
+				endTime=$(date +%s)
+				cost=$((endTime - startTime))
+				echo "cost(ilir): $cost"
+			fi
+
+			# 使用ILCFE输出IL IR（64位）。
+			if [ $build_64_llc != 0 ]; then
+				echo "===> IL IR(arch64)"
+				startTime=$(date +%s)
+				$ilcfe $example_path/main.il -arch 64 -incpath "$example_path/../;$example_path/" -action compile -target ilir -output $bin_path/main_64.ir
+				ilcfe_rval=$?
+				if [ $ilcfe_rval != 0 ]; then
+					if [ $ignore_ilcfe_pp_error != 0 ] && [ $ilcfe_rval == 234 ]; then
+						echo -e "\033[33m ILCFE COMPILE ERROR, BUT IGNORED \033[0m"
+					else
+						echo -e "\033[31m ILCFE COMPILE ERROR \033[0m"
+						continue
+					fi
+				else
+					$ilcbe $bin_path/main_64.ir -arch 64 -incpath "$example_path/../;$example_path/" -action compile -target gas -output $bin_path/main_64_ir.s
+				fi
+				endTime=$(date +%s)
+				cost=$((endTime - startTime))
+				echo "cost(ilir): $cost"
+			fi
 
 			# 使用ILCFE输出LLVM IR（32位）。
 			if [ $build_32_llc != 0 ]; then

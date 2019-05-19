@@ -15,7 +15,7 @@
 
 
 #define	_NODE_TYPE(t, node_type)	\
-	static ParserASTNode _node_type_##t = {	\
+	ParserASTNode __fe_sem_node_type_##t = {	\
 		.type = node_type,	\
 		.type_name = #node_type,	\
 			\
@@ -53,26 +53,26 @@ _NODE_TYPE(func, FE_NODE_TYPE_FUNC)
 _NODE_TYPE(pointer, FE_NODE_TYPE_POINTER)
 _NODE_TYPE(void, FE_NODE_TYPE_VOID)
 
-#define	_NODE_TYPE_CHAR		(&_node_type_char)
-#define	_NODE_TYPE_INT8		(&_node_type_int8)
-#define	_NODE_TYPE_INT16	(&_node_type_int16)
-#define	_NODE_TYPE_INT32	(&_node_type_int32)
-#define	_NODE_TYPE_INT64	(&_node_type_int64)
-#define	_NODE_TYPE_UINT8	(&_node_type_uint8)
-#define	_NODE_TYPE_UINT16	(&_node_type_uint16)
-#define	_NODE_TYPE_UINT32	(&_node_type_uint32)
-#define	_NODE_TYPE_UINT64	(&_node_type_uint64)
-#define	_NODE_TYPE_FLOAT	(&_node_type_float)
-#define	_NODE_TYPE_DOUBLE	(&_node_type_double)
-#define	_NODE_TYPE_STRUCT	(&_node_type_struct)
-#define	_NODE_TYPE_ARRAY	(&_node_type_array)
-#define	_NODE_TYPE_FUNC		(&_node_type_func)
-#define	_NODE_TYPE_POINTER	(&_node_type_pointer)
-#define	_NODE_TYPE_VOID		(&_node_type_void)
+#define	_NODE_TYPE_CHAR		(&__fe_sem_node_type_char)
+#define	_NODE_TYPE_INT8		(&__fe_sem_node_type_int8)
+#define	_NODE_TYPE_INT16	(&__fe_sem_node_type_int16)
+#define	_NODE_TYPE_INT32	(&__fe_sem_node_type_int32)
+#define	_NODE_TYPE_INT64	(&__fe_sem_node_type_int64)
+#define	_NODE_TYPE_UINT8	(&__fe_sem_node_type_uint8)
+#define	_NODE_TYPE_UINT16	(&__fe_sem_node_type_uint16)
+#define	_NODE_TYPE_UINT32	(&__fe_sem_node_type_uint32)
+#define	_NODE_TYPE_UINT64	(&__fe_sem_node_type_uint64)
+#define	_NODE_TYPE_FLOAT	(&__fe_sem_node_type_float)
+#define	_NODE_TYPE_DOUBLE	(&__fe_sem_node_type_double)
+#define	_NODE_TYPE_STRUCT	(&__fe_sem_node_type_struct)
+#define	_NODE_TYPE_ARRAY	(&__fe_sem_node_type_array)
+#define	_NODE_TYPE_FUNC		(&__fe_sem_node_type_func)
+#define	_NODE_TYPE_POINTER	(&__fe_sem_node_type_pointer)
+#define	_NODE_TYPE_VOID		(&__fe_sem_node_type_void)
 
-static ParserASTNode *_ptr_node_type_char = &_node_type_char;
+static ParserASTNode *_ptr_node_type_char = &__fe_sem_node_type_char;
 
-static ParserASTNode _node_type_char_ptr = {
+static ParserASTNode __fe_sem_node_type_char_ptr = {
 	.type = FE_NODE_TYPE_POINTER,
 	.type_name = "FE_NODE_TYPE_POINTER",
 
@@ -93,7 +93,7 @@ static ParserASTNode _node_type_char_ptr = {
 	.szdata = 0
 };
 
-#define	_NODE_TYPE_CHAR_POINTER	(&_node_type_char_ptr)
+#define	_NODE_TYPE_CHAR_POINTER	(&__fe_sem_node_type_char_ptr)
 
 #define	_SYNERR_TOKEN(ctx, token, msg)	{ (ctx)->syntax_error_token_msg((ctx), (token), (msg)); }
 #define	_SYNERR_NODE(ctx, node, msg, args...)	{ char __buffer__[1024]; sprintf(__buffer__, msg, ##args); (ctx)->syntax_error_node_msg((ctx), (node), __buffer__); }
