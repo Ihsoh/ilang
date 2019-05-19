@@ -3057,7 +3057,6 @@ static void _asm_var(
 				assert(align);
 
 				size_t type_size = BE_VAR_SYMBOL_GET_TYPE_SIZE(symbol);
-				assert(type_size != 0);
 
 				if (ctx->local_var_address_counter % align > 0) {
 					size_t align_padding = align - ctx->local_var_address_counter % align;
