@@ -114,6 +114,7 @@ for example_path in $base_path/$1*; do
 					fi
 				else
 					$ilcbe $bin_path/main_64.ir -arch 64 -incpath "$example_path/../;$example_path/" -action compile -target gas -output $bin_path/main_64_ir.s
+					as $bin_path/main_64_ir.s -o $bin_path/main_64_ir.o
 				fi
 				endTime=$(date +%s)
 				cost=$((endTime - startTime))
