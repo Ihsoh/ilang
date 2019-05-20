@@ -1532,8 +1532,66 @@ static void _stat_asm(
 	assert(ctx);
 	assert(node);
 	assert(node->type == FE_NODE_STAT_ASM);
+	assert(node->nchilds >= 1);
 
-	_SYNERR_NODE(ctx, node, "asm is not supported.");
+	ParserASTNode *node_asm_code = node->childs[0];
+	assert(node_asm_code->type == FE_NODE_LITERAL_STRING);
+
+	for (int i = 1; i < node->nchilds; i++) {
+		ParserASTNode *node_asm_option = node->childs[i];
+		assert(node_asm_option->type == FE_NODE_STAT_ASM_OPTION);
+		assert(node_asm_option->nchilds == 2);
+
+		ParserASTNode *node_expr = node_asm_option->childs[1];
+		assert(node_expr->type == FE_NODE_EXPR);
+		_expr_wrapper(ctx, node_expr);
+
+		ParserASTNode *node_specifier = node_asm_option->childs[0];
+		assert(node_specifier->type == FE_NODE_LITERAL_STRING);
+		LexerToken *tk_specifier = node_specifier->token;
+		if (tk_specifier->len >= 4) {
+			if (strncmp("set#", tk_specifier->content + 1, 4) == 0) {
+				if (!_is_primitive_type_node(ctx, node_expr)
+						&& !_is_pointer_type_node(ctx, node_expr)) {
+					_SYNERR_NODE(
+						ctx,
+						node_expr,
+						"parameter type must be primitive type or pointer type."
+					);
+				}
+			} else if (strncmp("get#", tk_specifier->content + 1, 4) == 0) {
+				if (!_is_primitive_type_node(ctx, node_expr)
+						&& !_is_pointer_type_node(ctx, node_expr)) {
+					_SYNERR_NODE(
+						ctx,
+						node_expr,
+						"parameter type must be primitive type or pointer type."
+					);
+				}
+
+				if (node_expr->childs[0]->type != FE_NODE_EXPR_ATOM
+						|| node_expr->childs[0]->childs[0]->type != FE_NODE_IDENTIFIER) {
+					_SYNERR_NODE(
+						ctx,
+						node_expr,
+						"parameter must be identifier."
+					);
+				}
+			} else {
+				_SYNERR_NODE(
+					ctx,
+					node_specifier,
+					"invalid asm option specifier."
+				);
+			}
+		} else {
+			_SYNERR_NODE(
+				ctx,
+				node_specifier,
+				"invalid asm option specifier."
+			);
+		}
+	}
 }
 
 static void _stat_dummy(

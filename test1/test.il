@@ -11,26 +11,20 @@ function print_double(str:*char, n:double) dummy
 function print_pointer(str:*char, ptr:*) dummy
 function print_string(str:*char) dummy
 
-function func_test(n:int64, ...) {
-	var a:__va_list;
-	var b:__va_list;
+function func_test(a:int64, b:int64):int64 {
+	var result:int64 = 0;
 
-	__va_start(a);
+	asm(
+		"addq %rbx, %rax;\n",
+		"set#%rax"(a + 1), "set#%rbx"(b + 4),
+		"get#%rax"(result)
+	);
 
-	__va_copy(b, a);
-
-	for (var i:int64 = 0; i < n; i++) {
-		print_int64("a = ", __va_arg(a, int64));
-	}
-
-	for (var i:int64 = 0; i < n; i++) {
-		print_int64("b = ", __va_arg(b, int64));
-	}
-
-	__va_end(a);
+	return result;
 }
 
 function main():int32 {
-	func_test(2, 10, 20);
+	var result:int64 = func_test(10, 20);
+	print_int64("result = ", result);
 	return 0;
 }

@@ -4454,8 +4454,95 @@ static void _ir_stat_asm(
 	assert(ctx);
 	assert(node_stat_asm);
 	assert(node_stat_asm->type == FE_NODE_STAT_ASM);
+	assert(node_stat_asm->nchilds >= 1);
 
-	_error("asm is not supported.");
+	ParserASTNode *node_asm_code = node_stat_asm->childs[0];
+	assert(node_asm_code->type == FE_NODE_LITERAL_STRING);
+
+	ResizableString rstr_set_reg;
+	rstr_init(&rstr_set_reg);
+
+	ResizableString rstr_get_reg;
+	rstr_init(&rstr_get_reg);
+
+	for (int i = 1; i < node_stat_asm->nchilds; i++) {
+		ParserASTNode *node_asm_option = node_stat_asm->childs[i];
+		assert(node_asm_option->type == FE_NODE_STAT_ASM_OPTION);
+		assert(node_asm_option->nchilds == 2);
+
+		ParserASTNode *node_expr = node_asm_option->childs[1];
+		assert(node_expr->type == FE_NODE_EXPR);
+		_ExprResult expr_result;
+		_expr_result_init(&expr_result);
+		_ir_expr_wrapper_val(ctx, ctx->body, &expr_result, node_expr);
+
+		ParserASTNode *node_specifier = node_asm_option->childs[0];
+		assert(node_specifier->type == FE_NODE_LITERAL_STRING);
+		LexerToken *tk_specifier = node_specifier->token;
+		if (tk_specifier->len >= 4) {
+			if (strncmp("set#", tk_specifier->content + 1, 4) == 0) {
+				ResizableString rstr_reg;
+				rstr_init_with_raw(
+					&rstr_reg,
+					tk_specifier->content + 5,
+					tk_specifier->len - 6
+				);
+				rstr_appendf(
+					&rstr_set_reg,
+					"asm_set_reg \"%s\", %s;\n",
+					RSTR_CSTR(&rstr_reg),
+					RSTR_CSTR(&(expr_result.rstr_result))
+				);
+				rstr_free(&rstr_reg);
+			} else if (strncmp("get#", tk_specifier->content + 1, 4) == 0) {
+				ResizableString rstr_reg;
+				rstr_init_with_raw(
+					&rstr_reg,
+					tk_specifier->content + 5,
+					tk_specifier->len - 6
+				);
+				rstr_appendf(
+					&rstr_get_reg,
+					"asm_get_reg %s, \"%s\";\n",
+					RSTR_CSTR(&(expr_result.rstr_result)),
+					RSTR_CSTR(&rstr_reg)
+				);
+				rstr_free(&rstr_reg);
+			} else {
+				assert(0);
+			}
+		} else {
+			assert(0);
+		}
+
+		_expr_result_free(&expr_result);
+	}
+
+	rstr_append_with_rstr(
+		ctx->body,
+		&rstr_set_reg
+	);
+
+	ResizableString rstr_asm_code;
+	rstr_init_with_raw(
+		&rstr_asm_code,
+		node_asm_code->token->content,
+		node_asm_code->token->len
+	);
+	rstr_appendf(
+		ctx->body,
+		"asm %s;\n",
+		RSTR_CSTR(&rstr_asm_code)
+	);
+	rstr_free(&rstr_asm_code);
+
+	rstr_append_with_rstr(
+		ctx->body,
+		&rstr_get_reg
+	);
+
+	rstr_free(&rstr_set_reg);
+	rstr_free(&rstr_get_reg);
 }
 
 static void _ir_stat_expr(
