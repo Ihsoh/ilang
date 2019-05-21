@@ -26,12 +26,12 @@ function test_parenthesis() {
 
 	var expr_paren_3:int = 1 + 2 * 3;
 	if (expr_paren_3 != 7) {
-		exit(1);
+		tst_exit(1);
 	}
 	
 	var expr_paren_4:int = (1 + 2) * 3;
 	if (expr_paren_4 != 9) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var a:int = 1;
@@ -39,13 +39,13 @@ function test_parenthesis() {
 	var c:int = 3;
 	var expr_paren_5:int = (a + b) * c;
 	if (expr_paren_5 != 9) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	//					   1 + ((1 + 2) * (1 + 2) + (1 + 2) * (1 + 2)) * (1 + 2) + 2 + 2
 	var expr_paren_6:int = a + ((a + b) * (a + b) + (a + b) * (a + b)) * (a + b) + b + b;
 	if (expr_paren_6 != 59) {
-		exit(1);
+		tst_exit(1);
 	}
 }
 
@@ -65,7 +65,7 @@ function test_member() {
 	a.a = 1;
 	a.b = 2;
 	if ((a.a + a.b + 1) * (a.a + a.b + 2) != 20) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var b:struct B;
@@ -74,7 +74,7 @@ function test_member() {
 	b.y.b = 5;
 	b.z = &a;
 	if (b.x + b.y.a + b.y.b + b.z->a + b.z->b != 15) {
-		exit(1);
+		tst_exit(1);
 	}
 }
 
@@ -90,7 +90,7 @@ function test_arridx() {
 		total1 += a[i];
 	}
 	if (total1 != 55) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	for (var i:int = 0; i < 10; ++i) {
@@ -105,7 +105,7 @@ function test_arridx() {
 		}
 	}
 	if (total2 != 5050) {
-		exit(1);
+		tst_exit(1);
 	}
 }
 
@@ -125,14 +125,14 @@ function test_func_call() {
 
 	var result1:int = 1 + mul(add(1, 2), add(1, 2));
 	if (result1 != 10) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var add_ptr:*function(a:int, b:int):int = add;
 	var mul_ptr:*function(a:int, b:int):int = mul;
 	var result2:int = 1 + mul_ptr(add_ptr(2, 3), add_ptr(2, 3));
 	if (result2 != 26) {
-		exit(1);
+		tst_exit(1);
 	}
 }
 
@@ -318,58 +318,58 @@ packed struct PackedStruct_2 {
 function test_unary() {
 	var val_not_1:int = !0;
 	if (val_not_1 != 1) {
-		exit(1);
+		tst_exit(1);
 	}
 	var val_not_2:int = !1;
 	if (val_not_2 != 0) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var val_bnot_1:uint8 = ~0x0f;
 	if (val_bnot_1 != 0xf0) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var val_positive_1:int = +1;
 	if (val_positive_1 != 1) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var val_negative_1:int = -1;
 	if (val_negative_1 != 0 - 1) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var val_inc_left_1:int = 0;
 	if (++val_inc_left_1 != 1) {
-		exit(1);
+		tst_exit(1);
 	}
 	if (val_inc_left_1 != 1) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var val_dec_left_1:int = 0;
 	if (--val_dec_left_1 != -1) {
-		exit(1);
+		tst_exit(1);
 	}
 	if (val_dec_left_1 != -1) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var val_inc_right_1:int = 0;
 	if (val_inc_right_1++ != 0) {
-		exit(1);
+		tst_exit(1);
 	}
 	if (val_inc_right_1 != 1) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	var val_dec_right_1:int = 0;
 	if (val_dec_right_1-- != 0) {
-		exit(1);
+		tst_exit(1);
 	}
 	if (val_dec_right_1 != -1) {
-		exit(1);
+		tst_exit(1);
 	}
 
 	assert(sizeof(char) == 1);
@@ -455,7 +455,7 @@ function test_add_sub() {
 		assert(e + f == 2.0 + 3.0);
 		var str:*char = "abcdef";
 		str = str + 2;
-		assert(strcmp(str, "cdef") == 0);
+		assert(tst_strcmp(str, "cdef") == 0);
 		var arr_3_int:[3]int;
 		arr_3_int[0] = 100;
 		arr_3_int[1] = 200;
@@ -476,7 +476,7 @@ function test_add_sub() {
 		assert(e - f == 3.0 - 2.0);
 		var str:*char = "abcdef" + 2;
 		str = str - 1;
-		assert(strcmp(str, "bcdef") == 0);
+		assert(tst_strcmp(str, "bcdef") == 0);
 		var arr_3_int:[3]int;
 		arr_3_int[0] = 100;
 		arr_3_int[1] = 200;

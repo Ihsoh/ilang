@@ -547,6 +547,22 @@ static bool _is_primitive_type_node(
 	return _is_primitive_type(FE_EXPR_AST_NODE_GET_TYPE(node));
 }
 
+static bool _is_compatible_void_type(
+	ParserContext *ctx,
+	ParserASTNode *target,
+	ParserASTNode *source,
+	bool same
+) {
+	assert(ctx);
+	assert(target);
+	assert(source);
+
+	uint8_t target_type = _get_type_by_type_node(ctx, target);
+	uint8_t source_type = _get_type_by_type_node(ctx, source);
+	return target_type == FE_TYPE_VOID
+			&& source_type == FE_TYPE_VOID;
+}
+
 static bool _is_compatible_primitive_type(
 	ParserContext *ctx,
 	ParserASTNode *target,
@@ -760,6 +776,9 @@ static bool _is_compatible_type(
 	assert(target);
 	assert(source);
 
+	if (_is_compatible_void_type(ctx, target, source, same)) {
+		return true;
+	}
 	if (_is_compatible_primitive_type(ctx, target, source, same)) {
 		return true;
 	}

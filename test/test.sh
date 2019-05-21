@@ -25,19 +25,27 @@ mkdir $bin_path
 if [ $build_32_llc != 0 ]; then
 	$ilcfe $base_path/test.il -arch 32 -incpath "$base_path/" -action compile -target llvmir > $bin_path/test_32.ll
 	llc -march=x86 $bin_path/test_32.ll -filetype=obj -o $bin_path/test_ll_32.o
+
+	clang -c -m32 $base_path/test.c -o $bin_path/test_c_32.o
 fi
 
 if [ $build_64_llc != 0 ]; then
 	$ilcfe $base_path/test.il -arch 64 -incpath "$base_path/" -action compile -target llvmir > $bin_path/test_64.ll
 	llc -march=x86-64 $bin_path/test_64.ll -filetype=obj -o $bin_path/test_ll_64.o
+
+	clang -c -m64 $base_path/test.c -o $bin_path/test_c_64.o
 fi
 
 if [ $build_32_clang != 0 ]; then
 	$ilcfe $base_path/test.il -arch 32 -incpath "$base_path/" -action compile -target c > $bin_path/test_32.c
+
+	cp $base_path/test.c $bin_path/test_c_32.c
 fi
 
 if [ $build_64_clang != 0 ]; then
 	$ilcfe $base_path/test.il -arch 64 -incpath "$base_path/" -action compile -target c > $bin_path/test_64.c
+
+	cp $base_path/test.c $bin_path/test_c_64.c
 fi
 
 if [ $build_32_ilcbe != 0 ]; then
@@ -147,7 +155,7 @@ for example_path in $base_path/$1*; do
 						continue
 					fi
 
-					clang -m32 -w $base_path/bin/test_ll_32.o $bin_path/main_ll_32.o -o $bin_path/main_ll_32
+					clang -m32 -w $base_path/bin/test_ll_32.o $base_path/bin/test_c_32.o $bin_path/main_ll_32.o -o $bin_path/main_ll_32
 					if [ $? != 0 ]; then
 						echo -e "\033[31m CLANG COMPILER ERROR \033[0m"
 						continue
@@ -191,7 +199,7 @@ for example_path in $base_path/$1*; do
 						continue
 					fi
 
-					clang -m64 -w $base_path/bin/test_ll_64.o $bin_path/main_ll_64.o -o $bin_path/main_ll_64
+					clang -m64 -w $base_path/bin/test_ll_64.o $base_path/bin/test_c_64.o $bin_path/main_ll_64.o -o $bin_path/main_ll_64
 					if [ $? != 0 ]; then
 						echo -e "\033[31m CLANG COMPILER ERROR \033[0m"
 						continue
@@ -223,7 +231,7 @@ for example_path in $base_path/$1*; do
 						continue
 					fi
 				else
-					clang -m32 -w $bin_path/main_32.c $base_path/bin/test_32.c  -o $bin_path/main_c_32
+					clang -m32 -w $bin_path/main_32.c $base_path/bin/test_32.c $base_path/bin/test_c_32.c  -o $bin_path/main_c_32
 					if [ $? != 0 ]; then
 						echo -e "\033[31m CLANG COMPILER ERROR(EXECUTABLE) \033[0m"
 						continue
@@ -261,7 +269,7 @@ for example_path in $base_path/$1*; do
 						continue
 					fi
 				else
-					clang -w $bin_path/main_64.c $base_path/bin/test_64.c  -o $bin_path/main_c_64
+					clang -w $bin_path/main_64.c $base_path/bin/test_64.c $base_path/bin/test_c_64.c  -o $bin_path/main_c_64
 					if [ $? != 0 ]; then
 						echo -e "\033[31m CLANG COMPILER ERROR(EXECUTABLE) \033[0m"
 						continue

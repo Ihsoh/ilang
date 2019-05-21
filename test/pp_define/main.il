@@ -19,11 +19,11 @@
 #define	_SUM(_result, _start, _end)	_result = _ZERO(); for (var _i:int32 = _start; _i <= _end; _INC(_i)) { _ADD_ASSIGN(_result, _i); }
 
 function main(argc:int, argv:**char):int {
-	if (strcmp(_STR_A, "1") != 0) {
+	if (tst_strcmp(_STR_A, "1") != 0) {
 		return 1;
 	}
 
-	if (strcmp(#_B, "100") != 0) {
+	if (tst_strcmp(#_B, "100") != 0) {
 		return 1;
 	}
 
