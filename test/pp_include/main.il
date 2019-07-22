@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 #include "A1.ilh"
 #include "A2.ilh"

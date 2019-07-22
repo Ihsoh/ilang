@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 function func_1() {
 }

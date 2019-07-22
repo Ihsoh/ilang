@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 struct A {
 	var a:int8;

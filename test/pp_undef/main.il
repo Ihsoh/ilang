@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 #undef	_NOTHING
 

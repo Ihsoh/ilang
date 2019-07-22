@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 function main(argc:int, argv:**char):int {
 	var total:int = 0;

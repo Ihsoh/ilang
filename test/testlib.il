@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 function fdopen(fd:int32, mode:*char):*struct FILE dummy
 

@@ -1,5 +1,5 @@
-#ifndef	__TYPE_ILH__
-#define	__TYPE_ILH__
+#ifndef	__TESTLIB_TYPE_ILH__
+#define	__TESTLIB_TYPE_ILH__
 
 #define	byte	int8
 #define	ubyte	uint8

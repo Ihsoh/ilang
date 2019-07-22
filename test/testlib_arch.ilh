@@ -1,5 +1,5 @@
-#ifndef	__ARCH_ILH__
-#define	__ARCH_ILH__
+#ifndef	__TESTLIB_ARCH_ILH__
+#define	__TESTLIB_ARCH_ILH__
 
 #if streq(__ARCH__, "32")
 	#define	ARCH_WORD_SIZE	4

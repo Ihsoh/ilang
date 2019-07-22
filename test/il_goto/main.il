@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 function test_1() {
 	var total:int = 0;

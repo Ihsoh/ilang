@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 function sum(n:int, ...):int {
 	var ap:__va_list;

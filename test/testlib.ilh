@@ -1,8 +1,8 @@
 #ifndef	__TEST_ILH__
 #define	__TEST_ILH__
 
-#include <type.ilh>
-#include <arch.ilh>
+#include <testlib_type.ilh>
+#include <testlib_arch.ilh>
 
 #define	NULL	(cast<*>(0))
 

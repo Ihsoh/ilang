@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 var global_expr_atom_uint:int = 1;
 var global_expr_atom_real:float = 1.23;

@@ -1,4 +1,4 @@
-#include <test.ilh>
+#include <testlib.ilh>
 
 #define	_A	1
 
