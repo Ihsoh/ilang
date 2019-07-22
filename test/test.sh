@@ -53,7 +53,13 @@ if [ $build_32_ilcbe != 0 ]; then
 fi
 
 if [ $build_64_ilcbe != 0 ]; then
-	echo -e 'wow'
+	$ilcfe $base_path/testlib.il -arch 64 -incpath "$base_path/" -action compile -target ilir -output $bin_path/testlib_64.ir
+	$ilcbe $bin_path/testlib_64.ir -arch 64 -incpath "$base_path/" -action compile -target gas -output $bin_path/testlib_64_ir.s
+	as $bin_path/testlib_64_ir.s -o $bin_path/testlib_64_ir.o
+
+	$ilcfe $base_path/testlib_il64.il -arch 64 -incpath "$base_path/" -action compile -target ilir -output $bin_path/testlib_il64.ir
+	$ilcbe $bin_path/testlib_il64.ir -arch 64 -incpath "$base_path/" -action compile -target gas -output $bin_path/testlib_il64_ir.s
+	as $bin_path/testlib_il64_ir.s -o $bin_path/testlib_il64_ir.o
 fi
 
 # 获取所有测试例子的目录。
@@ -123,6 +129,23 @@ for example_path in $base_path/$1*; do
 				else
 					$ilcbe $bin_path/main_64.ir -arch 64 -incpath "$example_path/../;$example_path/" -action compile -target gas -output $bin_path/main_64_ir.s
 					as $bin_path/main_64_ir.s -o $bin_path/main_64_ir.o
+					if [ $? != 0 ]; then
+						echo -e "\033[31m AS ERROR \033[0m"
+						continue
+					fi
+
+					clang -m64 -w $base_path/bin/testlib_64_ir.o $base_path/bin/testlib_il64_ir.o $bin_path/main_64_ir.o -o $bin_path/main_ir_64
+					if [ $? != 0 ]; then
+						echo -e "\033[31m CLANG COMPILER ERROR \033[0m"
+						continue
+					fi
+
+					chmod +x $bin_path/main_ir_64
+					$bin_path/main_ir_64 > /dev/null
+					if [ $? != 0 ]; then
+						echo -e "\033[31m ERROR \033[0m"
+						continue
+					fi
 				fi
 				endTime=$(date +%s)
 				cost=$((endTime - startTime))

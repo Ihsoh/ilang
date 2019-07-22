@@ -1,14 +1,14 @@
 #include <testlib.ilh>
 
-function fdopen(fd:int32, mode:*char):*struct FILE dummy
+function __tst_fdopen(fd:int, mode:*char):*struct FILE dummy
 
-function malloc(sz:uint64):* dummy
-function free(ptr:*) dummy
+function __tst_malloc(sz:size_t):* dummy
+function __tst_free(ptr:*) dummy
 function __tst_vfprintf(file:*struct FILE, fmt:*char, arg:*__va_list):int dummy
 
-function strcmp(a:*char, b:*char):int32 dummy
+function __tst_strcmp(a:*char, b:*char):int dummy
 
-function exit(status:int) dummy
+function __tst_exit(status:int) dummy
 
 
 
@@ -19,21 +19,21 @@ var _stderr:*struct FILE = NULL;
 
 function _get_stdin():*struct FILE {
 	if (_stdin == NULL) {
-		return fdopen(0, "r");
+		return __tst_fdopen(0, "r");
 	}
 	return _stdin;
 }
 
 function _get_stdout():*struct FILE {
 	if (_stdout == NULL) {
-		return fdopen(1, "w");
+		return __tst_fdopen(1, "w");
 	}
 	return _stdout;
 }
 
 function _get_stderr():*struct FILE {
 	if (_stderr == NULL) {
-		return fdopen(2, "w");
+		return __tst_fdopen(2, "w");
 	}
 	return _stderr;
 }
@@ -41,16 +41,16 @@ function _get_stderr():*struct FILE {
 
 
 
-function tst_fdopen(fd:int32, mode:*char):*struct FILE {
-	return fdopen(fd, mode);
+function tst_fdopen(fd:int, mode:*char):*struct FILE {
+	return __tst_fdopen(fd, mode);
 }
 
-function tst_malloc(sz:uint64):* {
-	return malloc(sz);
+function tst_malloc(sz:size_t):* {
+	return __tst_malloc(sz);
 }
 
 function tst_free(ptr:*) {
-	free(ptr);
+	__tst_free(ptr);
 }
 
 function tst_printf(fmt:*char, ...) {
@@ -67,10 +67,10 @@ function tst_fprintf(file:*struct FILE, fmt:*char, ...) {
 	__va_end(arg);
 }
 
-function tst_strcmp(a:*char, b:*char):int32 {
-	return strcmp(a, b);
+function tst_strcmp(a:*char, b:*char):int {
+	return __tst_strcmp(a, b);
 }
 
 function tst_exit(status:int) {
-	exit(status);
+	__tst_exit(status);
 }
