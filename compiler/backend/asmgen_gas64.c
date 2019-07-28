@@ -4526,7 +4526,7 @@ static void _asm_stat_fptrunc(
 		_ASM_REG_NAME_XMM0
 	);
 
-	_asm_inst_movsd_sym_x(
+	_asm_inst_movss_sym_x(
 		ctx,
 		ctx->body,
 		symbol_target,

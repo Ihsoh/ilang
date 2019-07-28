@@ -1197,7 +1197,7 @@ static bool _ir_expr_member_arridx_fncall(
 					&(expr_result->rstr_for_result_ptr),
 					"add %s, %s, %s;\n",
 					RSTR_CSTR(&rstr_tmp_label_ptr),
-					RSTR_CSTR(&(result_base.rstr_result_ptr)),
+					RSTR_CSTR(&(result_base.rstr_result)),
 					RSTR_CSTR(&(result_index.rstr_result))
 				);
 				_expr_result_set_result_ptr(expr_result, RSTR_CSTR(&rstr_tmp_label_ptr));

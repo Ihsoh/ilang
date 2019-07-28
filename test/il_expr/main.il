@@ -874,4 +874,6 @@ function main(argc:int, argv:**char):int {
 	test_logic();
 	test_cond();
 	test_assign();
+
+	return 0;
 }
