@@ -2644,7 +2644,8 @@ static void _asm_constexpr(
 static void _asm_constexpr_param(
 	ASMGeneratorGas64Context *ctx,
 	ResizableString *rstr_val,
-	ParserASTNode *node_constexpr
+	ParserASTNode *node_constexpr,
+	int tmp_reg
 ) {
 	assert(ctx);
 	assert(rstr_val);
@@ -2775,7 +2776,7 @@ static void _asm_constexpr_param(
 				_asm_inst_lea_x_x(
 					ctx,
 					ctx->body,
-					_ASM_REG_NAME_RAX,
+					_asm_inst_reg(ctx, BE_TYPE_INT64, tmp_reg),
 					RSTR_CSTR(&rstr_source)
 				);
 
@@ -2786,14 +2787,14 @@ static void _asm_constexpr_param(
 					ctx,
 					ctx->body,
 					BE_TYPE_POINTER,
-					_ASM_REG_NAME_RAX,
+					_asm_inst_reg(ctx, BE_TYPE_INT64, tmp_reg),
 					RSTR_CSTR(&rstr_ptr_val)
 				);
 				rstr_free(&rstr_ptr_val);
 
 				rstr_append_with_cstr(
 					rstr_val,
-					_ASM_REG_NAME_RAX
+					_asm_inst_reg(ctx, BE_TYPE_INT64, tmp_reg)
 				);
 
 				rstr_free(&conststr_name);
@@ -3185,7 +3186,7 @@ static uint8_t _move_id_or_constexpr_to_xmm_reg(
 	} else if (source_id_or_constexpr->type == BE_NODE_EXPR) {
 		ResizableString rstr;
 		rstr_init(&rstr);
-		_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
+		_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr, _ASM_REG_AX);
 		uint8_t type = BE_EXPR_AST_NODE_GET_TYPE(source_id_or_constexpr);
 
 		if (type == BE_TYPE_FLOAT) {
@@ -3374,7 +3375,7 @@ static uint8_t _move_id_or_constexpr_to_reg_ex(
 		if (be_sem_is_signed_type(type)) {
 			ResizableString rstr;
 			rstr_init(&rstr);
-			_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
+			_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr, target_reg);
 
 			if (type == BE_TYPE_INT64) {
 				_asm_inst_mov_reg64_imm64(
@@ -3409,7 +3410,7 @@ static uint8_t _move_id_or_constexpr_to_reg_ex(
 			if (type == BE_TYPE_UINT64) {
 				ResizableString rstr;
 				rstr_init(&rstr);
-				_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
+				_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr, target_reg);
 
 				_asm_inst_mov_reg64_imm64(
 					ctx,
@@ -3430,7 +3431,7 @@ static uint8_t _move_id_or_constexpr_to_reg_ex(
 
 				ResizableString rstr;
 				rstr_init(&rstr);
-				_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr);
+				_asm_constexpr_param(ctx, &rstr, source_id_or_constexpr, target_reg);
 
 				_asm_inst_mov_x_x(
 					ctx,
@@ -3511,7 +3512,7 @@ static void _asm_stat_assign(
 	} else if (node_source->type == BE_NODE_EXPR) {
 		ResizableString rstr_source;
 		rstr_init(&rstr_source);
-		_asm_constexpr_param(ctx, &rstr_source, node_source);
+		_asm_constexpr_param(ctx, &rstr_source, node_source, _ASM_REG_AX);
 		
 		uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
 		_move_id_or_constexpr_to_reg(
@@ -3614,7 +3615,7 @@ static void _asm_stat_asm_set_reg(
 	} else if (node_source->type == BE_NODE_EXPR) {
 		ResizableString rstr_source;
 		rstr_init(&rstr_source);
-		_asm_constexpr_param(ctx, &rstr_source, node_source);
+		_asm_constexpr_param(ctx, &rstr_source, node_source, _ASM_REG_AX);
 
 		uint8_t type_source = BE_EXPR_AST_NODE_GET_TYPE(node_source);
 
@@ -3812,7 +3813,7 @@ static void _asm_stat_cbr(
 	} else if (node_cond->type == BE_NODE_EXPR) {
 		ResizableString rstr_cond;
 		rstr_init(&rstr_cond);
-		_asm_constexpr_param(ctx, &rstr_cond, node_cond);
+		_asm_constexpr_param(ctx, &rstr_cond, node_cond, _ASM_REG_AX);
 
 		uint8_t type_id_cond = BE_EXPR_AST_NODE_GET_TYPE(node_cond);
 		
