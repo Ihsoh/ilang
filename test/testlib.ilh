@@ -24,16 +24,25 @@ function tst_fdopen(fd:int32, mode:*char):*struct FILE dummy
 
 function tst_malloc(sz:uint64):* dummy
 function tst_free(ptr:*) dummy
-function tst_printf(fmt:*char, ...) dummy
-function tst_fprintf(file:*struct FILE, fmt:*char, ...) dummy
 
 function tst_strcmp(a:*char, b:*char):int32 dummy
 
 function tst_exit(status:int) dummy
 
+function tst_fputs(str:*char, fptr:*struct FILE):int dummy
+function tst_fputi(n:int, fptr:*struct FILE):int dummy
+
+function tst_assert(file:*char, line:int) dummy
 
 
 
-#define	assert(val)	{ if (!(val)) { tst_fprintf(stderr, "ASSERT FAILED(%s:%d)!\n", __FILE__, __LINE__); tst_exit(1); } }
+
+#define	assert(val)	{	\
+	if (!(val)) {	\
+		tst_assert(__FILE__, __LINE__);	\
+	}	\
+}
+
+
 
 #endif

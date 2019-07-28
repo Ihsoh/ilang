@@ -14,14 +14,23 @@ void __tst_free(void *ptr) {
 	return free(ptr);
 }
 
-int __tst_vfprintf(FILE *stream, const char *format, va_list *arg) {
-	return vfprintf(stream, format, *arg);
-}
-
 int __tst_strcmp(char *a, char *b) {
 	return strcmp(a, b);
 }
 
 void __tst_exit(int status) {
 	return exit(status);
+}
+
+int __tst_fputs(char *str, FILE *fptr) {
+	return fputs(str, fptr);
+}
+
+int __tst_fputi(int n, FILE *fptr) {
+	return fprintf(fptr, "%d", n);
+}
+
+void __tst_assert(char *file, int line) {
+	fprintf(stderr, "ASSERT FAILED(%s:%d)!\n", file, line);
+	exit(1);
 }

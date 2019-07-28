@@ -10,13 +10,50 @@
 	asm("movq %rbp, %rsp\n");	\
 	asm("popq %rbp\n");
 
-function __tst_fdopen(fd:int, mode:*char):*struct FILE {
-	// parameter 'mode'
-	asm("", "set#%rdi"(mode));
+#define	_SET_PARAMS_1(p1) {	\
+	asm("", "set#%rdi"((p1)));	\
+}
 
-	// parameter 'fd'
-	asm("xorq %rsi, %rsi\n");
-	asm("", "set#%esi"(fd));
+#define	_SET_PARAMS_2(p1, p2) {	\
+	asm("", "set#%rdi"((p1)));	\
+	asm("", "set#%rsi"((p2)));	\
+}
+
+#define	_SET_PARAMS_3(p1, p2, p3) {	\
+	asm("", "set#%rdi"((p1)));	\
+	asm("", "set#%rsi"((p2)));	\
+	asm("", "set#%rdx"((p3)));	\
+}
+
+#define	_SET_PARAMS_4(p1, p2, p3, p4) {	\
+	asm("", "set#%rdi"((p1)));	\
+	asm("", "set#%rsi"((p2)));	\
+	asm("", "set#%rdx"((p3)));	\
+	asm("", "set#%rcx"((p4)));	\
+}
+
+#define	_SET_PARAMS_5(p1, p2, p3, p4, p5) {	\
+	asm("", "set#%rdi"((p1)));	\
+	asm("", "set#%rsi"((p2)));	\
+	asm("", "set#%rdx"((p3)));	\
+	asm("", "set#%rcx"((p4)));	\
+	asm("", "set#%r8"((p5)));	\
+}
+
+#define	_SET_PARAMS_6(p1, p2, p3, p4, p5, p6) {	\
+	asm("", "set#%rdi"((p1)));	\
+	asm("", "set#%rsi"((p2)));	\
+	asm("", "set#%rdx"((p3)));	\
+	asm("", "set#%rcx"((p4)));	\
+	asm("", "set#%r8"((p5)));	\
+	asm("", "set#%r9"((p6)));	\
+}
+
+
+
+
+function __tst_fdopen(fd:int, mode:*char):*struct FILE {
+	_SET_PARAMS_2(cast<int64>(fd), mode)
 
 	_STACK_ALIGN16_BEGIN
 
@@ -26,8 +63,7 @@ function __tst_fdopen(fd:int, mode:*char):*struct FILE {
 }
 
 function __tst_malloc(sz:size_t):* {
-	// parameter 'sz'
-	asm("", "set#%rdi"(sz));
+	_SET_PARAMS_1(sz)
 
 	_STACK_ALIGN16_BEGIN
 
@@ -37,8 +73,7 @@ function __tst_malloc(sz:size_t):* {
 }
 
 function __tst_free(ptr:*) {
-	// parameter 'ptr'
-	asm("", "set#%rdi"(ptr));
+	_SET_PARAMS_1(ptr)
 
 	_STACK_ALIGN16_BEGIN
 
@@ -47,16 +82,8 @@ function __tst_free(ptr:*) {
 	_STACK_ALIGN16_END
 }
 
-function __tst_vfprintf(file:*struct FILE, fmt:*char, arg:*__va_list):int {
-	return 0;
-}
-
 function __tst_strcmp(a:*char, b:*char):int {
-	// parameter 'b'
-	asm("", "set#%rdi"(b));
-
-	// parameter 'a'
-	asm("", "set#%rsi"(a));
+	_SET_PARAMS_2(a, b)
 
 	_STACK_ALIGN16_BEGIN
 
@@ -66,12 +93,43 @@ function __tst_strcmp(a:*char, b:*char):int {
 }
 
 function __tst_exit(status:int) {
-	// parameter 'status'
-	asm("", "set#%rdi"(cast<int64>(status)));
+	_SET_PARAMS_1(cast<int64>(status))
 
 	_STACK_ALIGN16_BEGIN
 
 	asm("callq _exit\n");
 
 	_STACK_ALIGN16_END
+}
+
+function __tst_fputs(str:*char, fptr:*struct FILE):int {
+	_SET_PARAMS_2(str, fptr)
+
+	_STACK_ALIGN16_BEGIN
+
+	asm("callq _fputs\n");
+
+	_STACK_ALIGN16_END
+}
+
+function __tst_fputi(n:int, fptr:*struct FILE):int {
+	_SET_PARAMS_3(fptr, "%d", cast<int64>(n))
+
+	_STACK_ALIGN16_BEGIN
+
+	asm("callq _fprintf\n");
+
+	_STACK_ALIGN16_END
+}
+
+function __tst_assert(file:*char, line:int) {
+	_SET_PARAMS_4(stderr, "ASSERT FAILED(%s:%d)!\n", file, cast<int64>(line))
+
+	_STACK_ALIGN16_BEGIN
+
+	asm("callq _fprintf\n");
+
+	_STACK_ALIGN16_END
+		
+	__tst_exit(1);
 }

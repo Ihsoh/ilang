@@ -93,7 +93,7 @@ for example_path in $base_path/$1*; do
 			$ilcfe $example_path/main.il -incpath "$example_path/../;$example_path/" -action preprocess -output $bin_path/main_pp.il
 
 			# 使用ILCFE输出IL IR（32位）。
-			if [ $build_32_llc != 0 ]; then
+			if [ $build_32_ilcbe != 0 ]; then
 				echo "===> IL IR(arch32)"
 				startTime=$(date +%s)
 				$ilcfe $example_path/main.il -arch 32 -incpath "$example_path/../;$example_path/" -action compile -target ilir -output $bin_path/main_32.ir
@@ -114,7 +114,7 @@ for example_path in $base_path/$1*; do
 			fi
 
 			# 使用ILCFE输出IL IR（64位）。
-			if [ $build_64_llc != 0 ]; then
+			if [ $build_64_ilcbe != 0 ]; then
 				echo "===> IL IR(arch64)"
 				startTime=$(date +%s)
 				$ilcfe $example_path/main.il -arch 64 -incpath "$example_path/../;$example_path/" -action compile -target ilir -output $bin_path/main_64.ir
@@ -141,7 +141,7 @@ for example_path in $base_path/$1*; do
 					fi
 
 					chmod +x $bin_path/main_ir_64
-					$bin_path/main_ir_64 > /dev/null
+					$bin_path/main_ir_64
 					if [ $? != 0 ]; then
 						echo -e "\033[31m ERROR \033[0m"
 						continue
@@ -185,7 +185,7 @@ for example_path in $base_path/$1*; do
 					fi
 
 					chmod +x $bin_path/main_ll_32
-					$bin_path/main_ll_32 > /dev/null
+					$bin_path/main_ll_32
 					if [ $? != 0 ]; then
 						echo -e "\033[31m ERROR \033[0m"
 						continue
@@ -229,7 +229,7 @@ for example_path in $base_path/$1*; do
 					fi
 
 					chmod +x $bin_path/main_ll_64
-					$bin_path/main_ll_64 > /dev/null
+					$bin_path/main_ll_64
 					if [ $? != 0 ]; then
 						echo -e "\033[31m ERROR \033[0m"
 						continue
@@ -267,7 +267,7 @@ for example_path in $base_path/$1*; do
 					fi
 
 					chmod +x $bin_path/main_c_32
-					$bin_path/main_c_32 > /dev/null
+					$bin_path/main_c_32
 					if [ $? != 0 ]; then
 						echo -e "\033[31m ERROR \033[0m"
 						continue
@@ -305,7 +305,7 @@ for example_path in $base_path/$1*; do
 					fi
 
 					chmod +x $bin_path/main_c_64
-					$bin_path/main_c_64 > /dev/null
+					$bin_path/main_c_64
 					if [ $? != 0 ]; then
 						echo -e "\033[31m ERROR \033[0m"
 						continue
