@@ -4868,7 +4868,7 @@ static void _check_fncall_params(
 
 	bool func_param_count_matched = false;
 
-	if (node_func_params->nchilds >= node_func_sym_params->nchilds) {
+	if (node_func_params->nchilds == node_func_sym_params->nchilds) {
 		func_param_count_matched = true;
 	}
 
