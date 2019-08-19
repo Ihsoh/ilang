@@ -138,6 +138,10 @@ extern ParserSymbol * parser_new_symbol(
 	size_t szdata,
 	void *data
 );
+extern ParserSymbol * parser_clone_symbol(
+	ParserContext *ctx,
+	ParserSymbol *source
+);
 extern ParserSymbol * parser_add_symptr_to_node(
 	ParserContext *ctx,
 	ParserASTNode *node,

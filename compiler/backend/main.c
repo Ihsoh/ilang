@@ -17,6 +17,7 @@
 #include "semantics.h"
 
 #include "asmgen.h"
+#include "asmgen_gas32.h"
 #include "asmgen_gas64.h"
 
 #include "../preprocessor/preprocessor.h"
@@ -334,7 +335,9 @@ int main(int argc, char *argv[]) {
 	if (strcmp(opt_action, _OPT_ACTION_COMPILE) == 0) {
 		if (strcmp(opt_target, _OPT_TARGET_GAS) == 0) {
 			if (arch == BE_ARCH_32) {
-				_error("target 'gas(32)' is not supported currently.");
+				ASMGeneratorGas32Context *asmgen_ctx = be_asmgen_gas32_new_context(ctx, output, platform);
+				be_asmgen_gas32_generate(asmgen_ctx);
+				be_asmgen_gas32_free_context(asmgen_ctx);
 			} else if (arch == BE_ARCH_64) {
 				ASMGeneratorGas64Context *asmgen_ctx = be_asmgen_gas64_new_context(ctx, output, platform);
 				be_asmgen_gas64_generate(asmgen_ctx);

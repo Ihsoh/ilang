@@ -3803,6 +3803,7 @@ static void _var_with_parent(
 		} else {
 			BE_VAR_SYMBOL_SET_ALIGN(symbol, _calc_type_align(ctx, node, node_type));
 		}
+		BE_VAR_SYMBOL_SET_SCOPE_TYPE(symbol, var_scope_type);
 
 		BE_VAR_ITEM_AST_NODE_SET_SYMBOL(node_var_item, symbol);
 

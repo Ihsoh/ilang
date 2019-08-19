@@ -2523,6 +2523,8 @@ ParserSymbol * be_parser_add_var_symbol_to_node(
 	data.address = SIZE_MAX;
 	data.type_size = type_size;
 
+	data.scope_type = BE_VAR_TYPE_UNKNOWN;
+
 	ParserSymbol *symbol = parser_add_symbol_to_node(
 		ctx,
 		node,

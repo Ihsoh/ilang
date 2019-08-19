@@ -374,6 +374,25 @@ ParserSymbol * parser_new_symbol(
 	return symbol;
 }
 
+ParserSymbol * parser_clone_symbol(
+	ParserContext *ctx,
+	ParserSymbol *source
+) {
+	assert(ctx);
+	assert(source);
+
+	size_t size = sizeof(ParserSymbol) + source->szdata;
+
+	ParserSymbol *symbol = (ParserSymbol *)malloc(size);
+	if (symbol == NULL) {
+		ctx->alloc_mem_error(ctx);
+	}
+
+	memcpy(symbol, source, size);
+
+	return symbol;
+}
+
 static ParserSymbol * _parser_add_symbol(
 	ParserContext *ctx,
 	ParserSymbol **symtbl,

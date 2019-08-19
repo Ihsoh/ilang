@@ -1,49 +1,44 @@
-#include "test_inc.ir"
+// #include "test_inc.ir"
 
-function _test(a:int64, ...) {
-	var n:int64;
-	assign n, i64const 0;
+var a:int32 = cast<int32>(123);
+var b:int64 = cast<int64>(456);
 
-	var va:__va_list;
-	var va_ptr:*__va_list;
-	ref va_ptr, va;
+function _a1():int32 {
+	return cast<int32>(123);
+}
 
-	var va1:__va_list;
-	var va1_ptr:*__va_list;
-	ref va1_ptr, va1;
+function _a2():int64 {
+	return cast<int64>(0x1234567887654321);
+}
 
-	__va_start va_ptr;
+function _a3():int32 {
+	return a;
+}
 
-	__va_copy va1_ptr, va_ptr;
+function _a4():int64 {
+	return b;
+}
 
-	__va_arg n, int64, va_ptr;
-	vcall _print_int64("va[0] = ", n);
+function _a5():int32 {
+	var c:int32;
+	assign c, cast<int32>(123);
+	return c;
+}
 
-	__va_arg n, int64, va_ptr;
-	vcall _print_int64("va[1] = ", n);
+function _a6():int64 {
+	var d:int64;
+	var e:int64;
 
-	__va_arg n, int64, va_ptr;
-	vcall _print_int64("va[2] = ", n);
-
-
-
-	__va_arg n, int64, va1_ptr;
-	vcall _print_int64("va1[0] = ", n);
-
-	__va_arg n, int64, va1_ptr;
-	vcall _print_int64("va1[1] = ", n);
-
-	__va_arg n, int64, va1_ptr;
-	vcall _print_int64("va1[2] = ", n);
-
+	assign d, cast<int64>(456);
 	
+	assign e, d;
+	
+	assign b, e;
 
-	__va_end va_ptr;
-	__va_end va1_ptr;
+	return d;
 }
 
 function _main():int32 {
-	vcall _test(1, 2, 3);
-
-	return cast<int32>(0);
+	var c:int32;
+	var d:int32;
 }

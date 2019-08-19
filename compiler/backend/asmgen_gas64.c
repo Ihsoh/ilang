@@ -2822,7 +2822,7 @@ static void _asm_constexpr_initializer(
 	ParserASTNode *node_constexpr
 ) {
 	assert(ctx);
-	assert(rstr);\
+	assert(rstr);
 	assert(node_constexpr);
 	assert(BE_EXPR_AST_NODE_GET_CONSTANT(node_constexpr));
 
