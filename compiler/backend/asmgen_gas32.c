@@ -1639,7 +1639,6 @@ static void _asm_constexpr_param(
 ) {
 	assert(ctx);
 	assert(rstr_val_l);
-	assert(rstr_val_h);
 	assert(node_constexpr);
 	assert(BE_EXPR_AST_NODE_GET_CONSTANT(node_constexpr));
 
@@ -1651,7 +1650,9 @@ static void _asm_constexpr_param(
 				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_CHAR_VAL(node_constexpr)
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
-			rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			if (rstr_val_h != NULL) {
+				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			}
 			break;
 		}
 		case BE_TYPE_INT8: {
@@ -1661,7 +1662,9 @@ static void _asm_constexpr_param(
 				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT8_VAL(node_constexpr)
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
-			rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			if (rstr_val_h != NULL) {
+				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			}
 			break;
 		}
 		case BE_TYPE_INT16: {
@@ -1671,7 +1674,9 @@ static void _asm_constexpr_param(
 				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT16_VAL(node_constexpr)
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
-			rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			if (rstr_val_h != NULL) {
+				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			}
 			break;
 		}
 		case BE_TYPE_INT32: {
@@ -1681,27 +1686,31 @@ static void _asm_constexpr_param(
 				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT32_VAL(node_constexpr)
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
-			rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			if (rstr_val_h != NULL) {
+				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			}
 			break;
 		}
 		case BE_TYPE_INT64: {
 			char str[128];
 
 			int64_t val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_INT64_VAL(node_constexpr);
+			
 			int32_t val_l = (int32_t)(val & 0xffffffff);
-			int32_t val_h = (int32_t)((val >> 32) & 0xffffffff);
-
 			snprintf(
 				str, sizeof(str), "$0x%x",
 				val_l
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
 
-			snprintf(
-				str, sizeof(str), "$0x%x",
-				val_h
-			);
-			rstr_append_with_cstr(rstr_val_h, str);
+			if (rstr_val_h != NULL) {
+				int32_t val_h = (int32_t)((val >> 32) & 0xffffffff);
+				snprintf(
+					str, sizeof(str), "$0x%x",
+					val_h
+				);
+				rstr_append_with_cstr(rstr_val_h, str);
+			}
 			break;
 		}
 		case BE_TYPE_UINT8: {
@@ -1711,7 +1720,9 @@ static void _asm_constexpr_param(
 				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT8_VAL(node_constexpr)
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
-			rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			if (rstr_val_h != NULL) {
+				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			}
 			break;
 		}
 		case BE_TYPE_UINT16: {
@@ -1721,7 +1732,9 @@ static void _asm_constexpr_param(
 				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT16_VAL(node_constexpr)
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
-			rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			if (rstr_val_h != NULL) {
+				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			}
 			break;
 		}
 		case BE_TYPE_UINT32: {
@@ -1731,27 +1744,31 @@ static void _asm_constexpr_param(
 				BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT32_VAL(node_constexpr)
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
-			rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			if (rstr_val_h != NULL) {
+				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+			}
 			break;
 		}
 		case BE_TYPE_UINT64: {
 			char str[128];
 
 			uint64_t val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_UINT64_VAL(node_constexpr);
-			uint32_t val_l = (uint32_t)(val & 0xffffffff);
-			uint32_t val_h = (uint32_t)((val >> 32) & 0xffffffff);
 
+			uint32_t val_l = (uint32_t)(val & 0xffffffff);
 			snprintf(
 				str, sizeof(str), "$0x%x",
 				val_l
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
 
-			snprintf(
-				str, sizeof(str), "$0x%x",
-				val_h
-			);
-			rstr_append_with_cstr(rstr_val_h, str);
+			if (rstr_val_h != NULL) {
+				uint32_t val_h = (uint32_t)((val >> 32) & 0xffffffff);
+				snprintf(
+					str, sizeof(str), "$0x%x",
+					val_h
+				);
+				rstr_append_with_cstr(rstr_val_h, str);
+			}
 			break;
 		}
 		case BE_TYPE_FLOAT: {
@@ -1826,7 +1843,9 @@ static void _asm_constexpr_param(
 					rstr_val_l,
 					_asm_inst_reg(ctx, BE_TYPE_INT32, tmp_reg)
 				);
-				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+				if (rstr_val_h != NULL) {
+					rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+				}
 
 				rstr_free(&conststr_name);
 				rstr_free(&rstr_cur_func_name);
@@ -1840,7 +1859,9 @@ static void _asm_constexpr_param(
 					(uint32_t)val
 				);
 				rstr_append_with_cstr(rstr_val_l, str);
-				rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+				if (rstr_val_h != NULL) {
+					rstr_append_with_cstr(rstr_val_h, _ASM_CONST_0);
+				}
 			}
 			break;
 		}
@@ -2731,6 +2752,143 @@ static void _asm_stat_assign(
 	}
 }
 
+static void _out_literal_string(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(node);
+	assert(node->type == BE_NODE_LITERAL_STRING);
+	
+	ResizableString unescaped_str;
+	rstr_init(&unescaped_str);
+	be_lexer_unescape_string(
+		ctx->psrctx->lexctx,
+		&unescaped_str,
+		node->token->content + 1,
+		node->token->len - 2
+	);
+
+	rstr_append_with_cstr(
+		rstr,
+		RSTR_CSTR(&unescaped_str)
+	);
+
+	rstr_free(&unescaped_str);
+}
+
+static void _asm_stat_asm(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_asm_code = node->childs[0];
+	assert(node_asm_code->type == BE_NODE_LITERAL_STRING);
+
+	_out_literal_string(ctx, ctx->body, node_asm_code);
+}
+
+static void _asm_stat_asm_set_reg(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM_SET_REG);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_LITERAL_STRING);
+
+	ResizableString rstr_reg_target;
+	rstr_init(&rstr_reg_target);
+	_out_literal_string(ctx, &rstr_reg_target, node_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	if (node_source->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_source = _get_symbol_by_id_node(ctx, node_source);
+		if (symbol_source->type == BE_SYM_VAR) {
+			ParserSymbol *tmp = _instantiate_varsym(ctx, symbol_source, 0);
+			_asm_inst_mov_x_sym(
+				ctx,
+				ctx->body,
+				RSTR_CSTR(&rstr_reg_target),
+				tmp
+			);
+			_free_varsym(ctx, tmp);
+		} else if (symbol_source->type == BE_SYM_FUNC) {
+			_asm_inst_mov_x_fsym(
+				ctx,
+				ctx->body,
+				RSTR_CSTR(&rstr_reg_target),
+				symbol_source
+			);
+		} else {
+			assert(0);
+		}
+	} else if (node_source->type == BE_NODE_EXPR) {
+		ResizableString rstr_source;
+		rstr_init(&rstr_source);
+		_asm_constexpr_param(ctx, &rstr_source, NULL, node_source, _ASM_REG_AX);
+
+		uint8_t type_source = BE_EXPR_AST_NODE_GET_TYPE(node_source);
+
+		_asm_inst_mov_x_x(
+			ctx,
+			ctx->body,
+			type_source,
+			RSTR_CSTR(&rstr_reg_target),
+			RSTR_CSTR(&rstr_source)
+		);
+
+		rstr_free(&rstr_source);
+	} else {
+		assert(0);
+	}
+
+	rstr_free(&rstr_reg_target);
+}
+
+static void _asm_stat_asm_get_reg(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_ASM_GET_REG);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_LITERAL_STRING);
+
+	ResizableString rstr_reg;
+	rstr_init(&rstr_reg);
+	_out_literal_string(ctx, &rstr_reg, node_source);
+
+	ParserSymbol *tmp = _instantiate_varsym(ctx, symbol_target, 0);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		tmp,
+		RSTR_CSTR(&rstr_reg)
+	);
+
+	_free_varsym(ctx, tmp);
+
+	rstr_free(&rstr_reg);
+}
+
 
 
 
@@ -2789,6 +2947,21 @@ static void _asm_stat(
 			_asm_stat_assign(ctx, node_stat);
 			break;
 		}
+
+		case BE_NODE_STAT_ASM: {
+			_asm_stat_asm(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_ASM_SET_REG: {
+			_asm_stat_asm_set_reg(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_ASM_GET_REG: {
+			_asm_stat_asm_get_reg(ctx, node_stat);
+			break;
+		}
+
+
 
 
 

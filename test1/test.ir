@@ -2,40 +2,19 @@
 
 var a:int32 = cast<int32>(123);
 var b:int64 = cast<int64>(456);
+var x:int32 = cast<int32>(789);
 
-function _a1():int32 {
-	return cast<int32>(123);
-}
-
-function _a2():int64 {
-	return cast<int64>(0x1234567887654321);
-}
-
-function _a3():int32 {
-	return a;
-}
-
-function _a4():int64 {
-	return b;
-}
-
-function _a5():int32 {
+function _a1() {
+	asm "// =============\n";
+	asm_set_reg "%ecx", cast<int32>(123);
 	var c:int32;
-	assign c, cast<int32>(123);
-	return c;
-}
-
-function _a6():int64 {
-	var d:int64;
-	var e:int64;
-
-	assign d, cast<int64>(456);
-	
-	assign e, d;
-	
-	assign b, e;
-
-	return d;
+	asm_get_reg c, "%ecx";
+	asm_get_reg a, "%ecx";
+	asm "// =============\n";
+	asm_set_reg "%edx", a;
+	asm "// =============\n";
+	asm_set_reg "%edx", c;
+	asm "// =============\n";
 }
 
 function _main():int32 {
