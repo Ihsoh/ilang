@@ -4,16 +4,17 @@ var a:int32 = cast<int32>(123);
 var b:int64 = cast<int64>(456);
 var x:int32 = cast<int32>(789);
 
+function _f() {
+}
+
 function _a1() {
 	asm "// =============\n";
-	asm_set_reg "%ecx", cast<int32>(123);
-	var c:int32;
-	asm_get_reg c, "%ecx";
-	asm_get_reg a, "%ecx";
-	asm "// =============\n";
-	asm_set_reg "%edx", a;
-	asm "// =============\n";
-	asm_set_reg "%edx", c;
+	cbr cast<int64>(1), lbl_true, lbl_false;
+lbl_true:
+	asm "// ====TRUE=========\n";
+lbl_false:
+	asm "// ====FALSE=========\n";
+
 	asm "// =============\n";
 }
 

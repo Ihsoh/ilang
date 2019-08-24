@@ -968,6 +968,20 @@ static void _asm_inst_je_x(
 	_asm_inst1(ctx, rstr, mnemonic, target);
 }
 
+static void _asm_inst_jz_x(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	const char *target
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+
+	const char *mnemonic = "jz";
+
+	_asm_inst1(ctx, rstr, mnemonic, target);
+}
+
 static void _asm_inst_jne_x(
 	ASMGeneratorGas32Context *ctx,
 	ResizableString *rstr,
@@ -978,6 +992,20 @@ static void _asm_inst_jne_x(
 	assert(target);
 
 	const char *mnemonic = "jne";
+
+	_asm_inst1(ctx, rstr, mnemonic, target);
+}
+
+static void _asm_inst_jnz_x(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	const char *target
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+
+	const char *mnemonic = "jnz";
 
 	_asm_inst1(ctx, rstr, mnemonic, target);
 }
@@ -994,6 +1022,60 @@ static void _asm_inst_js_x(
 	const char *mnemonic = "js";
 
 	_asm_inst1(ctx, rstr, mnemonic, target);
+}
+
+/*
+	CMP
+*/
+
+static void _asm_inst_cmp_x_x(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "cmp");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
+static void _asm_inst_cmp_sym_x(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	ParserSymbol *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	_asm_inst_cmp_x_x(
+		ctx,
+		rstr,
+		BE_VAR_SYMBOL_GET_TYPE(target),
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(target)),
+		source
+	);
 }
 
 
@@ -1473,6 +1555,112 @@ static void _asm_inst_pop_x(
 
 
 
+
+
+
+
+
+/*
+	AND
+*/
+
+static void _asm_inst_and_x_x(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "and");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
+/*
+	OR
+*/
+
+static void _asm_inst_or_x_x(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "or");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
+
+/*
+	XOR
+*/
+
+static void _asm_inst_xor_x_x(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	uint8_t type,
+	const char *target,
+	const char *source
+) {
+	assert(ctx);
+	assert(rstr);
+	assert(target);
+	assert(source);
+
+	ResizableString rstr_mnemonic;
+	rstr_init_with_cstr(&rstr_mnemonic, "xor");
+	rstr_append_with_char(
+		&rstr_mnemonic,
+		_asm_inst_type_suffix(ctx, type)
+	);
+
+	_asm_inst2(
+		ctx,
+		rstr,
+		RSTR_CSTR(&rstr_mnemonic),
+		source,
+		target
+	);
+
+	rstr_free(&rstr_mnemonic);
+}
 
 
 
@@ -2889,6 +3077,166 @@ static void _asm_stat_asm_get_reg(
 	rstr_free(&rstr_reg);
 }
 
+static void _asm_stat_label(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_LABEL);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_id = node->childs[0];
+	assert(node_id->type == BE_NODE_IDENTIFIER);
+
+	_out_label(ctx, ctx->body, NULL, node_id);
+	rstr_append_with_cstr(ctx->body, ":\n");
+}
+
+static void _asm_stat_br(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BR);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_id = node->childs[0];
+	assert(node_id->type == BE_NODE_IDENTIFIER);
+
+	ResizableString rstr_id;
+	rstr_init(&rstr_id);
+	_out_label(ctx, &rstr_id, NULL, node_id);
+
+	_asm_inst_jmp_x(ctx, ctx->body, RSTR_CSTR(&rstr_id));
+
+	rstr_free(&rstr_id);
+}
+
+static void _asm_stat_cbr(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_CBR);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_cond = node->childs[0];
+
+	ParserASTNode *node_label_true = node->childs[1];
+	assert(node_label_true->type == BE_NODE_IDENTIFIER);
+	ResizableString rstr_label_true;
+	rstr_init(&rstr_label_true);
+	_out_label(ctx, &rstr_label_true, NULL, node_label_true);
+
+	ParserASTNode *node_label_false = node->childs[2];
+	assert(node_label_false->type == BE_NODE_IDENTIFIER);
+	ResizableString rstr_label_false;
+	rstr_init(&rstr_label_false);
+	_out_label(ctx, &rstr_label_false, NULL, node_label_false);
+
+	if (node_cond->type == BE_NODE_IDENTIFIER) {
+		ParserSymbol *symbol_cond = _get_symbol_by_id_node(ctx, node_cond);
+		if (symbol_cond->type == BE_SYM_VAR) {
+			uint8_t cond_type = BE_VAR_SYMBOL_GET_TYPE(symbol_cond);
+			if (cond_type == BE_TYPE_UINT64 || cond_type == BE_TYPE_INT64) {
+				ParserSymbol *symbol_cond_l = _instantiate_varsym(ctx, symbol_cond, 0);
+				ParserSymbol *symbol_cond_h = _instantiate_varsym(ctx, symbol_cond, 4);
+
+				_asm_inst_mov_x_sym(
+					ctx,
+					ctx->body,
+					_ASM_REG_NAME_EAX,
+					symbol_cond_l
+				);
+
+				_asm_inst_mov_x_sym(
+					ctx,
+					ctx->body,
+					_ASM_REG_NAME_EBX,
+					symbol_cond_h
+				);
+
+				_asm_inst_or_x_x(
+					ctx,
+					ctx->body,
+					BE_TYPE_UINT32,
+					_ASM_REG_NAME_EAX,
+					_ASM_REG_NAME_EBX
+				);
+
+				_free_varsym(ctx, symbol_cond_l);
+				_free_varsym(ctx, symbol_cond_h);
+			} else {
+				ParserSymbol *symbol_cond_l = _instantiate_varsym(ctx, symbol_cond, 0);
+
+				_asm_inst_cmp_sym_x(
+					ctx,
+					ctx->body,
+					symbol_cond_l,
+					_ASM_CONST_0
+				);
+
+				_free_varsym(ctx, symbol_cond_l);			
+			}
+		} else if (symbol_cond->type == BE_SYM_FUNC) {
+			_asm_inst_mov_x_fsym(
+				ctx,
+				ctx->body,
+				_ASM_REG_NAME_EAX,
+				symbol_cond
+			);
+
+			_asm_inst_cmp_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_CONST_0
+			);
+		} else {
+			assert(0);
+		}
+	} else if (node_cond->type == BE_NODE_EXPR) {
+		uint8_t cond_type = _move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			_ASM_REG_BX,
+			node_cond
+		);
+
+		if (cond_type == BE_TYPE_UINT64 || cond_type == BE_TYPE_INT64) {
+			_asm_inst_or_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_REG_NAME_EBX
+			);
+		} else {
+			_asm_inst_cmp_x_x(
+				ctx,
+				ctx->body,
+				cond_type,
+				_asm_inst_reg(ctx, cond_type, _ASM_REG_AX),
+				_ASM_CONST_0
+			);
+		}
+	} else {
+		assert(0);
+	}
+
+	_asm_inst_jz_x(ctx, ctx->body, RSTR_CSTR(&rstr_label_false));
+	_asm_inst_jnz_x(ctx, ctx->body, RSTR_CSTR(&rstr_label_true));
+
+	rstr_free(&rstr_label_true);
+	rstr_free(&rstr_label_false);
+}
+
+
+
 
 
 
@@ -2958,6 +3306,19 @@ static void _asm_stat(
 		}
 		case BE_NODE_STAT_ASM_GET_REG: {
 			_asm_stat_asm_get_reg(ctx, node_stat);
+			break;
+		}
+
+		case BE_NODE_STAT_LABEL: {
+			_asm_stat_label(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_BR: {
+			_asm_stat_br(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_CBR: {
+			_asm_stat_cbr(ctx, node_stat);
 			break;
 		}
 
