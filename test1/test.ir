@@ -7,14 +7,19 @@ var x:int32 = cast<int32>(789);
 function _f() {
 }
 
+var la:int64;
+var pa:*int64;
+var lb:int64;
+
 function _a1() {
 	asm "// =============\n";
-	cbr cast<int64>(1), lbl_true, lbl_false;
-lbl_true:
-	asm "// ====TRUE=========\n";
-lbl_false:
-	asm "// ====FALSE=========\n";
-
+	assign la, cast<int64>(1234);
+	asm "// =============\n";
+	ref pa, la;
+	asm "// =============\n";
+	store pa, cast<int64>(5678);
+	asm "// =============\n";
+	load lb, pa;
 	asm "// =============\n";
 }
 
