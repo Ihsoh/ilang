@@ -7,11 +7,11 @@ var x:int32 = cast<int32>(789);
 function _f() {
 }
 
-var la:int64;
-var pa:*int64;
-var lb:int64;
-
 function _a1() {
+	var la:int64;
+	var pa:*int64;
+	var lb:int64;
+		
 	asm "// =============\n";
 	assign la, cast<int64>(1234);
 	asm "// =============\n";
