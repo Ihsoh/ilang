@@ -4258,13 +4258,6 @@ static void _asm_stat_uitofp(
 				_ASM_REG_NAME_RAX
 			);
 
-			_asm_inst_movss_sym_x(
-				ctx,
-				ctx->body,
-				symbol_target,
-				_ASM_REG_NAME_XMM0
-			);
-
 			_asm_inst_jmp_x(ctx, ctx->body, RSTR_CSTR(&rstr_tmp_label2));
 
 			rstr_append_with_rstr(ctx->body, &rstr_tmp_label1);
@@ -4309,13 +4302,6 @@ static void _asm_stat_uitofp(
 				BE_TYPE_INT64,
 				_ASM_REG_NAME_XMM0,
 				_ASM_REG_NAME_RAX
-			);
-
-			_asm_inst_movsd_sym_x(
-				ctx,
-				ctx->body,
-				symbol_target,
-				_ASM_REG_NAME_XMM0
 			);
 
 			_asm_inst_jmp_x(ctx, ctx->body, RSTR_CSTR(&rstr_tmp_label2));

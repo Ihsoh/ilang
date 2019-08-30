@@ -1,25 +1,20 @@
 // #include "test_inc.ir"
 
-var a:int32 = cast<int32>(123);
-var b:int64 = cast<int64>(456);
-var x:int32 = cast<int32>(789);
+var ga:int32 = cast<int32>(123);
+var gb:int64 = cast<int64>(456);
+var gx:int32 = cast<int32>(789);
 
 function _f() {
 }
 
 function _a1() {
-	var la:int64;
-	var pa:*int64;
-	var lb:int64;
+	var a:uint64;
+	var b:double;
 		
 	asm "// =============\n";
-	assign la, cast<int64>(1234);
+	assign a, cast<uint64>(1234);
 	asm "// =============\n";
-	ref pa, la;
-	asm "// =============\n";
-	store pa, cast<int64>(5678);
-	asm "// =============\n";
-	load lb, pa;
+	uitofp b, a;
 	asm "// =============\n";
 }
 
