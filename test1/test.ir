@@ -4,18 +4,15 @@ var ga:int32 = cast<int32>(123);
 var gb:int64 = cast<int64>(456);
 var gx:int32 = cast<int32>(789);
 
-function _f() {
-}
+function _test() {
+	var r32:int32;
+	var r64:int64;
+	var rf:float;
+	var rd:double;
 
-function _a1() {
-	var a:uint64;
-	var b:double;
-		
-	asm "// =============\n";
-	assign a, cast<uint64>(1234);
-	asm "// =============\n";
-	uitofp b, a;
-	asm "// =============\n";
+	asm "#==============\n";
+	assign rf, cast<float>(123.456);
+	asm "#==============\n";
 }
 
 function _main():int32 {
