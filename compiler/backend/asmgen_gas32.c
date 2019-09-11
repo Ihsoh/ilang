@@ -3390,6 +3390,13 @@ static ParserSymbol * _instantiate_varsym(
 			);
 			break;
 		}
+		case BE_VAR_TYPE_FUNC_PARAM: {
+			rstr_append_with_rstr(
+				BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol),
+				BE_VAR_SYMBOL_GET_CODE_GEN_NAME(varsym)
+			);
+			break;
+		}
 		default: {
 			assert(0);
 			return NULL;
@@ -3901,12 +3908,51 @@ static void _asm_stat_assign(
 	if (node_source->type == BE_NODE_IDENTIFIER) {
 		ParserSymbol *symbol_source = _get_symbol_by_id_node(ctx, node_source);
 		if (symbol_source->type == BE_SYM_VAR) {
-			_asm_inst_mov_sym_sym(
-				ctx,
-				ctx->body,
-				symbol_target,
-				symbol_source
-			);
+			uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+			if (type_target == BE_TYPE_UINT64
+					|| type_target == BE_TYPE_INT64
+					|| type_target == BE_TYPE_DOUBLE) {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+				ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+				ParserSymbol *symbol_source_l = _instantiate_varsym(ctx, symbol_source, 0);
+				ParserSymbol *symbol_source_h = _instantiate_varsym(ctx, symbol_source, 4);
+
+				_asm_inst_mov_sym_sym(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					symbol_source_l
+				);
+
+				_asm_inst_mov_sym_sym(
+					ctx,
+					ctx->body,
+					symbol_target_h,
+					symbol_source_h
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+				_free_varsym(ctx, symbol_target_h);
+
+				_free_varsym(ctx, symbol_source_l);
+				_free_varsym(ctx, symbol_source_h);
+			} else {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+				ParserSymbol *symbol_source_l = _instantiate_varsym(ctx, symbol_source, 0);
+
+				_asm_inst_mov_sym_sym(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					symbol_source_l
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+
+				_free_varsym(ctx, symbol_source_l);
+			}
 		} else if (symbol_source->type == BE_SYM_FUNC) {
 			_asm_inst_mov_x_fsym(
 				ctx,
@@ -3915,12 +3961,16 @@ static void _asm_stat_assign(
 				symbol_source
 			);
 
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
 			_asm_inst_mov_sym_x(
 				ctx,
 				ctx->body,
-				symbol_target,
+				symbol_target_l,
 				_ASM_REG_NAME_EAX
 			);
+
+			_free_varsym(ctx, symbol_target_l);
 		} else {
 			assert(0);
 		}

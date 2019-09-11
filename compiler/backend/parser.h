@@ -440,7 +440,8 @@ typedef struct {
 #define	BE_VAR_TYPE_UNKNOWN				0
 #define	BE_VAR_TYPE_GLOBAL				1
 #define	BE_VAR_TYPE_LOCAL				2
-#define	BE_VAR_TYPE_STRUCT_MEMBER		3
+#define	BE_VAR_TYPE_FUNC_PARAM			3
+#define	BE_VAR_TYPE_STRUCT_MEMBER		4
 
 typedef struct {
 	/*
@@ -448,6 +449,7 @@ typedef struct {
 
 		BE_VAR_TYPE_GLOBAL：全局变量
 		BE_VAR_TYPE_LOCAL：局部变量
+		BE_VAR_TYPE_FUNC_PARAM：函数参数
 		BE_VAR_TYPE_STRUCT_MEMBER：结构体成员变量
 	*/
 	uint8_t			type;

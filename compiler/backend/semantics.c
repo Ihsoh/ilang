@@ -6099,6 +6099,8 @@ static void _func(
 				type_size
 			);
 
+			BE_VAR_SYMBOL_SET_SCOPE_TYPE(symbol, BE_VAR_TYPE_FUNC_PARAM);
+
 			BE_FUNC_PARAM_AST_NODE_SET_SYMBOL(node_func_param, symbol);
 		}
 	}
