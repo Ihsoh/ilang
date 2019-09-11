@@ -8075,8 +8075,1064 @@ static void _asm_stat_le(
 	}
 }
 
+static void _asm_stat_gt(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_GT);
+	assert(node->nchilds == 3);
 
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
 
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	uint8_t type_source = _get_id_or_constexpr_type(ctx, node_source_left);
+
+	if (be_sem_is_unsigned_type(type_source)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			_ASM_REG_BX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			_ASM_REG_DX,
+			node_source_right
+		);
+
+		if (type_source == BE_TYPE_UINT64) {
+			// TODO: 64位整数大于。
+			assert(0);
+		} else {
+			_asm_inst_cmp_x_x(
+				ctx,
+				ctx->body,
+				type_source,
+				_asm_inst_reg(ctx, type_source, _ASM_REG_AX),
+				_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+			);
+
+			_asm_inst_seta_x(
+				ctx,
+				ctx->body,
+				_ASM_REG_NAME_AL
+			);
+
+			_asm_inst_and_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_CONST_1
+			);
+
+			if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+				ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					_ASM_REG_NAME_EAX
+				);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_h,
+					_ASM_CONST_0
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+				_free_varsym(ctx, symbol_target_h);
+			} else {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+			}
+		}
+	} else if (be_sem_is_signed_type(type_source)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			_ASM_REG_BX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			_ASM_REG_DX,
+			node_source_right
+		);
+
+		if (type_source == BE_TYPE_INT64) {
+			// TODO: 64位整数大于。
+			assert(0);
+		} else {
+			_asm_inst_cmp_x_x(
+				ctx,
+				ctx->body,
+				type_source,
+				_asm_inst_reg(ctx, type_source, _ASM_REG_AX),
+				_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+			);
+
+			_asm_inst_setg_x(
+				ctx,
+				ctx->body,
+				_ASM_REG_NAME_AL
+			);
+
+			_asm_inst_and_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_CONST_1
+			);
+
+			if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+				ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					_ASM_REG_NAME_EAX
+				);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_h,
+					_ASM_CONST_0
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+				_free_varsym(ctx, symbol_target_h);
+			} else {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+			}
+		}
+	} else if (type_source == BE_TYPE_FLOAT) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_ucomiss_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_seta_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_AL
+		);
+
+		_asm_inst_and_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT32,
+			_ASM_REG_NAME_EAX,
+			_ASM_CONST_1
+		);
+
+		if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+			ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_ASM_REG_NAME_EAX
+			);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_h,
+				_ASM_CONST_0
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+			_free_varsym(ctx, symbol_target_h);
+		} else {
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+		}
+	}  else if (type_source == BE_TYPE_DOUBLE) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_ucomisd_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_seta_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_AL
+		);
+
+		_asm_inst_and_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT32,
+			_ASM_REG_NAME_EAX,
+			_ASM_CONST_1
+		);
+
+		if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+			ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_ASM_REG_NAME_EAX
+			);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_h,
+				_ASM_CONST_0
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+			_free_varsym(ctx, symbol_target_h);
+		} else {
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+		}
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_ge(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_GE);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	uint8_t type_source = _get_id_or_constexpr_type(ctx, node_source_left);
+
+	if (be_sem_is_unsigned_type(type_source)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			_ASM_REG_BX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			_ASM_REG_DX,
+			node_source_right
+		);
+
+		if (type_source == BE_TYPE_UINT64) {
+			// TODO: 64位整数大于等于。
+			assert(0);
+		} else {
+			_asm_inst_cmp_x_x(
+				ctx,
+				ctx->body,
+				type_source,
+				_asm_inst_reg(ctx, type_source, _ASM_REG_AX),
+				_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+			);
+
+			_asm_inst_setae_x(
+				ctx,
+				ctx->body,
+				_ASM_REG_NAME_AL
+			);
+
+			_asm_inst_and_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_CONST_1
+			);
+
+			if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+				ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					_ASM_REG_NAME_EAX
+				);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_h,
+					_ASM_CONST_0
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+				_free_varsym(ctx, symbol_target_h);
+			} else {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+			}
+		}
+	} else if (be_sem_is_signed_type(type_source)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			_ASM_REG_BX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			_ASM_REG_DX,
+			node_source_right
+		);
+
+		if (type_source == BE_TYPE_INT64) {
+			// TODO: 64位整数大于等于。
+			assert(0);
+		} else {
+			_asm_inst_cmp_x_x(
+				ctx,
+				ctx->body,
+				type_source,
+				_asm_inst_reg(ctx, type_source, _ASM_REG_AX),
+				_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+			);
+
+			_asm_inst_setge_x(
+				ctx,
+				ctx->body,
+				_ASM_REG_NAME_AL
+			);
+
+			_asm_inst_and_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_CONST_1
+			);
+
+			if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+				ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					_ASM_REG_NAME_EAX
+				);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_h,
+					_ASM_CONST_0
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+				_free_varsym(ctx, symbol_target_h);
+			} else {
+				ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+				_asm_inst_mov_sym_x(
+					ctx,
+					ctx->body,
+					symbol_target_l,
+					_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+				);
+
+				_free_varsym(ctx, symbol_target_l);
+			}
+		}
+	} else if (type_source == BE_TYPE_FLOAT) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_ucomiss_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_setae_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_AL
+		);
+
+		_asm_inst_and_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT32,
+			_ASM_REG_NAME_EAX,
+			_ASM_CONST_1
+		);
+
+		if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+			ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_ASM_REG_NAME_EAX
+			);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_h,
+				_ASM_CONST_0
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+			_free_varsym(ctx, symbol_target_h);
+		} else {
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+		}
+	}  else if (type_source == BE_TYPE_DOUBLE) {
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM0,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_xmm_reg(
+			ctx,
+			_ASM_REG_NAME_XMM1,
+			node_source_right
+		);
+
+		_asm_inst_ucomisd_x_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_XMM0,
+			_ASM_REG_NAME_XMM1
+		);
+
+		_asm_inst_setae_x(
+			ctx,
+			ctx->body,
+			_ASM_REG_NAME_AL
+		);
+
+		_asm_inst_and_x_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT32,
+			_ASM_REG_NAME_EAX,
+			_ASM_CONST_1
+		);
+
+		if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+			ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_ASM_REG_NAME_EAX
+			);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_h,
+				_ASM_CONST_0
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+			_free_varsym(ctx, symbol_target_h);
+		} else {
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+		}
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_band(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BAND);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			_ASM_REG_BX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			_ASM_REG_DX,
+			node_source_right
+		);
+
+		if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+			// TODO: 64位整数位与。
+			assert(0);
+		} else {
+			_asm_inst_and_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_REG_NAME_ECX
+			);
+
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+		}
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_bor(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BOR);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			_ASM_REG_BX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			_ASM_REG_DX,
+			node_source_right
+		);
+
+		if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+			// TODO: 64位整数位或。
+			assert(0);
+		} else {
+			_asm_inst_or_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_REG_NAME_ECX
+			);
+
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+		}
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_bxor(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_BXOR);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+
+	ParserASTNode *node_source_left = node->childs[1];
+	ParserASTNode *node_source_right = node->childs[2];
+
+	if (be_sem_is_integer_type(type_target)) {
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_AX,
+			_ASM_REG_BX,
+			node_source_left
+		);
+
+		_move_id_or_constexpr_to_reg(
+			ctx,
+			_ASM_REG_CX,
+			_ASM_REG_DX,
+			node_source_right
+		);
+
+		if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
+			// TODO: 64位整数位异或。
+			assert(0);
+		} else {
+			_asm_inst_xor_x_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT32,
+				_ASM_REG_NAME_EAX,
+				_ASM_REG_NAME_ECX
+			);
+
+			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+			_asm_inst_mov_sym_x(
+				ctx,
+				ctx->body,
+				symbol_target_l,
+				_asm_inst_reg(ctx, type_target, _ASM_REG_AX)
+			);
+
+			_free_varsym(ctx, symbol_target_l);
+		}
+	} else {
+		assert(0);
+	}
+}
+
+static void _asm_stat_va_start(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VA_START);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EAX,
+		_ASM_REG_NAME_EBP
+	);
+
+	// +16为第一个参数的位子，再+8后跳过第一个参数，所以+24。
+	_asm_inst_add_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EAX,
+		_ASM_CONST_24
+	);
+
+	ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EBX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target_l))
+	);
+
+	_free_varsym(ctx, symbol_target_l);
+
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(
+		ctx,
+		&rstr_memref,
+		_ASM_REG_NAME_EBX
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		RSTR_CSTR(&rstr_memref),
+		_ASM_REG_NAME_EAX
+	);
+
+	rstr_free(&rstr_memref);
+}
+
+static void _asm_stat_va_end(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VA_END);
+	assert(node->nchilds == 1);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+
+	ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EAX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target_l))
+	);
+
+	_free_varsym(ctx, symbol_target_l);
+
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(
+		ctx,
+		&rstr_memref,
+		_ASM_REG_NAME_EAX
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		RSTR_CSTR(&rstr_memref),
+		_ASM_CONST_0
+	);
+
+	rstr_free(&rstr_memref);
+}
+
+static void _asm_stat_va_copy(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VA_COPY);
+	assert(node->nchilds == 2);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+
+	ParserASTNode *node_source = node->childs[1];
+	assert(node_source->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+
+	ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EAX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_target_l))
+	);
+
+	_free_varsym(ctx, symbol_target_l);
+
+	ParserSymbol *symbol_source_l = _instantiate_varsym(ctx, symbol_source, 0);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EBX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source_l))
+	);
+
+	_free_varsym(ctx, symbol_source_l);
+
+	ResizableString rstr_memref_target;
+	rstr_init(&rstr_memref_target);
+	_asm_inst_memref_base(
+		ctx,
+		&rstr_memref_target,
+		_ASM_REG_NAME_EAX
+	);
+
+	ResizableString rstr_memref_source;
+	rstr_init(&rstr_memref_source);
+	_asm_inst_memref_base(
+		ctx,
+		&rstr_memref_source,
+		_ASM_REG_NAME_EBX
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_ECX,
+		RSTR_CSTR(&rstr_memref_source)
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		RSTR_CSTR(&rstr_memref_target),
+		_ASM_REG_NAME_ECX
+	);
+
+	rstr_free(&rstr_memref_target);
+	rstr_free(&rstr_memref_source);
+}
+
+static void _asm_stat_va_arg(
+	ASMGeneratorGas32Context *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_STAT_VA_ARG);
+	assert(node->nchilds == 3);
+
+	ParserASTNode *node_target = node->childs[0];
+	assert(node_target->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_target = _get_var_symbol_by_id_node(ctx, node_target);
+	uint8_t type_target = BE_VAR_SYMBOL_GET_TYPE(symbol_target);
+	assert(be_sem_is_primitive_type(type_target) || be_sem_is_pointer_type(type_target));
+
+	ParserASTNode *node_type = node->childs[1];
+
+	ParserASTNode *node_source = node->childs[2];
+	assert(node_source->type == BE_NODE_IDENTIFIER);
+	ParserSymbol *symbol_source = _get_var_symbol_by_id_node(ctx, node_source);
+
+	ParserSymbol *symbol_source_l = _instantiate_varsym(ctx, symbol_source, 0);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EAX,
+		RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol_source_l))
+	);
+
+	_free_varsym(ctx, symbol_source_l);
+
+	ResizableString rstr_memref_source;
+	rstr_init(&rstr_memref_source);
+	_asm_inst_memref_base(ctx, &rstr_memref_source, _ASM_REG_NAME_EAX);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EBX,
+		RSTR_CSTR(&rstr_memref_source)
+	);
+
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base(ctx, &rstr_memref, _ASM_REG_NAME_EBX);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_ECX,
+		RSTR_CSTR(&rstr_memref)
+	);
+
+	rstr_free(&rstr_memref);
+
+	ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
+
+	_asm_inst_mov_sym_x(
+		ctx,
+		ctx->body,
+		symbol_target_l,
+		_asm_inst_reg(ctx, type_target, _ASM_REG_CX)
+	);
+
+	_free_varsym(ctx, symbol_target_l);
+
+	_asm_inst_add_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_EBX,
+		_ASM_CONST_8
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		RSTR_CSTR(&rstr_memref_source),
+		_ASM_REG_NAME_EBX
+	);
+
+	rstr_free(&rstr_memref_source);
+}
 
 
 
@@ -8268,11 +9324,44 @@ static void _asm_stat(
 			_asm_stat_le(ctx, node_stat);
 			break;
 		}
+		case BE_NODE_STAT_GT: {
+			_asm_stat_gt(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_GE: {
+			_asm_stat_ge(ctx, node_stat);
+			break;
+		}
 
+		case BE_NODE_STAT_BAND: {
+			_asm_stat_band(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_BOR: {
+			_asm_stat_bor(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_BXOR: {
+			_asm_stat_bxor(ctx, node_stat);
+			break;
+		}
 
-
-
-
+		case BE_NODE_STAT_VA_START: {
+			_asm_stat_va_start(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_VA_END: {
+			_asm_stat_va_end(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_VA_COPY: {
+			_asm_stat_va_copy(ctx, node_stat);
+			break;
+		}
+		case BE_NODE_STAT_VA_ARG: {
+			_asm_stat_va_arg(ctx, node_stat);
+			break;
+		}
 
 		case BE_NODE_STAT_DUMMY: {
 			
