@@ -3068,40 +3068,51 @@ static void _expr_atom(
 
 	switch (child->type) {
 		case FE_NODE_LITERAL_UINT: {
-			if (ctx->arch == FE_ARCH_32) {
-				FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_INT32);
-				FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+			uint64_t val = fe_parser_get_uint64_val(ctx, child);
 
-				uint32_t val = fe_parser_get_uint32_val(ctx, child);
-				FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT32_VAL(node, val);
-			} else if (ctx->arch == FE_ARCH_64) {
-				FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_INT64);
-				FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+			bool has_unsigned_mark = fe_parser_has_unsigned_mark(ctx, child);
+			if (val <= 0xffffffff) {
+				if (has_unsigned_mark) {
+					FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_UINT32);
+					FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_UINT32);
 
-				uint64_t val = fe_parser_get_uint64_val(ctx, child);
-				FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT64_VAL(node, val);
+					FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT32_VAL(node, (uint32_t)val);
+				} else {
+					FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_INT32);
+					FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+
+					FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT32_VAL(node, *(int32_t *)&val);
+				}
 			} else {
-				assert(0);
+				if (has_unsigned_mark) {
+					FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_UINT64);
+					FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_UINT64);
+
+					FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT64_VAL(node, val);
+				} else {
+					FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_INT64);
+					FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+
+					FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT64_VAL(node, *(int64_t *)&val);
+				}
 			}
 
 			FE_EXPR_AST_NODE_SET_CONSTANT(node, true);
 			break;
 		}
 		case FE_NODE_LITERAL_REAL: {
-			if (ctx->arch == FE_ARCH_32) {
+			if (fe_parser_has_float_mark(ctx, child)) {
 				FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_FLOAT);
 				FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_FLOAT);
 
 				float val = fe_parser_get_float_val(ctx, child);
 				FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_FLOAT_VAL(node, val);
-			} else if (ctx->arch == FE_ARCH_64) {
+			} else {
 				FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_DOUBLE);
 				FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_DOUBLE);
 
 				double val = fe_parser_get_double_val(ctx, child);
 				FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_DOUBLE_VAL(node, val);
-			} else {
-				assert(0);
 			}
 
 			FE_EXPR_AST_NODE_SET_CONSTANT(node, true);
@@ -4277,6 +4288,45 @@ static void _expr_lt(
 				}
 			} else {
 				_SYNERR_NODE(ctx, node, "binary operator '<' and '<=' and '>' and '>=' do not support this operand combination.");
+			}
+
+			break;
+		}
+		case FE_NODE_EXPR_INSTANCEOF: {
+			assert(node->nchilds == 2);
+
+			ParserASTNode *node_expr = node->childs[0];
+			ParserASTNode *node_type = node->childs[1];
+
+			_expr(ctx, node_expr);
+			_type(ctx, node_type, NULL);
+
+			ParserASTNode *node_expr_type = FE_EXPR_AST_NODE_GET_TYPE_NODE(node_expr);
+
+			bool same = fe_sem_is_compatible_type(ctx, node_expr_type, node_type, true);
+
+			FE_EXPR_AST_NODE_SET_CONSTANT(node, true);
+
+			if (ctx->arch == FE_ARCH_32) {
+				FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_INT32);
+				FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+
+				if (same) {
+					FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT32_VAL(node, 1);
+				} else {
+					FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT32_VAL(node, 0);
+				}
+			} else if (ctx->arch == FE_ARCH_64) {
+				FE_EXPR_AST_NODE_SET_TYPE(node, FE_TYPE_INT64);
+				FE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+
+				if (same) {
+					FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT64_VAL(node, 1);
+				} else {
+					FE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT64_VAL(node, 0);
+				}
+			} else {
+				assert(0);
 			}
 
 			break;

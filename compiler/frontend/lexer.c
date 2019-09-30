@@ -154,6 +154,8 @@ LEXER_MATCHER(keyword)
 		_KEYWORD("alignof", FE_TOKEN_KEYWORD_ALIGNOF),
 		_KEYWORD("align", FE_TOKEN_KEYWORD_ALIGN),
 		_KEYWORD("packed", FE_TOKEN_KEYWORD_PACKED),
+		_KEYWORD("instanceof", FE_TOKEN_KEYWORD_INSTANCEOF),
+
 
 		_KEYWORD("__va_start", FE_TOKEN_KEYWORD_VA_START),
 		_KEYWORD("__va_arg", FE_TOKEN_KEYWORD_VA_ARG),
@@ -465,4 +467,31 @@ void fe_lexer_unescape_string(
 	assert(source);
 
 	util_unescape_string(target, source, source_len);
+}
+
+bool fe_lexer_has_unsigned_mark(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+	assert(
+		token->type == FE_TOKEN_LITERAL_UINT_BIN
+		|| token->type == FE_TOKEN_LITERAL_UINT_OCT
+		|| token->type == FE_TOKEN_LITERAL_UINT_DEC
+		|| token->type == FE_TOKEN_LITERAL_UINT_HEX
+	);
+
+	return token->content[token->len - 1] == 'u';
+}
+
+bool fe_lexer_has_float_mark(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+	assert(token->type == FE_TOKEN_LITERAL_REAL);
+
+	return token->content[token->len - 1] == 'f';
 }

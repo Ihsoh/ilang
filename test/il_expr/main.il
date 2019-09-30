@@ -682,6 +682,74 @@ function test_comparison() {
 	}
 }
 
+function __test_func_a():int {
+}
+function __test_func_b(a:int):int {
+}
+function __test_func_c(a:int, b:int) {
+}
+function __test_func_d(a:int, b:int, ...) {
+}
+
+function test_instanceof() {
+	assert(cast<char>(0) instanceof char);
+
+	assert(cast<int8>(0) instanceof int8);
+	assert(cast<int16>(0) instanceof int16);
+	assert(cast<int32>(0) instanceof int32);
+	assert(cast<int64>(0) instanceof int64);
+
+	assert(cast<uint8>(0) instanceof uint8);
+	assert(cast<uint16>(0) instanceof uint16);
+	assert(cast<uint32>(0) instanceof uint32);
+	assert(cast<uint64>(0) instanceof uint64);
+
+	assert(cast<float>(0) instanceof float);
+	assert(cast<double>(0) instanceof double);
+
+	{
+		var a:__va_list;
+		assert(a instanceof __va_list);
+	}
+
+	{
+		var a:struct A;
+		assert(a instanceof struct A);
+	}
+
+	{
+		var a:[3]int;
+		assert(a instanceof [3]int);
+
+		var b:[3][4]int;
+		assert(b instanceof [3][4]int);
+
+		var c:[3][4][5]int;
+		assert(c instanceof [3][4][5]int);
+
+		var d:[3][4][5]*;
+		assert(d instanceof [3][4][5]*);
+
+		var e:[3][4][5]*int;
+		assert(e instanceof [3][4][5]*int);
+
+		var f:[3][4][5]*struct A;
+		assert(f instanceof [3][4][5]*struct A);
+	}
+
+	{
+		assert(__test_func_a instanceof *function():int);
+		assert(__test_func_b instanceof *function(a:int):int);
+		assert(__test_func_c instanceof *function(a:int, b:int));
+		assert(__test_func_d instanceof *function(a:int, b:int, ...));
+	}
+
+	assert(cast<*>(0) instanceof *);
+	assert(cast<**>(0) instanceof **);
+	assert(cast<*int>(0) instanceof *int);
+	assert(cast<**int>(0) instanceof **int);
+}
+
 function test_bitwise() {
 	{
 		var a:int = 0b0111;
@@ -870,6 +938,7 @@ function main(argc:int, argv:**char):int {
 	test_add_sub();
 	test_shift();
 	test_comparison();
+	test_instanceof();
 	test_bitwise();
 	test_logic();
 	test_cond();

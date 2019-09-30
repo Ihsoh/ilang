@@ -45,7 +45,7 @@ function main(argc:int, argv:**char):int {
 
 	} while (cast<*int8>(0));
 
-	var total:long = 0;
+	var total:int64 = 0;
 	var i1:int = 0;
 	do {
 		var i2:int = 0;
@@ -87,7 +87,7 @@ function main(argc:int, argv:**char):int {
 		} while (i2 < 10);
 		++i1;
 	} while (i1 < 10);
-	if (total != 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10) {
+	if (total != cast<int64>(10) * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10) {
 		return 1;
 	}
 

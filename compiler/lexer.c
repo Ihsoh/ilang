@@ -215,7 +215,11 @@ _COMMON_LEXER_MATCHER(literal_uint_bin)
 				// MATCHED
 			}, {
 				// NOT MATCHED
-				if (cmn_ctx->is_delimiter(chr)) {
+				if (chr == 'u') {
+					lexer_next_char(ctx);
+					token.len++;
+					return lexer_clone_token(ctx, &token);
+				} else if (cmn_ctx->is_delimiter(chr)) {
 					return lexer_clone_token(ctx, &token);
 				} else {
 					return NULL;
@@ -258,7 +262,11 @@ _COMMON_LEXER_MATCHER(literal_uint_oct)
 				// MATCHED
 			}, {
 				// NOT MATCHED
-				if (cmn_ctx->is_delimiter(chr)) {
+				if (chr == 'u') {
+					lexer_next_char(ctx);
+					token.len++;
+					return lexer_clone_token(ctx, &token);
+				} else if (cmn_ctx->is_delimiter(chr)) {
 					return lexer_clone_token(ctx, &token);
 				} else {
 					return NULL;
@@ -287,7 +295,11 @@ _COMMON_LEXER_MATCHER(literal_uint_dec)
 				// MATCHED
 			}, {
 				// NOT MATCHED
-				if (cmn_ctx->is_delimiter(chr)) {
+				if (chr == 'u') {
+					lexer_next_char(ctx);
+					token.len++;
+					return lexer_clone_token(ctx, &token);
+				} else if (cmn_ctx->is_delimiter(chr)) {
 					return lexer_clone_token(ctx, &token);
 				} else {
 					return NULL;
@@ -332,7 +344,11 @@ _COMMON_LEXER_MATCHER(literal_uint_hex)
 				// MATCHED
 			}, {
 				// NOT MATCHED
-				if (cmn_ctx->is_delimiter(chr)) {
+				if (chr == 'u') {
+					lexer_next_char(ctx);
+					token.len++;
+					return lexer_clone_token(ctx, &token);
+				} else if (cmn_ctx->is_delimiter(chr)) {
 					return lexer_clone_token(ctx, &token);
 				} else {
 					return NULL;
@@ -385,7 +401,11 @@ _COMMON_LEXER_MATCHER(literal_real)
 				// MATCHED
 			}, {
 				// NOT MATCHED
-				if (cmn_ctx->is_delimiter(chr)) {
+				if (chr == 'f') {
+					lexer_next_char(ctx);
+					token.len++;
+					return lexer_clone_token(ctx, &token);
+				} else if (cmn_ctx->is_delimiter(chr)) {
 					return lexer_clone_token(ctx, &token);
 				} else {
 					return NULL;

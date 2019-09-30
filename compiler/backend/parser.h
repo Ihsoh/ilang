@@ -725,4 +725,14 @@ extern ParserSymbol * be_parser_add_func_symbol_to_node(
 
 
 
+extern bool be_parser_has_unsigned_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+
+extern bool be_parser_has_float_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+
 #endif

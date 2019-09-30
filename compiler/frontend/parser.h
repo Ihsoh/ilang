@@ -135,6 +135,7 @@
 #define	FE_NODE_EXPR_LE						0x0e81
 #define	FE_NODE_EXPR_GT						0x0e82
 #define	FE_NODE_EXPR_GE						0x0e83
+#define	FE_NODE_EXPR_INSTANCEOF				0x0e84
 
 #define	FE_NODE_EXPR_SHIFT_LEFT				0x0e90
 #define	FE_NODE_EXPR_SHIFT_RIGHT			0x0e91
@@ -648,5 +649,17 @@ extern ParserSymbol * fe_parser_add_func_symbol_to_node(
 	bool dummy
 );
 
+
+
+
+extern bool fe_parser_has_unsigned_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+
+extern bool fe_parser_has_float_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
 
 #endif

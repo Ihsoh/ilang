@@ -196,4 +196,14 @@ extern void be_lexer_unescape_string(
 	size_t source_len
 );
 
+extern bool be_lexer_has_unsigned_mark(
+	LexerContext *ctx,
+	LexerToken *token
+);
+
+extern bool be_lexer_has_float_mark(
+	LexerContext *ctx,
+	LexerToken *token
+);
+
 #endif

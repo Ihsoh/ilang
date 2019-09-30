@@ -44,11 +44,15 @@
 #define	FE_TOKEN_KEYWORD_ALIGNOF		0x3014	// alignof
 #define	FE_TOKEN_KEYWORD_ALIGN			0x3015	// align
 #define	FE_TOKEN_KEYWORD_PACKED			0x3016	// packed
+#define	FE_TOKEN_KEYWORD_INSTANCEOF		0x3017	// instanceof
 
-#define	FE_TOKEN_KEYWORD_VA_START		0x3017	// __va_start
-#define	FE_TOKEN_KEYWORD_VA_ARG			0x3018	// __va_arg
-#define	FE_TOKEN_KEYWORD_VA_END			0x3019	// __va_end
-#define	FE_TOKEN_KEYWORD_VA_COPY		0x301a	// __va_copy
+
+
+
+#define	FE_TOKEN_KEYWORD_VA_START		0x3020	// __va_start
+#define	FE_TOKEN_KEYWORD_VA_ARG			0x3021	// __va_arg
+#define	FE_TOKEN_KEYWORD_VA_END			0x3022	// __va_end
+#define	FE_TOKEN_KEYWORD_VA_COPY		0x3023	// __va_copy
 
 #define	FE_TOKEN_KEYWORD_CHAR			0x3100	// char
 #define	FE_TOKEN_KEYWORD_INT8			0x3101	// int8
@@ -154,6 +158,16 @@ extern void fe_lexer_unescape_string(
 	ResizableString *target,
 	const char *source,
 	size_t source_len
+);
+
+extern bool fe_lexer_has_unsigned_mark(
+	LexerContext *ctx,
+	LexerToken *token
+);
+
+extern bool fe_lexer_has_float_mark(
+	LexerContext *ctx,
+	LexerToken *token
 );
 
 #endif

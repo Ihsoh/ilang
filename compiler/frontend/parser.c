@@ -1757,6 +1757,17 @@ _RULE(expr_lt)
 			_EXPR_BINARY_ITEM(FE_NODE_EXPR_GT, expr_shift)
 		} else if (_RULE_TOKEN_TYPE == FE_TOKEN_PNCT_GE) {
 			_EXPR_BINARY_ITEM(FE_NODE_EXPR_GE, expr_shift)
+		} else if (_RULE_TOKEN_TYPE == FE_TOKEN_KEYWORD_INSTANCEOF) {
+			ParserASTNode *node_left = _RULE_CURRENT_NODE;
+			ParserASTNode *node_right = _RULE_NAME(type)(_RULE_PARSER_CTX);
+			if (node_right != NULL) {
+				__node = _new_node(__ctx, FE_NODE_EXPR_INSTANCEOF, "FE_NODE_EXPR_INSTANCEOF", NULL);
+				_RULE_ADD_CHILD(node_left)
+				_RULE_ADD_CHILD(node_right)
+			} else {
+				_RULE_POP_LEXCTX
+				break;
+			}
 		} else {
 			_RULE_POP_LEXCTX
 			break;
@@ -2510,4 +2521,26 @@ ParserSymbol * fe_parser_add_func_symbol_to_node(
 		sizeof(data),
 		&data
 	);
+}
+
+bool fe_parser_has_unsigned_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_LITERAL_UINT);
+
+	return fe_lexer_has_unsigned_mark(ctx->lexctx, node->token);
+}
+
+bool fe_parser_has_float_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == FE_NODE_LITERAL_REAL);
+
+	return fe_lexer_has_float_mark(ctx->lexctx, node->token);
 }

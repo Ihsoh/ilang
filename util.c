@@ -437,6 +437,8 @@ uint64_t util_get_uint64_bin_val(const char *str, uint32_t len) {
 			v |= (chr - '0') << (i++);
 		} else if (chr == '_') {
 			;
+		} else if (chr == 'u') {
+			continue;
 		} else {
 			assert(0);
 		}
@@ -495,6 +497,8 @@ uint64_t util_get_uint64_oct_val(const char *str, uint32_t len) {
 			base *= 8;
 		} else if (chr == '_') {
 			;
+		} else if (chr == 'u') {
+			continue;
 		} else {
 			assert(0);
 		}
@@ -552,6 +556,8 @@ uint64_t util_get_uint64_dec_val(const char *str, uint32_t len) {
 			base *= 10;
 		} else if (chr == '_') {
 			;
+		} else if (chr == 'u') {
+			continue;
 		} else {
 			assert(0);
 		}
@@ -616,6 +622,8 @@ uint64_t util_get_uint64_hex_val(const char *str, uint32_t len) {
 			base *= 16;
 		} else if (chr == '_') {
 			;
+		} else if (chr == 'u') {
+			continue;
 		} else {
 			assert(0);
 		}

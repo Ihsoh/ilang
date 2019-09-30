@@ -2333,40 +2333,50 @@ static void _expr_atom(
 
 	switch (child->type) {
 		case BE_NODE_LITERAL_UINT: {
-			if (ctx->arch == BE_ARCH_32) {
-				BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT32);
-				BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
+			uint64_t val = be_parser_get_uint64_val(ctx, child);
+			bool has_unsigned_mark = be_parser_has_unsigned_mark(ctx, child);
+			if (val <= 0xffffffff) {
+				if (has_unsigned_mark) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_UINT32);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_UINT32);
 
-				uint32_t val = be_parser_get_uint32_val(ctx, child);
-				BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT32_VAL(node, val);
-			} else if (ctx->arch == BE_ARCH_64) {
-				BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT64);
-				BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+					BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT32_VAL(node, (uint32_t)val);
+				} else {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT32);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT32);
 
-				uint64_t val = be_parser_get_uint64_val(ctx, child);
-				BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT64_VAL(node, val);
+					BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT32_VAL(node, *(int32_t *)&val);
+				}
 			} else {
-				assert(0);
+				if (has_unsigned_mark) {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_UINT64);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_UINT64);
+
+					BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_UINT64_VAL(node, val);
+				} else {
+					BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_INT64);
+					BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_INT64);
+
+					BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_INT64_VAL(node, *(int64_t *)&val);
+				}
 			}
 
 			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);
 			break;
 		}
 		case BE_NODE_LITERAL_REAL: {
-			if (ctx->arch == BE_ARCH_32) {
+			if (be_parser_has_float_mark(ctx, child)) {
 				BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_FLOAT);
 				BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_FLOAT);
 
 				float val = be_parser_get_float_val(ctx, child);
 				BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_FLOAT_VAL(node, val);
-			} else if (ctx->arch == BE_ARCH_64) {
+			} else {
 				BE_EXPR_AST_NODE_SET_TYPE(node, BE_TYPE_DOUBLE);
 				BE_EXPR_AST_NODE_SET_TYPE_NODE(node, _NODE_TYPE_DOUBLE);
 
 				double val = be_parser_get_double_val(ctx, child);
 				BE_EXPR_AST_NODE_SET_CONSTEXPR_RESULT_DOUBLE_VAL(node, val);
-			} else {
-				assert(0);
 			}
 
 			BE_EXPR_AST_NODE_SET_CONSTANT(node, true);

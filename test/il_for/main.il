@@ -30,7 +30,7 @@ function main(argc:int, argv:**char):int {
 		return 1;
 	}
 
-	var total2:long = 0;
+	var total2:int64 = 0;
 	for (var i1:int = 0; i1 < 10; ++i1) {
 		for (var i2:int = 0; i2 < 10; ++i2) {
 			for (var i3:int = 0; i3 < 10; ++i3) {
@@ -52,7 +52,7 @@ function main(argc:int, argv:**char):int {
 			}
 		}
 	}
-	if (total2 != 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10) {
+	if (total2 != cast<int64>(10) * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10) {
 		return 1;
 	}
 

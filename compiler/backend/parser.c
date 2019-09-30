@@ -2659,3 +2659,25 @@ ParserSymbol * be_parser_add_func_symbol_to_node(
 		&data
 	);
 }
+
+bool be_parser_has_unsigned_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_LITERAL_UINT);
+
+	return be_lexer_has_unsigned_mark(ctx->lexctx, node->token);
+}
+
+bool be_parser_has_float_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+	assert(node->type == BE_NODE_LITERAL_REAL);
+
+	return be_lexer_has_float_mark(ctx->lexctx, node->token);
+}

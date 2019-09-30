@@ -11,20 +11,10 @@ function print_double(str:*char, n:double) dummy
 function print_pointer(str:*char, ptr:*) dummy
 function print_string(str:*char) dummy
 
-function func_test(a:int64, b:int64):int64 {
-	var result:int64 = 0;
-
-	asm(
-		"addq %rbx, %rax;\n",
-		"set#%rax"(a + 1), "set#%rbx"(b + 4),
-		"get#%rax"(result)
-	);
-
-	return result;
-}
 
 function main():int32 {
-	var result:int64 = func_test(10, 20);
-	print_int64("result = ", result);
+
+	print_int64("result = ", cast<int8>(1) instanceof int8);
+
 	return 0;
 }

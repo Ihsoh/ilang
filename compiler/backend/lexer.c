@@ -496,3 +496,30 @@ void be_lexer_unescape_string(
 
 	util_unescape_string(target, source, source_len);
 }
+
+bool be_lexer_has_unsigned_mark(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+	assert(
+		token->type == BE_TOKEN_LITERAL_UINT_BIN
+		|| token->type == BE_TOKEN_LITERAL_UINT_OCT
+		|| token->type == BE_TOKEN_LITERAL_UINT_DEC
+		|| token->type == BE_TOKEN_LITERAL_UINT_HEX
+	);
+
+	return token->content[token->len - 1] == 'u';
+}
+
+bool be_lexer_has_float_mark(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+	assert(token->type == BE_TOKEN_LITERAL_REAL);
+
+	return token->content[token->len - 1] == 'f';
+}
