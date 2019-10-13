@@ -14,7 +14,8 @@ function print_string(str:*char) dummy
 
 function main():int32 {
 
-	print_int64("result = ", cast<int8>(1) instanceof int8);
+	var a:uint64 = 1, b:uint64 = 2;
+	var c:uint64 = a * b;
 
 	return 0;
 }
