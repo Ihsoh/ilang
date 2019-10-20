@@ -1,16 +1,82 @@
-#ifdef __ASM_GAS__
+#if !defined(__ASM_GAS__) && !defined(__ASM_IASM__)
+	#define	__ASM_GAS__
+#endif
+
+#if defined(__ASM_GAS__)
 	#define	_SET_REG_EAX	"set#%eax"
 	#define	_SET_REG_EBX	"set#%ebx"
 	#define	_SET_REG_ECX	"set#%ecx"
 	#define	_SET_REG_EDX	"set#%edx"
-#elifdef __ASM_IASM__
+#elif defined(__ASM_IASM__)
 	#error NOT SUPPORT 'IASM'
 #else
-	#define	_SET_REG_EAX	"set#%eax"
-	#define	_SET_REG_EBX	"set#%ebx"
-	#define	_SET_REG_ECX	"set#%ecx"
-	#define	_SET_REG_EDX	"set#%edx"
+	#error RT32 ERROR
 #endif
+
+struct __RtInt64 {
+	var l:uint32;
+	var h:uint32;
+}
+
+function __rt_add_64(
+	r:*struct __RtInt64,
+	a:*struct __RtInt64,
+	b:*struct __RtInt64
+) {
+	var rl:uint32 = 0, rh:uint32 = 0;
+
+	#if defined(__ASM_GAS__)
+		asm(
+			"	addl %ecx, %eax\n\t	\
+				adcl %edx, %ebx\n\t	\
+			",
+			"set#%eax"(a->l),
+			"set#%ebx"(a->h),
+			"set#%ecx"(b->l),
+			"set#%edx"(b->h),
+			"get#%eax"(rl),
+			"get#%ebx"(rh)
+		);
+	#elif defined(__ASM_IASM__)
+		#error NOT SUPPORT 'IASM'
+	#else
+		#error RT32 ERROR
+	#endif
+
+	r->l = rl;
+	r->h = rh;
+}
+
+function __rt_sub_64(
+	r:*struct __RtInt64,
+	a:*struct __RtInt64,
+	b:*struct __RtInt64
+) {
+	var rl:uint32 = 0, rh:uint32 = 0;
+
+	#if defined(__ASM_GAS__)
+		asm(
+			"	subl %ecx, %eax\n\t	\
+				sbbl %edx, %ebx\n\t	\
+			",
+			"set#%eax"(a->l),
+			"set#%ebx"(a->h),
+			"set#%ecx"(b->l),
+			"set#%edx"(b->h),
+			"get#%eax"(rl),
+			"get#%ebx"(rh)
+		);
+	#elif defined(__ASM_IASM__)
+		#error NOT SUPPORT 'IASM'
+	#else
+		#error RT32 ERROR
+	#endif
+
+	r->l = rl;
+	r->h = rh;
+}
+
+
 
 /*
 	64位有符号整数相乘。
