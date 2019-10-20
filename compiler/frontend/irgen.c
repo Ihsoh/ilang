@@ -1456,6 +1456,47 @@ static bool _ir_expr_unary(
 
 			return true;
 		}
+		case FE_NODE_EXPR_BNOT: {
+			assert(node->nchilds == 1);
+
+			ParserSymbol *func_symbol = ctx->func_symbol;
+			assert(func_symbol);
+
+			_ExprResult result_expr;
+			_expr_result_init(&result_expr);
+
+			ParserASTNode *node_expr = node->childs[0];
+
+			_ir_expr(ctx, rstr, &result_expr, node_expr);
+			rstr_append_with_rstr(rstr, &(result_expr.rstr_for_result_ptr));
+			rstr_append_with_rstr(rstr, &(result_expr.rstr_for_result));
+
+			ResizableString rstr_tmp_label_val;
+			rstr_init(&rstr_tmp_label_val);
+			_generate_func_tmp_var(
+				ctx,
+				func_symbol,
+				&rstr_tmp_label_val,
+				FE_EXPR_AST_NODE_GET_TYPE_NODE(node)
+			);
+
+			rstr_appendf(
+				&(expr_result->rstr_for_result),
+				"bnot %s, %s;\n",
+				RSTR_CSTR(&rstr_tmp_label_val),
+				RSTR_CSTR(&(result_expr.rstr_result))
+			);
+
+			_expr_result_set_result(
+				expr_result,
+				RSTR_CSTR(&rstr_tmp_label_val)
+			);
+
+			_expr_result_free(&result_expr);
+			rstr_free(&rstr_tmp_label_val);
+
+			return true;
+		}
 		case FE_NODE_EXPR_INC_LEFT:
 		case FE_NODE_EXPR_INC_RIGHT:
 		case FE_NODE_EXPR_DEC_LEFT:

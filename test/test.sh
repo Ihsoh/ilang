@@ -10,7 +10,7 @@ build_32_llc=0
 build_64_llc=1
 build_32_clang=0
 build_64_clang=1
-build_32_ilcbe=0
+build_32_ilcbe=1
 build_64_ilcbe=1
 
 totalCount=0
@@ -106,6 +106,14 @@ for example_path in $base_path/$1*; do
 						continue
 					fi
 				else
+					$ilcbe $bin_path/main_32.ir -arch 32 -incpath "$example_path/../;$example_path/" -action compile -target gas -output $bin_path/main_32_ir.s
+					as -m32 $bin_path/main_32_ir.s -o $bin_path/main_32_ir.o
+					if [ $? != 0 ]; then
+						echo -e "\033[31m AS ERROR \033[0m"
+						continue
+					fi
+
+
 					echo -e 'wow'
 				fi
 				endTime=$(date +%s)

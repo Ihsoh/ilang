@@ -95,5 +95,3 @@ function __rt_div_u64() {
 		_SET_REG_EDX(0)
 	);
 }
-
-
