@@ -14,7 +14,7 @@ function print_string(str:*char) dummy
 
 function main():int32 {
 
-	print_int8("Hello, World! value = ", 123);
+	print_int64("Hello, World! value = ", 123456789012);
 
 	return 0;
 }
