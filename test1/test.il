@@ -37,5 +37,20 @@ function main():int32 {
 
 	print_string("print_string = TEST STRING");
 
+	int64 a_1 = 12345678900;
+	int64 a_2 = 1000;
+	int64 a_3 = a_1 * a_2;
+	print_int64("12345678900 * 1000 = ", a_3);
+
+	int64 b_1 = 12345678900;
+	int64 b_2 = 1000;
+	int64 b_3 = b_1 / b_2;
+	print_int64("12345678900 / 1000 = ", b_3);
+
+	int64 c_1 = 12345678900;
+	int64 c_2 = 3;
+	int64 c_3 = c_1 % c_2;
+	print_int64("12345678900 %% 3 = ", c_3);
+
 	return 0;
 }
