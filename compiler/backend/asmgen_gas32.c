@@ -10507,13 +10507,13 @@ static void _asm_stat_va_start(
 		_ASM_REG_NAME_EBP
 	);
 
-	// +16为第一个参数的位子，再+8后跳过第一个参数，所以+24。
+	// +8为第一个参数的位子，再+8后跳过第一个参数，所以+16。
 	_asm_inst_add_x_x(
 		ctx,
 		ctx->body,
 		BE_TYPE_UINT32,
 		_ASM_REG_NAME_EAX,
-		_ASM_CONST_24
+		_ASM_CONST_16
 	);
 
 	ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
@@ -11070,22 +11070,22 @@ static void _asm_func(
 		rstr_append_with_char(ctx->body, ':');
 		rstr_append_with_char(ctx->body, '\n');
 
-		// pushq %rbp
-		// movq %rsp, %rbp
+		// pushq %ebp
+		// movq %esp, %ebp
 		rstr_append_with_cstr(ctx->body, "pushl %ebp\nmovl %esp, %ebp\n\n");
 
 		/*
 			Position			Contents				Frame
 			------------------------------------------------------
-			8n+16(%rbp)			param N
+			8n+8(%ebp)			param N
 								...						previous
-			16(%rbp)			param 0			
+			8(%ebp)			param 0			
 			------------------------------------------------------
-			8(%rbp)				return address
-			0(%rbp)				previous %rbp value
-			-8(%rbp)			local variable 0		current
-			-16(%rbp)			local variable 1
-			-24(%rbp)			local variable 2
+			4(%ebp)				return address
+			0(%ebp)				previous %ebp value
+			-8(%ebp)			local variable 0		current
+			-16(%ebp)			local variable 1
+			-24(%ebp)			local variable 2
 								...
 		*/
 		ctx->local_var_address_counter = 0;
@@ -11122,7 +11122,7 @@ static void _asm_func(
 			rstr_appendf(
 				code_gen_name,
 				"%d(%%ebp)",
-				16 + 8 * i
+				8 + 8 * i
 			);
 
 			rstr_appendf(
@@ -11207,8 +11207,8 @@ static void _asm_func(
 			ctx->local_var_size
 		);
 
-		// popq	%rbp
-		// retq
+		// popl	%ebp
+		// retl
 		rstr_append_with_cstr(ctx->body, "popl %ebp\nretl\n");
 
 		rstr_append_with_char(ctx->body, '\n');
