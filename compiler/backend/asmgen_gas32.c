@@ -285,6 +285,15 @@ static void _new_double(
 
 
 
+
+#define	_FUNC_IP_STACK_OFFSET			(-4)
+#define	_FUNC_IP_STACK_OFFSET_STR		"-4"
+
+#define	_FUNC_STACK_RESERVE_SIZE		4
+
+
+
+
 static char _asm_inst_type_suffix(
 	ASMGeneratorGas32Context *ctx,
 	uint8_t type
@@ -2983,6 +2992,29 @@ static void _asm_constexpr(
 	}
 }
 
+static void _asm_get_ip(
+	ASMGeneratorGas32Context *ctx
+) {
+	ResizableString rstr_memref;
+	rstr_init(&rstr_memref);
+	_asm_inst_memref_base_disp(
+		ctx,
+		&rstr_memref,
+		_ASM_REG_NAME_EBP,
+		_FUNC_IP_STACK_OFFSET_STR
+	);
+
+	_asm_inst_mov_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_IP_REG,
+		RSTR_CSTR(&rstr_memref)
+	);
+
+	rstr_free(&rstr_memref);
+}
+
 static void _asm_constexpr_param(
 	ASMGeneratorGas32Context *ctx,
 	ResizableString *rstr_val_l,
@@ -3194,6 +3226,8 @@ static void _asm_constexpr_param(
 					_ASM_IP_LABEL_PREFIX,
 					RSTR_CSTR(&rstr_cur_func_name)
 				);
+
+				_asm_get_ip(ctx);
 
 				ResizableString rstr_source;
 				rstr_init(&rstr_source);
@@ -3592,6 +3626,8 @@ static ParserSymbol * _instantiate_varsym(
 				cur_func_name_node->token->len
 			);
 
+			_asm_get_ip(ctx);
+
 			rstr_appendf(
 				BE_VAR_SYMBOL_GET_CODE_GEN_NAME(symbol),
 				RSTR_CSTR(BE_VAR_SYMBOL_GET_CODE_GEN_NAME(varsym)),
@@ -3746,6 +3782,8 @@ static uint8_t _move_id_or_constexpr_to_xmm_reg(
 				RSTR_CSTR(&rstr_cur_func_name)
 			);
 
+			_asm_get_ip(ctx);
+
 			ResizableString rstr_memref;
 			rstr_init(&rstr_memref);
 			_asm_inst_memref_base_disp(
@@ -3783,6 +3821,8 @@ static uint8_t _move_id_or_constexpr_to_xmm_reg(
 				_ASM_IP_LABEL_PREFIX,
 				RSTR_CSTR(&rstr_cur_func_name)
 			);
+
+			_asm_get_ip(ctx);
 
 			ResizableString rstr_memref;
 			rstr_init(&rstr_memref);
@@ -11083,13 +11123,16 @@ static void _asm_func(
 			------------------------------------------------------
 			4(%ebp)				return address
 			0(%ebp)				previous %ebp value
-			-8(%ebp)			local variable 0		current
-			-16(%ebp)			local variable 1
-			-24(%ebp)			local variable 2
+
+			-4(%ebp)			FUNC IP
+
+			-12(%ebp)			local variable 0		current
+			-20(%ebp)			local variable 1
+			-28(%ebp)			local variable 2
 								...
 		*/
-		ctx->local_var_address_counter = 0;
-		ctx->local_var_size = 0;
+		ctx->local_var_address_counter = _FUNC_STACK_RESERVE_SIZE;
+		ctx->local_var_size = _FUNC_STACK_RESERVE_SIZE;
 		ctx->local_var_index_counter = 1;
 		for (int i = 0; i < node_func_params->nchilds; i++) {
 			ParserASTNode *node_param = node_func_params->childs[i];
@@ -11173,12 +11216,15 @@ static void _asm_func(
 			body,
 			"calll %s%s\n"
 				"%s%s:\n"
-				"popl %s\n\n",
+				"popl %s\n"
+				"movl %s, %d(%%ebp)\n\n",
 			_ASM_IP_LABEL_PREFIX,
 			RSTR_CSTR(&rstr_func_name),
 			_ASM_IP_LABEL_PREFIX,
 			RSTR_CSTR(&rstr_func_name),
-			_ASM_IP_REG
+			_ASM_IP_REG,
+			_ASM_IP_REG,
+			_FUNC_IP_STACK_OFFSET
 		);
 
 		rstr_append_with_cstr(body, "\n# code:\n");
