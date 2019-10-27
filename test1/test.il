@@ -31,7 +31,7 @@ function main():int32 {
 
 	print_float("print_float = ", 123.456f);
 
-	print_double("print_double = ", 123.456);
+	print_double("print_double = ", 654.321);
 
 	print_pointer("print_pointer = ", cast<*>(0x12345678));
 

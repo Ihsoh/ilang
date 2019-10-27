@@ -113,6 +113,10 @@ function print_uint64(str:*char, n:uint64) {
 }
 
 function print_float(str:*char, n:float) {
+	var v:double = n;
+	var v_l:uint32 = *cast<*uint32>(&v);
+	var v_h:uint32 = *(cast<*uint32>(&v) + 1);
+
 	asm(
 		"	\
 			pushl %eax\n	\
@@ -124,13 +128,15 @@ function print_float(str:*char, n:float) {
 
 	asm(
 		"	\
+			pushl %ecx\n	\
 			pushl %ebx\n	\
 			pushl %eax\n	\
 			calll printf\n	\
-			addl $8, %esp\n	\
+			addl $12, %esp\n	\
 		",
 		"set#%eax"("%f\n"),
-		"set#%ebx"(n)
+		"set#%ebx"(v_l),
+		"set#%ecx"(v_h)
 	);
 }
 
