@@ -14,7 +14,7 @@ function _print_int8(str:*char, n:int8) {
 	asm "xorl %ebx, %ebx\n";
 	asm_set_reg "%bl", n;
 	asm "calll printf\n";
-	asm "addl $4, %esp\n";
+	asm "addl $8, %esp\n";
 
 	_LINE
 }
