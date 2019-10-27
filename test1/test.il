@@ -35,21 +35,21 @@ function main():int32 {
 
 	print_pointer("print_pointer = ", cast<*>(0x12345678));
 
-	print_string("print_string = TEST STRING");
+	print_string("print_string = TEST STRING\n");
 
-	int64 a_1 = 12345678900;
-	int64 a_2 = 1000;
-	int64 a_3 = a_1 * a_2;
+	var a_1:int64 = 12345678900;
+	var a_2:int64 = 1000;
+	var a_3:int64 = a_1 * a_2;
 	print_int64("12345678900 * 1000 = ", a_3);
 
-	int64 b_1 = 12345678900;
-	int64 b_2 = 1000;
-	int64 b_3 = b_1 / b_2;
+	var b_1:int64 = 12345678900;
+	var b_2:int64 = 1000;
+	var b_3:int64 = b_1 / b_2;
 	print_int64("12345678900 / 1000 = ", b_3);
 
-	int64 c_1 = 12345678900;
-	int64 c_2 = 3;
-	int64 c_3 = c_1 % c_2;
+	var c_1:int64 = 12345678900;
+	var c_2:int64 = 3;
+	var c_3:int64 = c_1 % c_2;
 	print_int64("12345678900 %% 3 = ", c_3);
 
 	return 0;
