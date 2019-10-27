@@ -1,5 +1,5 @@
 CC=gcc
-CFlags=-o0 -g
+CFlags=-o0 -g -std=c99
 
 CommonSource=$(wildcard *.c)
 CommonHeader=$(wildcard *.h)
