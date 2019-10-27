@@ -85,10 +85,15 @@ static int _new_string(
 	);
 	int unescaped_str_len = RSTR_LEN(&unescaped_str);
 
+	// rstr_append_with_cstr(
+	// 	ctx->head,
+	// 	".section __TEXT,__cstring,cstring_literals\n"
+	// );
 	rstr_append_with_cstr(
 		ctx->head,
-		".section __TEXT,__cstring,cstring_literals\n"
+		".text\n"
 	);
+
 	rstr_appendf(
 		ctx->head,
 		"_STR.%zu:\n",
@@ -135,11 +140,17 @@ static void _new_float(
 		rstr_appendf(name, "_FLOAT.%zu", no);
 	}
 
+	// rstr_append_with_cstr(
+	// 	ctx->head,
+	// 	".section __TEXT,__literal4,4byte_literals\n"
+	// 		".p2align 2\n"
+	// );
 	rstr_append_with_cstr(
 		ctx->head,
-		".section __TEXT,__literal4,4byte_literals\n"
+		".text\n"
 			".p2align 2\n"
 	);
+
 	rstr_appendf(
 		ctx->head,
 		"_FLOAT.%zu:\n",
@@ -170,11 +181,17 @@ static void _new_double(
 		rstr_appendf(name, "_DOUBLE.%zu", no);
 	}
 
+	// rstr_append_with_cstr(
+	// 	ctx->head,
+	// 	".section __TEXT,__literal8,8byte_literals\n"
+	// 		".p2align 3\n"
+	// );
 	rstr_append_with_cstr(
 		ctx->head,
-		".section __TEXT,__literal8,8byte_literals\n"
+		".text\n"
 			".p2align 3\n"
 	);
+
 	rstr_appendf(
 		ctx->head,
 		"_DOUBLE.%zu:\n",
@@ -3344,7 +3361,8 @@ static void _asm_var(
 				// [VAR_NAME]:
 				// .[TYPE] [EXPR]
 
-				rstr_append_with_cstr(ctx->body, ".section __DATA,__data\n");
+				// rstr_append_with_cstr(ctx->body, ".section __DATA,__data\n");
+				rstr_append_with_cstr(ctx->body, ".data\n");
 				
 				ResizableString rstr_var_name;
 				rstr_init(&rstr_var_name);
@@ -11035,7 +11053,8 @@ static void _asm_func(
 		rstr_init_with_raw(&rstr_func_name, node_identifier->token->content, node_identifier->token->len);
 
 		// .section	__TEXT,__text,regular,pure_instructions
-		rstr_append_with_cstr(ctx->body, ".section	__TEXT,__text,regular,pure_instructions\n");
+		// rstr_append_with_cstr(ctx->body, ".section	__TEXT,__text,regular,pure_instructions\n");
+		rstr_append_with_cstr(ctx->body, ".text\n");
 
 		// .globl _FUNCTION_NAME
 		rstr_append_with_cstr(ctx->body, ".globl ");
