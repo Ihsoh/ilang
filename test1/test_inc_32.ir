@@ -26,14 +26,13 @@ function _print_int8(str:*char, n:int8) {
 
 	_LINE
 	
-	/*
 	asm_set_reg "%eax", "%d\n";
 	asm "subl $8, %esp\n";
 	asm "pushl %ebx\n";
 	asm "pushl %eax\n";
 	asm "calll printf\n";
 	asm "addl $16, %esp\n";
-	_LINE*/
+	_LINE
 
 	// _STACK_ALIGN16_END
 }
