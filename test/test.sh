@@ -6,16 +6,10 @@ base_path=$(cd `dirname $0`; pwd)
 as32_flags=""
 if [ "`as --version | grep "GNU"`" != "" ]; then
 	as32_flags="--32"
-fi
-if [ "`as --version | grep "LLVM"`" != "" ]; then
-	as32_flags="-m32"
-fi
-
-as64_flags=""
-if [ "`as --version | grep "GNU"`" != "" ]; then
 	as64_flags="--64"
 fi
 if [ "`as --version | grep "LLVM"`" != "" ]; then
+	as32_flags="-m32"
 	as64_flags="-m64"
 fi
 
