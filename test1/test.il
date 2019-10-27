@@ -14,7 +14,28 @@ function print_string(str:*char) dummy
 
 function main():int32 {
 
-	print_int64("Hello, World! wow~~~ value = ", 123456789021);
+	print_int8("print_int8 1 = ", 123);
+	print_int16("print_int16 1 = ", 12345);
+	print_int32("print_int32 1 = ", 1234567890);
+	print_int64("print_int64 1 = ", 123456789012);
+
+	print_int8("print_int8 2 = ", -123);
+	print_int16("print_int16 2 = ", -12345);
+	print_int32("print_int32 2 = ", -1234567890);
+	print_int64("print_int64 2 = ", -123456789012);
+
+	print_uint8("print_uint8 = ", 123);
+	print_uint16("print_uint16 = ", 12345);
+	print_uint32("print_uint32 = ", 1234567890);
+	print_uint64("print_uint64 = ", 123456789012);
+
+	print_float("print_float = ", 123.456f);
+
+	print_double("print_double = ", 123.456);
+
+	print_pointer("print_pointer = ", cast<*>(0x12345678));
+
+	print_string("print_string = TEST STRING");
 
 	return 0;
 }
