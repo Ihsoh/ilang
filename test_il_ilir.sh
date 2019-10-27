@@ -33,7 +33,7 @@ as $as32_flags main_32.s -o ../bin/main_32.o
 
 gcc $cc_flag -m32 ../bin/rt32.o ../bin/test.o ../bin/test_inc_32.o ../bin/main_32.o -o ../bin/mytest
 
-# ../bin/mytest
+../bin/mytest
 
 # gcc $cc_flag -m32 ../bin/rt32.o ../bin/test.o ../bin/test_inc_32.o -shared -o ../bin/mytest.so
 
