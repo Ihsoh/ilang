@@ -29,7 +29,9 @@ as $as32_flags ../bin/test.s -o ../bin/test.o
 ../bin/ilcbe test_inc_32.ir -arch 32 -incpath "./" -action compile -target gas -output ../bin/test_inc_32.s
 as $as32_flags ../bin/test_inc_32.s -o ../bin/test_inc_32.o
 
-gcc $cc_flag -m32 ../bin/rt32.o ../bin/test.o ../bin/test_inc_32.o -o ../bin/mytest
+as $as32_flags main_32.s -o ../bin/main_32.o
+
+gcc $cc_flag -m32 ../bin/rt32.o ../bin/test.o ../bin/test_inc_32.o ../bin/main_32.o -o ../bin/mytest
 
 # ../bin/mytest
 
