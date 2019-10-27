@@ -1,2 +1,2 @@
 make clean
-make
+make all32
