@@ -1,5 +1,3 @@
-sh build_64.sh
-
 cd test1
 
 as32_flags=""

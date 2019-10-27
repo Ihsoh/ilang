@@ -1,4 +1,3 @@
-sh build.sh
 cd test1
 
 ../bin/ilcbe test.ir -arch 32 -incpath "./" -action compile -target gas -output ../bin/test.s

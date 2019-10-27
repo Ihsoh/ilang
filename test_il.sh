@@ -1,4 +1,3 @@
-sh build.sh
 cd test1
 
 ../bin/ilcfe test.il -arch 64 -incpath "./" -action compile -target llvmir -output ../bin/test.ll
