@@ -7701,7 +7701,7 @@ static void _asm_stat_shr(
 				_ASM_REG_NAME_EBX
 			);
 
-			_asm_inst_sal_x_x(
+			_asm_inst_sar_x_x(
 				ctx,
 				ctx->body,
 				BE_TYPE_UINT32,
@@ -7726,7 +7726,7 @@ static void _asm_stat_shr(
 				_ASM_REG_NAME_EBX
 			);
 
-			_asm_inst_sal_x_x(
+			_asm_inst_sar_x_x(
 				ctx,
 				ctx->body,
 				BE_TYPE_UINT32,
