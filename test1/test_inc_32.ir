@@ -15,7 +15,7 @@ function _print_int8(str:*char, n:int8) {
 	asm_set_reg "%bl", n;
 	asm "movsbl %bl, %ebx;\n";
 
-	_STACK_ALIGN16_BEGIN
+	// _STACK_ALIGN16_BEGIN
 
 	_LINE
 
@@ -34,5 +34,5 @@ function _print_int8(str:*char, n:int8) {
 	asm "addl $16, %esp\n";
 	_LINE
 
-	_STACK_ALIGN16_END
+	// _STACK_ALIGN16_END
 }
