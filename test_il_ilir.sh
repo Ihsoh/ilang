@@ -26,12 +26,16 @@ as $as32_flags ../bin/rt32.s -o ../bin/rt32.o
 ../bin/ilcbe ../bin/test.ir -arch 32 -incpath "./" -action compile -target gas -output ../bin/test.s
 as $as32_flags ../bin/test.s -o ../bin/test.o
 
-gcc -m32 ../bin/rt32.o ../bin/test.o -shared -o ../bin/mytest.so
+../bin/ilcbe test_inc_32.ir -arch 32 -incpath "./" -action compile -target gas -output ../bin/test_inc_32.s
+as -m32 ../bin/test_inc_32.s -o ../bin/test_inc_32.o
 
-#../bin/ilcbe test_inc.ir -arch 32 -incpath "./" -action compile -target gas -output ../bin/test_inc.s
-#as -m32 ../bin/test_inc.s -o ../bin/test_inc.o
+gcc -m32 ../bin/rt32.o ../bin/test.o ../bin/test_inc_32.o -o ../bin/mytest
 
-# ld -lSystem ../bin/test.o ../bin/test_inc.o -o ../bin/mytest
+../bin/mytest
+
+# gcc -m32 ../bin/rt32.o ../bin/test.o ../bin/test_inc_32.o -shared -o ../bin/mytest.so
+
+# ld -lSystem ../bin/test.o ../bin/test_inc_32.o -o ../bin/mytest
 
 # ../bin/mytest
 

@@ -14,8 +14,7 @@ function print_string(str:*char) dummy
 
 function main():int32 {
 
-	var a:uint64 = 1, b:uint64 = 2;
-	var c:uint64 = a / b;
+	print_int8("Hello, World! value = ", 123);
 
 	return 0;
 }

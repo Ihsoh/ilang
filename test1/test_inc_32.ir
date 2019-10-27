@@ -1,0 +1,20 @@
+#define	_LINE	asm "\n#------------------------------\n\n";
+
+function _print_int8(str:*char, n:int8) {
+	_LINE
+	
+	asm_set_reg "%eax", str;
+	asm "pushl %eax\n";
+	asm "calll _printf\n";
+	asm "addl $4, %esp\n";
+
+	_LINE
+	
+	asm_set_reg "%eax", "%d\n";
+	asm "xorl %ebx, %ebx\n";
+	asm_set_reg "%bl", n;
+	asm "calll _printf\n";
+	asm "addl $4, %esp\n";
+
+	_LINE
+}
