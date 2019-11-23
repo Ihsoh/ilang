@@ -83,7 +83,7 @@ function main():int32 {
 	asm(
 		"",
 		"set#%eax"(2333),
-		"set#%ebx"("yahoo~~~"),
+		"set#%ebx"("3 ebx = yahoo~~~\n"),
 		"get#%eax"(eax),
 		"get#%ebx"(ebx)
 	);
