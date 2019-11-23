@@ -88,7 +88,7 @@ function main():int32 {
 		"get#%ebx"(ebx)
 	);
 	print_uint32("3 eax = ", eax);
-	print_string("3 ebx = ", cast<*char>(ebx));
+	print_string(cast<*char>(ebx));
 
 
 	var a_1:int64 = 12345678900;
