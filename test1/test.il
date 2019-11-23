@@ -52,10 +52,30 @@ function main():int32 {
 		"get#%ecx"(ecx),
 		"get#%edx"(edx)
 	);
-	print_uint32("eax = ", eax);
-	print_uint32("ebx = ", ebx);
-	print_uint32("ecx = ", ecx);
-	print_uint32("edx = ", edx);
+	print_uint32("1 eax = ", eax);
+	print_uint32("1 ebx = ", ebx);
+	print_uint32("1 ecx = ", ecx);
+	print_uint32("1 edx = ", edx);
+
+	eax = 0;
+	ebx = 0;
+	ecx = 0;
+	edx = 0;
+	asm(
+		"",
+		"set#%eax"(111),
+		"set#%ebx"(222),
+		"set#%ecx"(333),
+		"set#%edx"(444),
+		"get#%eax"(eax),
+		"get#%ebx"(ebx),
+		"get#%ecx"(ecx),
+		"get#%edx"(edx)
+	);
+	print_uint32("2 eax = ", eax);
+	print_uint32("2 ebx = ", ebx);
+	print_uint32("2 ecx = ", ecx);
+	print_uint32("2 edx = ", edx);
 
 
 	var a_1:int64 = 12345678900;
