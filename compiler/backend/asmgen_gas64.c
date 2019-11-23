@@ -3633,7 +3633,22 @@ static void _asm_stat_asm_set_reg(
 	} else if (node_source->type == BE_NODE_EXPR) {
 		ResizableString rstr_source;
 		rstr_init(&rstr_source);
+
+		_asm_inst_push_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX
+		);
+
 		_asm_constexpr_param(ctx, &rstr_source, node_source, _ASM_REG_AX);
+
+		_asm_inst_pop_x(
+			ctx,
+			ctx->body,
+			BE_TYPE_UINT64,
+			_ASM_REG_NAME_RAX
+		);
 
 		uint8_t type_source = BE_EXPR_AST_NODE_GET_TYPE(node_source);
 
