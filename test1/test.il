@@ -77,6 +77,19 @@ function main():int32 {
 	print_uint32("2 ecx = ", ecx);
 	print_uint32("2 edx = ", edx);
 
+	eax = 0;
+	ebx = 0;
+
+	asm(
+		"",
+		"set#%eax"(2333),
+		"set#%ebx"("yahoo~~~"),
+		"get#%eax"(eax),
+		"get#%ebx"(ebx)
+	);
+	print_uint32("3 eax = ", eax);
+	print_string("3 ebx = ", cast<*char>(ebx));
+
 
 	var a_1:int64 = 12345678900;
 	var a_2:int64 = 1000;
