@@ -37,6 +37,27 @@ function main():int32 {
 
 	print_string("print_string = TEST STRING\n");
 
+	var eax:uint32 = 123;
+	var ebx:uint32 = 456;
+	var ecx:uint32 = 789;
+	var edx:uint32 = 321;
+	asm(
+		"",
+		"set#%eax"(eax),
+		"set#%ebx"(ebx),
+		"set#%ecx"(ecx),
+		"set#%edx"(edx),
+		"get#%eax"(eax),
+		"get#%ebx"(ebx),
+		"get#%ecx"(ecx),
+		"get#%edx"(edx)
+	);
+	print_uint32("eax = ", eax);
+	print_uint32("ebx = ", ebx);
+	print_uint32("ecx = ", ecx);
+	print_uint32("edx = ", edx);
+
+
 	var a_1:int64 = 12345678900;
 	var a_2:int64 = 1000;
 	var a_3:int64 = a_1 * a_2;
