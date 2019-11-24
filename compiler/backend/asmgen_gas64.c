@@ -17,6 +17,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include <strings.h>
+
 #define	_OUT_CHAR(ctx, chr)	{ fputc((chr), (ctx)->out); }
 #define	_OUT_STR(ctx, str, len) { for (int __i = 0; __i < (len); __i++) { _OUT_CHAR((ctx), (str)[__i]) } }
 #define	_OUT_CSTR(ctx, str) { _OUT_STR((ctx), (str), strlen((str))) }
@@ -527,6 +529,23 @@ static const char * _asm_inst_reg(
 
 	return regs[reg][idx];
 }
+
+static bool _asm_compare_reg(
+	const char *a,
+	const char *b
+) {
+	assert(a);
+	assert(b);
+
+	return strcasecmp(a, b) == 0;
+}
+
+#define	_ASM_IS_AX(reg)	\
+	(_asm_compare_reg((reg), _ASM_REG_NAME_AL)	\
+		&& _asm_compare_reg((reg), _ASM_REG_NAME_AH)	\
+		&& _asm_compare_reg((reg), _ASM_REG_NAME_AX)	\
+		&& _asm_compare_reg((reg), _ASM_REG_NAME_EAX)	\
+		&& _asm_compare_reg((reg), _ASM_REG_NAME_RAX))
 
 /*
 	AT&T:	section:disp(base, index, scale)
@@ -3634,21 +3653,18 @@ static void _asm_stat_asm_set_reg(
 		ResizableString rstr_source;
 		rstr_init(&rstr_source);
 
-		_asm_inst_push_x(
-			ctx,
-			ctx->body,
-			BE_TYPE_UINT64,
-			_ASM_REG_NAME_RAX
-		);
+		bool target_is_not_ax = !_ASM_IS_AX(RSTR_CSTR(&rstr_reg_target));
+
+		if (target_is_not_ax) {
+			_asm_inst_push_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT64,
+				_ASM_REG_NAME_RAX
+			);
+		}
 
 		_asm_constexpr_param(ctx, &rstr_source, node_source, _ASM_REG_AX);
-
-		_asm_inst_pop_x(
-			ctx,
-			ctx->body,
-			BE_TYPE_UINT64,
-			_ASM_REG_NAME_RAX
-		);
 
 		uint8_t type_source = BE_EXPR_AST_NODE_GET_TYPE(node_source);
 
@@ -3659,6 +3675,15 @@ static void _asm_stat_asm_set_reg(
 			RSTR_CSTR(&rstr_reg_target),
 			RSTR_CSTR(&rstr_source)
 		);
+
+		if (target_is_not_ax) {
+			_asm_inst_pop_x(
+				ctx,
+				ctx->body,
+				BE_TYPE_UINT64,
+				_ASM_REG_NAME_RAX
+			);
+		}
 
 		rstr_free(&rstr_source);
 	} else {
