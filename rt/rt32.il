@@ -487,6 +487,20 @@ function __rt_ri64_mul_u(
 	var band_a:int32 = 1000;
 	print_int32("#band_a = ", band_a & (shl_a << 3));
 
+
+	var bs_c:uint8 = 3;
+	var bs_v:struct __RtInt64;
+	var bs_r:uint32 = 0;
+	bs_v.l = 1000;
+	bs_v.h = 0;
+	if (bs_c <= 31) {
+		bs_r = bs_v.l & (1 << bs_c);
+	} else {
+		bs_r = bs_v.h & (1 << (bs_c - 32));
+	}
+	print_uint32("#bs = ", bs_r);
+
+
 	for (var i:uint8 = 0; i < 64; i++) {
 		if (__rt_ri64_is_bit_set(b, i)) {
 			var temp:struct __RtInt64;
