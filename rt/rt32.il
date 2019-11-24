@@ -477,6 +477,10 @@ function __rt_ri64_mul_u(
 
 	__rt_ri64_set_by_u32(r, 0);
 
+	print_int32("#bitset 3 = ", __rt_ri64_is_bit_set(b, 3));
+	print_int32("#bitset 4 = ", __rt_ri64_is_bit_set(b, 4));
+	print_int32("#bitset 5 = ", __rt_ri64_is_bit_set(b, 5));
+
 	for (var i:uint8 = 0; i < 64; i++) {
 		if (__rt_ri64_is_bit_set(b, i)) {
 			var temp:struct __RtInt64;
