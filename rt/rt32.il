@@ -495,8 +495,10 @@ function __rt_ri64_mul_u(
 	bs_v.h = 0;
 	if (bs_c <= 31) {
 		bs_r = bs_v.l & (1 << bs_c);
+		print_string("#bs A\n");
 	} else {
 		bs_r = bs_v.h & (1 << (bs_c - 32));
+		print_string("#bs B\n");
 	}
 	print_uint32("#bs = ", bs_r);
 
