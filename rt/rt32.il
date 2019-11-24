@@ -616,31 +616,11 @@ function __rt_ri64_div_i(
 
 /*
 	64位有符号整数相乘。
-	参数：
-		EAX=数字1的低32位。
-		EBX=数字1的高32位。
-		ECX=数字2的低32位。
-		EDX=数字2的高32位。
-	返回值：
-		EAX=结果的低32位。
-		EBX=结果的高32位。
 */
-function __rt_mul_i64() {
-	var a_l:uint32 = 0, a_h:uint32 = 0;
-	var b_l:uint32 = 0, b_h:uint32 = 0;
-	#if defined(__ASM_GAS__)
-		asm("",
-			"get#%eax"(a_l),
-			"get#%ebx"(a_h),
-			"get#%ecx"(b_l),
-			"get#%edx"(b_h)
-		);
-	#elif defined(__ASM_IASM__)
-		#error NOT SUPPORT 'IASM'
-	#else
-		#error RT32 ERROR
-	#endif
-
+function __rt_mul_i64(
+	a_l:uint32, a_h:uint32,
+	b_l:uint32, b_h:uint32
+) {
 	var r:struct __RtInt64;
 	var a:struct __RtInt64;
 	var b:struct __RtInt64;
@@ -659,31 +639,11 @@ function __rt_mul_i64() {
 
 /*
 	64位无符号整数相乘。
-	参数：
-		EAX=数字1的低32位。
-		EBX=数字1的高32位。
-		ECX=数字2的低32位。
-		EDX=数字2的高32位。
-	返回值：
-		EAX=结果的低32位。
-		EBX=结果的高32位。
 */
-function __rt_mul_u64() {
-	var a_l:uint32 = 0, a_h:uint32 = 0;
-	var b_l:uint32 = 0, b_h:uint32 = 0;
-	#if defined(__ASM_GAS__)
-		asm("",
-			"get#%eax"(a_l),
-			"get#%ebx"(a_h),
-			"get#%ecx"(b_l),
-			"get#%edx"(b_h)
-		);
-	#elif defined(__ASM_IASM__)
-		#error NOT SUPPORT 'IASM'
-	#else
-		#error RT32 ERROR
-	#endif
-
+function __rt_mul_u64(
+	a_l:uint32, a_h:uint32,
+	b_l:uint32, b_h:uint32
+) {
 	var r:struct __RtInt64;
 	var a:struct __RtInt64;
 	var b:struct __RtInt64;
@@ -702,33 +662,16 @@ function __rt_mul_u64() {
 
 /*
 	64位有符号整数相除。
-	参数：
-		EAX=数字1的低32位。
-		EBX=数字1的高32位。
-		ECX=数字2的低32位。
-		EDX=数字2的高32位。
 	返回值：
 		EAX=结果商的低32位。
 		EBX=结果商的高32位。
 		ECX=结果余的低32位。
 		EDX=结果余的高32位。
 */
-function __rt_div_i64() {
-	var a_l:uint32 = 0, a_h:uint32 = 0;
-	var b_l:uint32 = 0, b_h:uint32 = 0;
-	#if defined(__ASM_GAS__)
-		asm("",
-			"get#%eax"(a_l),
-			"get#%ebx"(a_h),
-			"get#%ecx"(b_l),
-			"get#%edx"(b_h)
-		);
-	#elif defined(__ASM_IASM__)
-		#error NOT SUPPORT 'IASM'
-	#else
-		#error RT32 ERROR
-	#endif
-
+function __rt_div_i64(
+	a_l:uint32, a_h:uint32,
+	b_l:uint32, b_h:uint32
+) {
 	var q:struct __RtInt64;
 	var r:struct __RtInt64;
 	var a:struct __RtInt64;
@@ -750,33 +693,16 @@ function __rt_div_i64() {
 
 /*
 	64位无符号整数相除。
-	参数：
-		EAX=数字1的低32位。
-		EBX=数字1的高32位。
-		ECX=数字2的低32位。
-		EDX=数字2的高32位。
 	返回值：
 		EAX=结果商的低32位。
 		EBX=结果商的高32位。
 		ECX=结果余的低32位。
 		EDX=结果余的高32位。
 */
-function __rt_div_u64() {
-	var a_l:uint32 = 0, a_h:uint32 = 0;
-	var b_l:uint32 = 0, b_h:uint32 = 0;
-	#if defined(__ASM_GAS__)
-		asm("",
-			"get#%eax"(a_l),
-			"get#%ebx"(a_h),
-			"get#%ecx"(b_l),
-			"get#%edx"(b_h)
-		);
-	#elif defined(__ASM_IASM__)
-		#error NOT SUPPORT 'IASM'
-	#else
-		#error RT32 ERROR
-	#endif
-
+function __rt_div_u64(
+	a_l:uint32, a_h:uint32,
+	b_l:uint32, b_h:uint32
+) {
 	var q:struct __RtInt64;
 	var r:struct __RtInt64;
 	var a:struct __RtInt64;

@@ -4179,7 +4179,47 @@ static uint8_t _move_id_or_constexpr_to_reg(
 	);
 }
 
+static size_t _push_func_call_arg32(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	const char *value
+) {
+	_asm_inst_push_x(
+		ctx,
+		rstr,
+		BE_TYPE_UINT32,
+		value
+	);
 
+	_asm_inst_push_x(
+		ctx,
+		rstr,
+		BE_TYPE_UINT32,
+		_ASM_CONST_0
+	);
+
+	return 8;
+}
+
+static void _release_func_call_arg_space(
+	ASMGeneratorGas32Context *ctx,
+	ResizableString *rstr,
+	size_t size
+) {
+	ResizableString sz_const;
+	rstr_init(&sz_const);
+	_asm_inst_uint_const(ctx, &sz_const, size);
+
+	_asm_inst_add_x_x(
+		ctx,
+		ctx->body,
+		BE_TYPE_UINT32,
+		_ASM_REG_NAME_ESP,
+		RSTR_CSTR(&sz_const)
+	);
+
+	rstr_free(&sz_const);
+}
 
 
 
@@ -6653,17 +6693,31 @@ static void _asm_stat_mul(
 
 		if (type_target == BE_TYPE_INT64 || type_target == BE_TYPE_UINT64) {
 			if (type_target == BE_TYPE_INT64) {
+				_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EDX);
+				_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_ECX);
+				_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EBX);
+				_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EAX);
+
 				_asm_inst_call_x(
 					ctx,
 					ctx->body,
 					"___rt_mul_i64"
 				);
+
+				_release_func_call_arg_space(ctx, ctx->body, 4 * 8);
 			} else if (type_target == BE_TYPE_UINT64) {
+				_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EDX);
+				_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_ECX);
+				_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EBX);
+				_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EAX);
+
 				_asm_inst_call_x(
 					ctx,
 					ctx->body,
 					"___rt_mul_u64"
 				);
+
+				_release_func_call_arg_space(ctx, ctx->body, 4 * 8);
 			} else {
 				assert(0);
 			}
@@ -6805,11 +6859,18 @@ static void _asm_stat_div(
 		);
 
 		if (type_target == BE_TYPE_UINT64) {
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EDX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_ECX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EBX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EAX);
+
 			_asm_inst_call_x(
 				ctx,
 				ctx->body,
 				"___rt_div_u64"
 			);
+
+			_release_func_call_arg_space(ctx, ctx->body, 4 * 8);
 
 			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
 			ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
@@ -6873,11 +6934,18 @@ static void _asm_stat_div(
 		);
 
 		if (type_target == BE_TYPE_INT64) {
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EDX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_ECX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EBX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EAX);
+
 			_asm_inst_call_x(
 				ctx,
 				ctx->body,
 				"___rt_div_i64"
 			);
+
+			_release_func_call_arg_space(ctx, ctx->body, 4 * 8);
 
 			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
 			ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
@@ -7020,11 +7088,18 @@ static void _asm_stat_rem(
 		);
 
 		if (type_target == BE_TYPE_UINT64) {
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EDX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_ECX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EBX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EAX);
+
 			_asm_inst_call_x(
 				ctx,
 				ctx->body,
 				"___rt_div_u64"
 			);
+
+			_release_func_call_arg_space(ctx, ctx->body, 4 * 8);
 
 			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
 			ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
@@ -7088,11 +7163,18 @@ static void _asm_stat_rem(
 		);
 
 		if (type_target == BE_TYPE_INT64) {
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EDX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_ECX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EBX);
+			_push_func_call_arg32(ctx, ctx->body, _ASM_REG_NAME_EAX);
+
 			_asm_inst_call_x(
 				ctx,
 				ctx->body,
 				"___rt_div_i64"
 			);
+
+			_release_func_call_arg_space(ctx, ctx->body, 4 * 8);
 
 			ParserSymbol *symbol_target_l = _instantiate_varsym(ctx, symbol_target, 0);
 			ParserSymbol *symbol_target_h = _instantiate_varsym(ctx, symbol_target, 4);
