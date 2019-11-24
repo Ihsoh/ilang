@@ -16,12 +16,12 @@ fi
 ilcfe=$base_path/../bin/ilcfe
 ilcbe=$base_path/../bin/ilcbe
 
-build_32_llc=1
-build_64_llc=0
-build_32_gcc=1
-build_64_gcc=0
-build_32_ilcbe=1
-build_64_ilcbe=0
+build_32_llc=0
+build_64_llc=1
+build_32_gcc=0
+build_64_gcc=1
+build_32_ilcbe=0
+build_64_ilcbe=1
 
 totalCount=0
 successCount=0
