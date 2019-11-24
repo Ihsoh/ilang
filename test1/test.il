@@ -116,5 +116,10 @@ function main():int32 {
 	var e_3:int64 = e_1 - e_2;
 	print_int64("22222222123 - 11111111111 = ", e_3);
 
+	var f_1:int64 = 123;
+	var f_2:int64 = 3;
+	var f_3:int64 = f_1 * f_2;
+	print_int64("123 * 3 = ", f_3);
+
 	return 0;
 }
