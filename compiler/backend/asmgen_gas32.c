@@ -8969,7 +8969,7 @@ static void _asm_stat_lt(
 				ctx->body,
 				type_source,
 				_asm_inst_reg(ctx, type_source, _ASM_REG_AX),
-				_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+				_asm_inst_reg(ctx, type_source, _ASM_REG_CX)
 			);
 
 			_asm_inst_setl_x(
@@ -9373,7 +9373,7 @@ static void _asm_stat_le(
 				ctx->body,
 				type_source,
 				_asm_inst_reg(ctx, type_source, _ASM_REG_AX),
-				_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+				_asm_inst_reg(ctx, type_source, _ASM_REG_CX)
 			);
 
 			_asm_inst_setle_x(
@@ -9777,7 +9777,7 @@ static void _asm_stat_gt(
 				ctx->body,
 				type_source,
 				_asm_inst_reg(ctx, type_source, _ASM_REG_AX),
-				_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+				_asm_inst_reg(ctx, type_source, _ASM_REG_CX)
 			);
 
 			_asm_inst_setg_x(
@@ -10181,7 +10181,7 @@ static void _asm_stat_ge(
 				ctx->body,
 				type_source,
 				_asm_inst_reg(ctx, type_source, _ASM_REG_AX),
-				_asm_inst_reg(ctx, type_source, _ASM_REG_BX)
+				_asm_inst_reg(ctx, type_source, _ASM_REG_CX)
 			);
 
 			_asm_inst_setge_x(
