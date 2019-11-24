@@ -614,6 +614,8 @@ function __rt_ri64_div_i(
 	}
 }
 
+function print_uint64(str:*char, n:uint64) dummy
+
 /*
 	64位有符号整数相乘。
 */
@@ -625,10 +627,18 @@ function __rt_mul_i64(
 	var a:struct __RtInt64;
 	var b:struct __RtInt64;
 
+	var tmp_a:uint64 = (cast<uint64>(a_h) << 32) + a_l;
+	print_uint64("A = ", tmp_a);
+	var tmp_b:uint64 = (cast<uint64>(b_h) << 32) + b_l;
+	print_uint64("B = ", tmp_b);
+
 	__rt_ri64_set_by_2u32(&a, a_l, a_h);
 	__rt_ri64_set_by_2u32(&b, b_l, b_h);
 
 	__rt_ri64_mul_u(&r, &a, &b);
+
+	var tmp_c:uint64 = (cast<uint64>(r.h) << 32) + r.l;
+	print_uint64("C = ", tmp_c);
 
 	asm(
 		"",
@@ -660,8 +670,6 @@ function __rt_mul_u64(
 	);
 }
 
-function print_uint64(str:*char, n:uint64) dummy
-
 /*
 	64位有符号整数相除。
 	返回值：
@@ -678,11 +686,6 @@ function __rt_div_i64(
 	var r:struct __RtInt64;
 	var a:struct __RtInt64;
 	var b:struct __RtInt64;
-
-	var tmp_a:uint64 = (cast<uint64>(a_h) << 32) + a_l;
-	print_uint64("A = ", tmp_a);
-	var tmp_b:uint64 = (cast<uint64>(b_h) << 32) + b_l;
-	print_uint64("B = ", tmp_b);
 
 	__rt_ri64_set_by_2u32(&a, a_l, a_h);
 	__rt_ri64_set_by_2u32(&b, b_l, b_h);
