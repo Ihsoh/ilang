@@ -457,7 +457,9 @@ function __rt_ri64_mul_u(
 	var tmp_const_1:uint64 = (cast<uint64>(const_1.h) << 32) + const_1.l;
 	print_uint64("#const1 = ", tmp_const_1);
 
-	print_int32("#cmp = ", __RT_RI64_CMP_EQ_U(b, &const_1));
+	print_int32("#cmp1 = ", __RT_RI64_CMP_EQ_U(b, &const_1));
+	print_int32("#cmp2 = ", __rt_ri64_cmp_u(b, &const_1));
+	print_int32("#cmp3 = ", b->l == const_1.l && b->h == const_1.h);
 
 	if (__RT_RI64_CMP_EQ_U(b, &const_1)) {
 		__rt_ri64_copy(r, a);
