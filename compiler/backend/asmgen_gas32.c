@@ -4188,14 +4188,14 @@ static size_t _push_func_call_arg32(
 		ctx,
 		rstr,
 		BE_TYPE_UINT32,
-		value
+		_ASM_CONST_0
 	);
 
 	_asm_inst_push_x(
 		ctx,
 		rstr,
 		BE_TYPE_UINT32,
-		_ASM_CONST_0
+		value
 	);
 
 	return 8;
