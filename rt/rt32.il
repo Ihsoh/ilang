@@ -481,6 +481,12 @@ function __rt_ri64_mul_u(
 	print_int32("#bitset 4 = ", __rt_ri64_is_bit_set(b, 4));
 	print_int32("#bitset 5 = ", __rt_ri64_is_bit_set(b, 5));
 
+	var shl_a:int32 = 1;
+	print_int32("#shl_a = ", shl_a << 3);
+
+	var band_a:int32 = 1000;
+	print_int32("#band_a = ", band_a & (shl_a << 3));
+
 	for (var i:uint8 = 0; i < 64; i++) {
 		if (__rt_ri64_is_bit_set(b, i)) {
 			var temp:struct __RtInt64;
