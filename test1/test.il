@@ -113,7 +113,7 @@ function main():int32 {
 
 	var e_1:int64 = 22222222123;
 	var e_2:int64 = 11111111111;
-	var e_3:int64 = e_1 + e_2;
+	var e_3:int64 = e_1 - e_2;
 	print_int64("22222222123 - 11111111111 = ", e_3);
 
 	return 0;
