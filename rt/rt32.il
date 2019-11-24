@@ -450,6 +450,8 @@ function __rt_ri64_mul_u(
 
 	print_string("#mul 2\n");
 
+	print_int32("#cmp =", __RT_RI64_CMP_EQ_U(b, &const_1));
+
 	if (__RT_RI64_CMP_EQ_U(b, &const_1)) {
 		__rt_ri64_copy(r, a);
 		return;
