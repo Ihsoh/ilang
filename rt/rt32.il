@@ -1,16 +1,3 @@
-function print_int8(str:*char, n:int8) dummy
-function print_int16(str:*char, n:int16) dummy
-function print_int32(str:*char, n:int32) dummy
-function print_int64(str:*char, n:int64) dummy
-function print_uint8(str:*char, n:uint8) dummy
-function print_uint16(str:*char, n:uint16) dummy
-function print_uint32(str:*char, n:uint32) dummy
-function print_uint64(str:*char, n:uint64) dummy
-function print_float(str:*char, n:float) dummy
-function print_double(str:*char, n:double) dummy
-function print_pointer(str:*char, ptr:*) dummy
-function print_string(str:*char) dummy
-
 #if !defined(__ASM_GAS__) && !defined(__ASM_IASM__)
 	#define	__ASM_GAS__
 #endif
@@ -441,67 +428,20 @@ function __rt_ri64_mul_u(
 	__rt_ri64_set_by_u32(&const_0, 0);
 	__rt_ri64_set_by_u32(&const_1, 1);
 
-	print_string("#mul 1\n");
-
 	if (__RT_RI64_CMP_EQ_U(b, &const_0)) {
 		__rt_ri64_set_by_u32(r, 0);
 		return;
 	}
 
-	print_string("#mul 2\n");
-
-	var tmp_a:uint64 = (cast<uint64>(a->h) << 32) + a->l;
-	print_uint64("#a = ", tmp_a);
-	var tmp_b:uint64 = (cast<uint64>(b->h) << 32) + b->l;
-	print_uint64("#b = ", tmp_b);
-	var tmp_const_1:uint64 = (cast<uint64>(const_1.h) << 32) + const_1.l;
-	print_uint64("#const1 = ", tmp_const_1);
-
-	print_int32("#cmp1 = ", __RT_RI64_CMP_EQ_U(b, &const_1));
-	print_int32("#cmp2 = ", __rt_ri64_cmp_u(b, &const_1));
-	print_int32("#cmp3 = ", b->l == const_1.l && b->h == const_1.h);
-	print_int32("#cmp4 = ", b->l == const_1.l);
-	print_int32("#cmp5 = ", b->h == const_1.h);
-
 	var cond_a:int32 = 0;
 	var cond_b:int32 = 1;
-
-	print_int32("#cmp6 = ", cond_a && cond_b);
 
 	if (__RT_RI64_CMP_EQ_U(b, &const_1)) {
 		__rt_ri64_copy(r, a);
 		return;
 	}
 
-	print_string("#mul 3\n");
-
 	__rt_ri64_set_by_u32(r, 0);
-
-	print_int32("#bitset 3 = ", __rt_ri64_is_bit_set(b, 3));
-	print_int32("#bitset 4 = ", __rt_ri64_is_bit_set(b, 4));
-	print_int32("#bitset 5 = ", __rt_ri64_is_bit_set(b, 5));
-
-	var shl_a:int32 = 1;
-	print_int32("#shl_a = ", shl_a << 3);
-
-	var band_a:int32 = 1000;
-	print_int32("#band_a = ", band_a & (shl_a << 3));
-
-
-	var bs_c:uint8 = 3;
-	var bs_v:struct __RtInt64;
-	var bs_r:uint32 = 0;
-	bs_v.l = 1000;
-	bs_v.h = 0;
-	if (bs_c <= 31) {
-		bs_r = bs_v.l & (1 << bs_c);
-		print_string("#bs A\n");
-	} else {
-		bs_r = bs_v.h & (1 << (bs_c - 32));
-		print_string("#bs B\n");
-	}
-	print_uint32("#bs = ", bs_r);
-
 
 	for (var i:uint8 = 0; i < 64; i++) {
 		if (__rt_ri64_is_bit_set(b, i)) {
@@ -510,8 +450,6 @@ function __rt_ri64_mul_u(
 
 			__rt_ri64_shl(&temp, &temp, i);
 			__rt_ri64_add(r, r, &temp);
-
-			print_string("#mul 4\n");
 		}
 	}
 }
@@ -690,18 +628,10 @@ function __rt_mul_i64(
 	var a:struct __RtInt64;
 	var b:struct __RtInt64;
 
-	var tmp_a:uint64 = (cast<uint64>(a_h) << 32) + a_l;
-	print_uint64("A = ", tmp_a);
-	var tmp_b:uint64 = (cast<uint64>(b_h) << 32) + b_l;
-	print_uint64("B = ", tmp_b);
-
 	__rt_ri64_set_by_2u32(&a, a_l, a_h);
 	__rt_ri64_set_by_2u32(&b, b_l, b_h);
 
 	__rt_ri64_mul_u(&r, &a, &b);
-
-	var tmp_c:uint64 = (cast<uint64>(r.h) << 32) + r.l;
-	print_uint64("C = ", tmp_c);
 
 	asm(
 		"",
