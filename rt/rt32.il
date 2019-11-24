@@ -1,3 +1,16 @@
+function print_int8(str:*char, n:int8) dummy
+function print_int16(str:*char, n:int16) dummy
+function print_int32(str:*char, n:int32) dummy
+function print_int64(str:*char, n:int64) dummy
+function print_uint8(str:*char, n:uint8) dummy
+function print_uint16(str:*char, n:uint16) dummy
+function print_uint32(str:*char, n:uint32) dummy
+function print_uint64(str:*char, n:uint64) dummy
+function print_float(str:*char, n:float) dummy
+function print_double(str:*char, n:double) dummy
+function print_pointer(str:*char, ptr:*) dummy
+function print_string(str:*char) dummy
+
 #if !defined(__ASM_GAS__) && !defined(__ASM_IASM__)
 	#define	__ASM_GAS__
 #endif
@@ -428,15 +441,21 @@ function __rt_ri64_mul_u(
 	__rt_ri64_set_by_u32(&const_0, 0);
 	__rt_ri64_set_by_u32(&const_1, 1);
 
+	print_string("#mul 1\n");
+
 	if (__RT_RI64_CMP_EQ_U(b, &const_0)) {
 		__rt_ri64_set_by_u32(r, 0);
 		return;
 	}
 
+	print_string("#mul 2\n");
+
 	if (__RT_RI64_CMP_EQ_U(b, &const_1)) {
 		__rt_ri64_copy(r, a);
 		return;
 	}
+
+	print_string("#mul 3\n");
 
 	__rt_ri64_set_by_u32(r, 0);
 
@@ -447,6 +466,8 @@ function __rt_ri64_mul_u(
 
 			__rt_ri64_shl(&temp, &temp, i);
 			__rt_ri64_add(r, r, &temp);
+
+			print_string("#mul 4\n");
 		}
 	}
 }
@@ -613,8 +634,6 @@ function __rt_ri64_div_i(
 		__rt_ri64_copy(r, &temp_r);
 	}
 }
-
-function print_uint64(str:*char, n:uint64) dummy
 
 /*
 	64位有符号整数相乘。
