@@ -398,9 +398,9 @@ static bool _asm_compare_reg(
 
 #define	_ASM_IS_AX(reg)	\
 	(_asm_compare_reg((reg), _ASM_REG_NAME_AL)	\
-		&& _asm_compare_reg((reg), _ASM_REG_NAME_AH)	\
-		&& _asm_compare_reg((reg), _ASM_REG_NAME_AX)	\
-		&& _asm_compare_reg((reg), _ASM_REG_NAME_EAX))
+		|| _asm_compare_reg((reg), _ASM_REG_NAME_AH)	\
+		|| _asm_compare_reg((reg), _ASM_REG_NAME_AX)	\
+		|| _asm_compare_reg((reg), _ASM_REG_NAME_EAX))
 
 /*
 	临时分配寄存器。
