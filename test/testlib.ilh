@@ -20,12 +20,12 @@ function _get_stderr():*struct FILE dummy
 
 
 
-function tst_fdopen(fd:int32, mode:*char):*struct FILE dummy
+function tst_fdopen(fd:int, mode:*char):*struct FILE dummy
 
-function tst_malloc(sz:uint64):* dummy
+function tst_malloc(sz:size_t):* dummy
 function tst_free(ptr:*) dummy
 
-function tst_strcmp(a:*char, b:*char):int32 dummy
+function tst_strcmp(a:*char, b:*char):int dummy
 
 function tst_exit(status:int) dummy
 
