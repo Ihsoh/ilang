@@ -11,115 +11,49 @@ function print_double(str:*char, n:double) dummy
 function print_pointer(str:*char, ptr:*) dummy
 function print_string(str:*char) dummy
 
+function func_1() {
+}
+
+function func_2():int {
+	return 123;
+}
+
+function func_3(a:int, b:int):int {
+	return a + b;
+}
+
+function func_4(n:int, ...):int {
+	return 0;
+}
 
 function main():int32 {
+	func_1();
 
-	print_int8("print_int8 1 = ", 123);
-	print_int16("print_int16 1 = ", 12345);
-	print_int32("print_int32 1 = ", 1234567890);
-	print_int64("print_int64 1 = ", 123456789012);
+	if (func_2() != 123) {
+		return 1;
+	}
 
-	print_int8("print_int8 2 = ", -123);
-	print_int16("print_int16 2 = ", -12345);
-	print_int32("print_int32 2 = ", -1234567890);
-	print_int64("print_int64 2 = ", -123456789012);
+	if (func_3(1, 2) != 3) {
+		return 1;
+	}
 
-	print_uint8("print_uint8 = ", 123);
-	print_uint16("print_uint16 = ", 12345);
-	print_uint32("print_uint32 = ", 1234567890);
-	print_uint64("print_uint64 = ", 123456789012);
+	func_4(6, 1, 2, 3, 4, 5, 6);
 
-	print_float("print_float = ", 123.456f);
+	var func_1_ptr:*function() = func_1;
+	func_1_ptr();
 
-	print_double("print_double = ", 654.321);
+	var func_2_ptr:*function():int = func_2;
+	if (func_2_ptr() != 123) {
+		return 1;
+	}
 
-	print_pointer("print_pointer = ", cast<*>(0x12345678));
+	var func_3_ptr:*function(a:int, b:int):int = func_3;
+	if (func_3_ptr(2, 3) != 5) {
+		return 1;
+	}
 
-	print_string("print_string = TEST STRING\n");
-
-	var eax:uint32 = 123;
-	var ebx:uint32 = 456;
-	var ecx:uint32 = 789;
-	var edx:uint32 = 321;
-	asm(
-		"",
-		"set#%eax"(eax),
-		"set#%ebx"(ebx),
-		"set#%ecx"(ecx),
-		"set#%edx"(edx),
-		"get#%eax"(eax),
-		"get#%ebx"(ebx),
-		"get#%ecx"(ecx),
-		"get#%edx"(edx)
-	);
-	print_uint32("1 eax = ", eax);
-	print_uint32("1 ebx = ", ebx);
-	print_uint32("1 ecx = ", ecx);
-	print_uint32("1 edx = ", edx);
-
-	eax = 0;
-	ebx = 0;
-	ecx = 0;
-	edx = 0;
-	asm(
-		"",
-		"set#%eax"(111),
-		"set#%ebx"(222),
-		"set#%ecx"(333),
-		"set#%edx"(444),
-		"get#%eax"(eax),
-		"get#%ebx"(ebx),
-		"get#%ecx"(ecx),
-		"get#%edx"(edx)
-	);
-	print_uint32("2 eax = ", eax);
-	print_uint32("2 ebx = ", ebx);
-	print_uint32("2 ecx = ", ecx);
-	print_uint32("2 edx = ", edx);
-
-	eax = 0;
-	ebx = 0;
-
-	asm(
-		"",
-		"set#%eax"(2333),
-		"set#%ebx"("3 ebx = yahoo~~~\n"),
-		"get#%eax"(eax),
-		"get#%ebx"(ebx)
-	);
-	print_uint32("3 eax = ", eax);
-	print_string(cast<*char>(ebx));
-
-
-	var a_1:int64 = 12345678900;
-	var a_2:int64 = 1000;
-	var a_3:int64 = a_1 * a_2;
-	print_int64("12345678900 * 1000 = ", a_3);
-
-	var b_1:int64 = 12345678900;
-	var b_2:int64 = 1000;
-	var b_3:int64 = b_1 / b_2;
-	print_int64("12345678900 / 1000 = ", b_3);
-
-	var c_1:int64 = 12345678900;
-	var c_2:int64 = 3;
-	var c_3:int64 = c_1 % c_2;
-	print_int64("12345678900 %% 3 = ", c_3);
-
-	var d_1:int64 = 11111111111;
-	var d_2:int64 = 22222222123;
-	var d_3:int64 = d_1 + d_2;
-	print_int64("11111111111 + 22222222123 = ", d_3);
-
-	var e_1:int64 = 22222222123;
-	var e_2:int64 = 11111111111;
-	var e_3:int64 = e_1 - e_2;
-	print_int64("22222222123 - 11111111111 = ", e_3);
-
-	var f_1:int64 = 123;
-	var f_2:int64 = 3;
-	var f_3:int64 = f_1 * f_2;
-	print_int64("123 * 3 = ", f_3);
+	var func_4_ptr:*function(n:int, ...):int = func_4;
+	func_4_ptr(6, 1, 2, 3, 4, 5, 6);
 
 	return 0;
 }
