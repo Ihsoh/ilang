@@ -919,7 +919,7 @@ static void _asm_inst_mov_x_fsym(
 	_asm_inst_memref_base_disp(
 		ctx,
 		&rstr_source,
-		target,
+		_ASM_IP_REG,
 		RSTR_CSTR(&rstr_disp)
 	);
 
