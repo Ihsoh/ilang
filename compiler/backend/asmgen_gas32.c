@@ -160,7 +160,7 @@ static void _new_float(
 	);
 	rstr_appendf(
 		ctx->head,
-		".4byte 0x%x\n\n",
+		".4byte %u\n\n",
 		*(uint32_t *)&value
 	);
 }
@@ -201,7 +201,7 @@ static void _new_double(
 	);
 	rstr_appendf(
 		ctx->head,
-		".8byte 0x%llx\n\n",
+		".8byte %llu\n\n",
 		*(uint64_t *)&value
 	);
 }
@@ -2959,7 +2959,7 @@ static void _asm_constexpr(
 			char str[128];
 			float val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_FLOAT_VAL(node_constexpr);
 			snprintf(
-				str, sizeof(str), "0x%x",
+				str, sizeof(str), "%u",
 				*(uint32_t *)&val
 			);
 			rstr_append_with_cstr(rstr_val, str);
@@ -2969,7 +2969,7 @@ static void _asm_constexpr(
 			char str[128];
 			double val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_DOUBLE_VAL(node_constexpr);
 			snprintf(
-				str, sizeof(str), "0x%llx",
+				str, sizeof(str), "%llu",
 				*(uint64_t *)&val
 			);
 			rstr_append_with_cstr(rstr_val, str);
@@ -2997,7 +2997,7 @@ static void _asm_constexpr(
 				char str[128];
 				uint64_t val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
 				snprintf(
-					str, sizeof(str), "0x%llx",
+					str, sizeof(str), "%llu",
 					val
 				);
 				rstr_append_with_cstr(rstr_val, str);
@@ -3101,7 +3101,7 @@ static void _asm_constexpr_param(
 			
 			int32_t val_l = (int32_t)(val & 0xffffffff);
 			snprintf(
-				str, sizeof(str), "$0x%x",
+				str, sizeof(str), "$%u",
 				val_l
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
@@ -3109,7 +3109,7 @@ static void _asm_constexpr_param(
 			if (rstr_val_h != NULL) {
 				int32_t val_h = (int32_t)((val >> 32) & 0xffffffff);
 				snprintf(
-					str, sizeof(str), "$0x%x",
+					str, sizeof(str), "$%u",
 					val_h
 				);
 				rstr_append_with_cstr(rstr_val_h, str);
@@ -3159,7 +3159,7 @@ static void _asm_constexpr_param(
 
 			uint32_t val_l = (uint32_t)(val & 0xffffffff);
 			snprintf(
-				str, sizeof(str), "$0x%x",
+				str, sizeof(str), "$%u",
 				val_l
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
@@ -3167,7 +3167,7 @@ static void _asm_constexpr_param(
 			if (rstr_val_h != NULL) {
 				uint32_t val_h = (uint32_t)((val >> 32) & 0xffffffff);
 				snprintf(
-					str, sizeof(str), "$0x%x",
+					str, sizeof(str), "$%u",
 					val_h
 				);
 				rstr_append_with_cstr(rstr_val_h, str);
@@ -3181,7 +3181,7 @@ static void _asm_constexpr_param(
 			uint32_t val = *(uint32_t *)&fval;
 			
 			snprintf(
-				str, sizeof(str), "$0x%x",
+				str, sizeof(str), "$%u",
 				val
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
@@ -3198,7 +3198,7 @@ static void _asm_constexpr_param(
 
 			uint32_t val_l = (uint32_t)(val & 0xffffffff);
 			snprintf(
-				str, sizeof(str), "$0x%x",
+				str, sizeof(str), "$%u",
 				val_l
 			);
 			rstr_append_with_cstr(rstr_val_l, str);
@@ -3206,7 +3206,7 @@ static void _asm_constexpr_param(
 			if (rstr_val_h != NULL) {
 				uint32_t val_h = (uint32_t)((val >> 32) & 0xffffffff);
 				snprintf(
-					str, sizeof(str), "$0x%x",
+					str, sizeof(str), "$%u",
 					val_h
 				);
 				rstr_append_with_cstr(rstr_val_h, str);
@@ -3291,7 +3291,7 @@ static void _asm_constexpr_param(
 				char str[128];
 				uint64_t val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
 				snprintf(
-					str, sizeof(str), "$0x%x",
+					str, sizeof(str), "$%u",
 					(uint32_t)val
 				);
 				rstr_append_with_cstr(rstr_val_l, str);
