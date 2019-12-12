@@ -17,11 +17,11 @@ ilcfe=$base_path/../bin/ilcfe
 ilcbe=$base_path/../bin/ilcbe
 
 build_32_llc=0
-build_64_llc=1
+build_64_llc=0
 build_32_gcc=0
-build_64_gcc=1
-build_32_ilcbe=0
-build_64_ilcbe=1
+build_64_gcc=0
+build_32_ilcbe=1
+build_64_ilcbe=0
 
 totalCount=0
 successCount=0
@@ -70,6 +70,16 @@ if [ $build_64_ilcbe != 0 ]; then
 	$ilcfe $base_path/testlib_il64.il -arch 64 -incpath "$base_path/" -action compile -target ilir -output $bin_path/testlib_il64.ir
 	$ilcbe $bin_path/testlib_il64.ir -arch 64 -incpath "$base_path/" -action compile -target gas -output $bin_path/testlib_il64_ir.s
 	as $as64_flags $bin_path/testlib_il64_ir.s -o $bin_path/testlib_il64_ir.o
+fi
+
+if [ $build_32_ilcbe != 0 ]; then
+	$ilcfe $base_path/testlib.il -arch 32 -incpath "$base_path/" -action compile -target ilir -output $bin_path/testlib_32.ir
+	$ilcbe $bin_path/testlib_32.ir -arch 32 -incpath "$base_path/" -action compile -target gas -output $bin_path/testlib_32_ir.s
+	as $as32_flags $bin_path/testlib_32_ir.s -o $bin_path/testlib_32_ir.o
+
+	$ilcfe $base_path/testlib_il32.il -arch 32 -incpath "$base_path/" -action compile -target ilir -output $bin_path/testlib_il32.ir
+	$ilcbe $bin_path/testlib_il32.ir -arch 32 -incpath "$base_path/" -action compile -target gas -output $bin_path/testlib_il32_ir.s
+	as $as32_flags $bin_path/testlib_il32_ir.s -o $bin_path/testlib_il32_ir.o
 fi
 
 # 获取所有测试例子的目录。
@@ -123,8 +133,18 @@ for example_path in $base_path/$1*; do
 						continue
 					fi
 
+					gcc -m32 -w $base_path/bin/testlib_32_ir.o $base_path/bin/testlib_il32_ir.o $bin_path/main_32_ir.o -o $bin_path/main_ir_32
+					if [ $? != 0 ]; then
+						echo -e "\033[31m CLANG COMPILER ERROR \033[0m"
+						continue
+					fi
 
-					echo -e 'wow'
+					chmod +x $bin_path/main_ir_32
+					$bin_path/main_ir_32
+					if [ $? != 0 ]; then
+						echo -e "\033[31m ERROR \033[0m"
+						continue
+					fi
 				fi
 				endTime=$(date +%s)
 				cost=$((endTime - startTime))
