@@ -31,7 +31,9 @@ static void _error(const char * msg) {
 	exit(1);
 }
 
-
+static void _asm_get_ip(
+	ASMGeneratorGas32Context *ctx
+);
 
 
 static size_t _generate_func_tmp(
