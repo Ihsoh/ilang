@@ -58,10 +58,6 @@ if [ $build_64_gcc != 0 ]; then
 	cp $base_path/testlib_c.c $bin_path/testlib_c_64.c
 fi
 
-if [ $build_32_ilcbe != 0 ]; then
-	echo -e 'wow'
-fi
-
 if [ $build_64_ilcbe != 0 ]; then
 	$ilcfe $base_path/testlib.il -arch 64 -incpath "$base_path/" -action compile -target ilir -output $bin_path/testlib_64.ir
 	$ilcbe $bin_path/testlib_64.ir -arch 64 -incpath "$base_path/" -action compile -target gas -output $bin_path/testlib_64_ir.s
@@ -81,7 +77,7 @@ if [ $build_32_ilcbe != 0 ]; then
 	$ilcbe $bin_path/testlib_il32.ir -arch 32 -incpath "$base_path/" -action compile -target gas -output $bin_path/testlib_il32_ir.s
 	as $as32_flags $bin_path/testlib_il32_ir.s -o $bin_path/testlib_il32_ir.o
 
-	$ilcbe $bin_path/main_il32.ir -arch 32 -incpath "$base_path/" -action compile -target gas -output $bin_path/main_il32.s
+	$ilcbe $base_path/main_il32.ir -arch 32 -incpath "$base_path/" -action compile -target gas -output $bin_path/main_il32.s
 	as $as32_flags $bin_path/main_il32.s -o $bin_path/main_il32.o
 fi
 
