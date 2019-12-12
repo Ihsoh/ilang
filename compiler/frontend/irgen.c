@@ -3676,7 +3676,11 @@ static void _ir_expr_wrapper_val(
 ) {
 	_ir_expr_wrapper(ctx, rstr, expr_result, node);
 
-	rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result_ptr));
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// ! TODO: ILIR生成器应该不需要像LLVM IR生成器那样必须生成获取地址的代码。
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result_ptr));
+
 	rstr_append_with_rstr(rstr, &(expr_result->rstr_for_result));
 }
 
