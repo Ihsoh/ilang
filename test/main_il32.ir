@@ -1,0 +1,5 @@
+function _main(argc:int32, argv:**char):int32 dummy
+
+function main(argc:int32, argv:**char):int32 {
+	vcall _main(argc, argv);
+}

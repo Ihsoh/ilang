@@ -80,6 +80,9 @@ if [ $build_32_ilcbe != 0 ]; then
 	$ilcfe $base_path/testlib_il32.il -arch 32 -incpath "$base_path/" -action compile -target ilir -output $bin_path/testlib_il32.ir
 	$ilcbe $bin_path/testlib_il32.ir -arch 32 -incpath "$base_path/" -action compile -target gas -output $bin_path/testlib_il32_ir.s
 	as $as32_flags $bin_path/testlib_il32_ir.s -o $bin_path/testlib_il32_ir.o
+
+	$ilcbe $bin_path/main_il32.ir -arch 32 -incpath "$base_path/" -action compile -target gas -output $bin_path/main_il32.s
+	as $as32_flags $bin_path/main_il32.s -o $bin_path/main_il32.o
 fi
 
 # 获取所有测试例子的目录。
@@ -133,7 +136,7 @@ for example_path in $base_path/$1*; do
 						continue
 					fi
 
-					gcc -m32 -w $base_path/bin/testlib_32_ir.o $base_path/bin/testlib_il32_ir.o $bin_path/main_32_ir.o -o $bin_path/main_ir_32
+					gcc -m32 -w $base_path/bin/testlib_32_ir.o $base_path/bin/testlib_il32_ir.o $bin_path/main_32_ir.o $bin_path/main_il32.o -o $bin_path/main_ir_32
 					if [ $? != 0 ]; then
 						echo -e "\033[31m CLANG COMPILER ERROR \033[0m"
 						continue
