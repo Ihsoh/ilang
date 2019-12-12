@@ -160,7 +160,7 @@ static void _new_float(
 	);
 	rstr_appendf(
 		ctx->head,
-		".4byte 0x%X\n\n",
+		".4byte 0x%x\n\n",
 		*(uint32_t *)&value
 	);
 }
@@ -201,7 +201,7 @@ static void _new_double(
 	);
 	rstr_appendf(
 		ctx->head,
-		".8byte 0x%llX\n\n",
+		".8byte 0x%llx\n\n",
 		*(uint64_t *)&value
 	);
 }
@@ -2959,7 +2959,7 @@ static void _asm_constexpr(
 			char str[128];
 			float val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_FLOAT_VAL(node_constexpr);
 			snprintf(
-				str, sizeof(str), "0x%X",
+				str, sizeof(str), "0x%x",
 				*(uint32_t *)&val
 			);
 			rstr_append_with_cstr(rstr_val, str);
@@ -2969,7 +2969,7 @@ static void _asm_constexpr(
 			char str[128];
 			double val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_DOUBLE_VAL(node_constexpr);
 			snprintf(
-				str, sizeof(str), "0x%llX",
+				str, sizeof(str), "0x%llx",
 				*(uint64_t *)&val
 			);
 			rstr_append_with_cstr(rstr_val, str);
@@ -2997,7 +2997,7 @@ static void _asm_constexpr(
 				char str[128];
 				uint64_t val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
 				snprintf(
-					str, sizeof(str), "0x%llX",
+					str, sizeof(str), "0x%llx",
 					val
 				);
 				rstr_append_with_cstr(rstr_val, str);
@@ -3291,7 +3291,7 @@ static void _asm_constexpr_param(
 				char str[128];
 				uint64_t val = BE_EXPR_AST_NODE_GET_CONSTEXPR_RESULT_POINTER_VAL(node_constexpr);
 				snprintf(
-					str, sizeof(str), "$0x%X",
+					str, sizeof(str), "$0x%x",
 					(uint32_t)val
 				);
 				rstr_append_with_cstr(rstr_val_l, str);
