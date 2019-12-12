@@ -1,5 +1,7 @@
 function _main(argc:int32, argv:**char):int32 dummy
 
 function main(argc:int32, argv:**char):int32 {
-	vcall _main(argc, argv);
+	var ret_val:int32;
+	call ret_val, _main(argc, argv);
+	return ret_val;
 }
