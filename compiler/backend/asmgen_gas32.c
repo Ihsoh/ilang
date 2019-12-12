@@ -5006,7 +5006,7 @@ static void _asm_stat_sext(
 			reg_target
 		);
 
-		_asm_inst_sal_x_x(
+		_asm_inst_sar_x_x(
 			ctx,
 			ctx->body,
 			BE_TYPE_UINT32,
