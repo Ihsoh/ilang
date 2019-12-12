@@ -914,6 +914,8 @@ static void _asm_inst_mov_x_fsym(
 		RSTR_CSTR(&rstr_cur_func_name)
 	);
 
+	_asm_get_ip(ctx);
+
 	ResizableString rstr_source;
 	rstr_init(&rstr_source);
 	_asm_inst_memref_base_disp(
