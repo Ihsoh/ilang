@@ -6180,7 +6180,7 @@ static void _asm_stat_call(
 			ctx,
 			ctx->body,
 			symbol_target_h,
-			_ASM_REG_NAME_EBX
+			_ASM_REG_NAME_EDX
 		);
 
 		_free_varsym(ctx, symbol_target_l);
