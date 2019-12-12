@@ -20,8 +20,30 @@ build_32_llc=0
 build_64_llc=0
 build_32_gcc=0
 build_64_gcc=0
-build_32_ilcbe=1
+build_32_ilcbe=0
 build_64_ilcbe=0
+
+for i in $*
+do
+	if [ "$i" == "llvm32" ]; then
+		build_32_llc=1
+	fi
+	if [ "$i" == "llvm64" ]; then
+		build_64_llc=1
+	fi
+	if [ "$i" == "c32" ]; then
+		build_32_gcc=1
+	fi
+	if [ "$i" == "c64" ]; then
+		build_64_gcc=1
+	fi
+	if [ "$i" == "ilir32" ]; then
+		build_32_ilcbe=1
+	fi
+	if [ "$i" == "ilir64" ]; then
+		build_64_ilcbe=1
+	fi
+done
 
 totalCount=0
 successCount=0
@@ -82,7 +104,7 @@ if [ $build_32_ilcbe != 0 ]; then
 fi
 
 # 获取所有测试例子的目录。
-for example_path in $base_path/$1*; do
+for example_path in $base_path/*; do
 	if [ -d $example_path ]; then
 		main_il_path=$example_path/main.il
 		config_txt_path=$example_path/config.txt
