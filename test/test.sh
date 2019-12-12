@@ -132,7 +132,7 @@ for example_path in $base_path/$1*; do
 						continue
 					fi
 
-					gcc -m32 -w $base_path/bin/testlib_32_ir.o $base_path/bin/testlib_il32_ir.o $bin_path/main_32_ir.o $bin_path/main_il32.o -o $bin_path/main_ir_32
+					gcc -m32 -w $base_path/bin/testlib_32_ir.o $base_path/bin/testlib_il32_ir.o $base_path/bin/main_il32.o $bin_path/main_32_ir.o -o $bin_path/main_ir_32
 					if [ $? != 0 ]; then
 						echo -e "\033[31m CLANG COMPILER ERROR \033[0m"
 						continue
