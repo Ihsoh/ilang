@@ -15,9 +15,9 @@
 #include <string.h>
 
 #define	_OUT_CHAR(ctx, chr)	{ fputc((chr), (ctx)->out); }
-#define	_OUT_STR(ctx, str, len) { for (int __i = 0; __i < (len); __i++) { _OUT_CHAR((ctx), (str)[__i]) } fflush((ctx)->out); }
-#define	_OUT_CSTR(ctx, str) { _OUT_STR((ctx), (str), strlen((str))) fflush((ctx)->out); }
-#define	_OUT_FMT(ctx, fmt, ...) { fprintf((ctx)->out, fmt, __VA_ARGS__); fflush((ctx)->out); }
+#define	_OUT_STR(ctx, str, len) { for (int __i = 0; __i < (len); __i++) { _OUT_CHAR((ctx), (str)[__i]) } }
+#define	_OUT_CSTR(ctx, str) { _OUT_STR((ctx), (str), strlen((str))) }
+#define	_OUT_FMT(ctx, fmt, ...) { fprintf((ctx)->out, fmt, __VA_ARGS__); }
 
 static void _error(const char * msg) {
 	assert(msg);
