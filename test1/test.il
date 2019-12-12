@@ -11,6 +11,19 @@ function print_double(str:*char, n:double) dummy
 function print_pointer(str:*char, ptr:*) dummy
 function print_string(str:*char) dummy
 
+#define	byte	int8
+#define	ubyte	uint8
+#define	short	int16
+#define	ushort	uint16
+
+#define	size_t uint32
+#define	ssize_t int32
+
+#define	int int32
+#define	uint uint32
+#define	long int32
+#define	ulong uint32
+
 function func_1() {
 }
 
