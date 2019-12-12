@@ -3510,12 +3510,12 @@ static void _asm_var(
 						break;
 					}
 					case BE_NODE_TYPE_POINTER: {
-						rstr_append_with_cstr(ctx->body, ".8byte ");
+						rstr_append_with_cstr(ctx->body, ".4byte ");
 						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
 					case BE_NODE_TYPE_VA_LIST: {
-						rstr_append_with_cstr(ctx->body, ".8byte ");
+						rstr_append_with_cstr(ctx->body, ".4byte ");
 						_asm_global_var_initializer(ctx, ctx->body, node_expr, node_type);
 						break;
 					}
