@@ -52,8 +52,8 @@ function main():int32 {
 
 	func_4(6, 1, 2, 3, 4, 5, 6);
 
-	// var func_1_ptr:*function() = func_1;
-	// func_1_ptr();
+	var func_1_ptr:*function() = func_1;
+	func_1_ptr();
 
 	// var func_2_ptr:*function():int = func_2;
 	// if (func_2_ptr() != 123) {
