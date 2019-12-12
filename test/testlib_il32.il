@@ -138,4 +138,6 @@ function __tst_assert(file:*char, line:int) {
 	_SET_PARAMS_4(stderr, "ASSERT FAILED(%s:%d)!\n", file, line)
 	asm("calll	fprintf\n");
 	_CLEAR_PARAMS_4
+
+	__tst_exit(1);
 }
