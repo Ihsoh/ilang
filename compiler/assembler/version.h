@@ -1,0 +1,7 @@
+#ifndef	__COMPILER_ASSEMBLER_VERSION_H__
+#define	__COMPILER_ASSEMBLER_VERSION_H__
+
+#define	ASM_VERSION_MAJOR	"0"
+#define ASM_VERSION_MINOR	"1"
+
+#endif

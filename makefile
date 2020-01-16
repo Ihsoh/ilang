@@ -14,6 +14,9 @@ CompilerBackendHeader=$(wildcard compiler/backend/*.h)
 CompilerPreprocessorSource=$(wildcard compiler/preprocessor/*.c)
 CompilerPreprocessorHeader=$(wildcard compiler/preprocessor/*.h)
 
+AssemblerSource=$(wildcard compiler/assembler/*.c)
+AssemblerHeader=$(wildcard compiler/assembler/*.h)
+
 CompilerSource=$(wildcard compiler/*.c)
 CompilerHeader=$(wildcard compiler/*.h)
 
@@ -27,9 +30,14 @@ CompilerBackendRequest=$(CommonSource) $(CommonHeader)	\
 				$(CompilerBackendSource) $(CompilerBackendHeader)	\
 				$(CompilerPreprocessorSource) $(CompilerPreprocessorHeader)
 
-all64: bin/ilcfe64 bin/ilcbe64
+AssemblerRequest=$(CommonSource) $(CommonHeader)	\
+				$(CompilerSource) $(CompilerHeader)	\
+				$(AssemblerSource) $(AssemblerHeader)	\
+				$(CompilerPreprocessorSource) $(CompilerPreprocessorHeader)
 
-all32: bin/ilcfe32 bin/ilcbe32
+all64: bin/ilcfe64 bin/ilcbe64 bin/iasm64
+
+all32: bin/ilcfe32 bin/ilcbe32 bin/iasm32
 
 bin/ilcfe64: bin/ $(CompilerFrontendRequest)
 	$(CC) $(CFlags64) $(CommonSource) $(CompilerSource) $(CompilerFrontendSource) $(CompilerPreprocessorSource) -o bin/ilcfe
@@ -37,11 +45,17 @@ bin/ilcfe64: bin/ $(CompilerFrontendRequest)
 bin/ilcbe64: bin/ $(CompilerBackendRequest)
 	$(CC) $(CFlags64) $(CommonSource) $(CompilerSource) $(CompilerBackendSource) $(CompilerPreprocessorSource) -o bin/ilcbe
 
+bin/iasm64: bin/ $(AssemblerRequest)
+	$(CC) $(CFlags64) $(CommonSource) $(CompilerSource) $(AssemblerSource) $(CompilerPreprocessorSource) -o bin/iasm
+
 bin/ilcfe32: bin/ $(CompilerFrontendRequest)
 	$(CC) $(CFlags32) $(CommonSource) $(CompilerSource) $(CompilerFrontendSource) $(CompilerPreprocessorSource) -o bin/ilcfe
 
 bin/ilcbe32: bin/ $(CompilerBackendRequest)
 	$(CC) $(CFlags32) $(CommonSource) $(CompilerSource) $(CompilerBackendSource) $(CompilerPreprocessorSource) -o bin/ilcbe
+
+bin/iasm32: bin/ $(AssemblerRequest)
+	$(CC) $(CFlags32) $(CommonSource) $(CompilerSource) $(AssemblerSource) $(CompilerPreprocessorSource) -o bin/iasm
 
 bin/:
 	-mkdir bin/
