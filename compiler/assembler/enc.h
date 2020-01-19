@@ -5,7 +5,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-
+typedef struct {
+	
+} EncoderContext;
 
 
 
