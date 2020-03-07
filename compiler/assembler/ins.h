@@ -326,53 +326,53 @@
 	Bits 5, 4, and 3 of ModR/M byte used as an opcode extension (refer to Section A.4, “Opcode Extensions For One-Byte
 	And Two-byte Opcodes”).
 */
-#define	_INS_SS_1A	0x01
+#define	_INS_SS_1A	(1 << 0)
 
 /*
 	Use the 0F0B opcode (UD2 instruction) or the 0FB9H opcode when deliberately trying to generate an invalid opcode
 	exception (#UD).
 */
-#define	_INS_SS_1B	0x02
+#define	_INS_SS_1B	(1 << 1)
 
 /*
 	Some instructions use the same two-byte opcode. If the instruction has variations, or the opcode represents
 	different instructions, the ModR/M byte will be used to differentiate the instruction. For the value of the ModR/M
 	byte needed to decode the instruction, see Table A-6.
 */
-#define	_INS_SS_1C	0x03
+#define	_INS_SS_1C	(1 << 2)
 
 /*
 	The instruction is invalid or not encodable in 64-bit mode. 40 through 4F (single-byte INC and DEC) are REX prefix
 	combinations when in 64-bit mode (use FE/FF Grp 4 and 5 for INC and DEC).
 */
-#define	_INS_SS_i64	0x04
+#define	_INS_SS_i64	(1 << 3)
 
 /*
 	Instruction is only available when in 64-bit mode.
 */
-#define	_INS_SS_o64	0x05
+#define	_INS_SS_o64	(1 << 4)
 
 /*
 	When in 64-bit mode, instruction defaults to 64-bit operand size and cannot encode 32-bit operand size.
 */
-#define	_INS_SS_d64	0x06
+#define	_INS_SS_d64	(1 << 5)
 
 /*
 	The operand size is forced to a 64-bit operand size when in 64-bit mode (prefixes that change operand size are
 	ignored for this instruction in 64-bit mode).
 */
-#define	_INS_SS_f64	0x07
+#define	_INS_SS_f64	(1 << 6)
 
 /*
 	VEX form only exists. There is no legacy SSE form of the instruction. For Integer GPR instructions it means VEX
 	prefix required.
 */
-#define	_INS_SS_v	0x08
+#define	_INS_SS_v	(1 << 7)
 
 /*
 	VEX128 & SSE forms only exist (no VEX256), when can’t be inferred from the data size.
 */
-#define	_INS_SS_v1	0x09
+#define	_INS_SS_v1	(1 << 8)
 
 /*====================================================================================================
 	Superscripts Utilized in Opcode Tables
@@ -380,7 +380,7 @@
 	0x0x ~ 0xfx
 ====================================================================================================*/
 
-#define	_INS_SS_PREFIX	0x10
+#define	_INS_SS_PREFIX	(1 << 9)
 
 typedef struct {
 	
@@ -397,7 +397,7 @@ typedef struct _Instruction {
 	======================================================================*/
 	char		*mnemonic;		// 助记符。
 	
-	uint8_t		superscript;	// Opcode Map里的指令上标。
+	uint32_t	superscript;	// Opcode Map里的指令上标。
 
 	struct {
 		uint8_t		opcode_len;		// Opcode的长度。值：1、2、3。
