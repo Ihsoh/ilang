@@ -1133,6 +1133,328 @@ static Instruction _ins[] = {
 		}
 	},
 
+	{
+		"TEST", _INS_SS_NONE,
+		{1, 0x80 | 0x04},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_G | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"TEST", _INS_SS_NONE,
+		{1, 0x80 | 0x05},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_G | _INS_OT_v
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x80 | 0x06},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_G | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x80 | 0x07},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_G | _INS_OT_v
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+
+	// 0x09, 0x00~0x07
+	{
+		"NOP", _INS_SS_NONE,
+		{1, 0x90 | 0x00},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"PAUSE", _INS_SS_NONE,
+		{1, 0x90 | 0x00},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x00},
+		{
+			_INS_AM_r8,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x01},
+		{
+			_INS_AM_rCX,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x01},
+		{
+			_INS_AM_r9,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x02},
+		{
+			_INS_AM_rDX,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x02},
+		{
+			_INS_AM_r10,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x03},
+		{
+			_INS_AM_rBX,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x03},
+		{
+			_INS_AM_r11,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x04},
+		{
+			_INS_AM_rSP,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x04},
+		{
+			_INS_AM_r12,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x05},
+		{
+			_INS_AM_rBP,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x05},
+		{
+			_INS_AM_r13,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x06},
+		{
+			_INS_AM_rSI,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x06},
+		{
+			_INS_AM_r14,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x07},
+		{
+			_INS_AM_rDI,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+	{
+		"XCHG", _INS_SS_NONE,
+		{1, 0x90 | 0x07},
+		{
+			_INS_AM_r15,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.oprd_reversible = true
+	},
+
+	// 0x0a, 0x00~0x07
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xa0 | 0x00},
+		{
+			_INS_AM_AL,
+			_INS_AM_O | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xa0 | 0x01},
+		{
+			_INS_AM_rAX,
+			_INS_AM_O | _INS_OT_v
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xa0 | 0x02},
+		{
+			_INS_AM_O | _INS_OT_b,
+			_INS_AM_AL
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xa0 | 0x03},
+		{
+			_INS_AM_O | _INS_OT_v,
+			_INS_AM_rAX
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOVSB", _INS_SS_NONE,
+		{1, 0xa0 | 0x04},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOVSW", _INS_SS_NONE,
+		{1, 0xa0 | 0x05},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOVSD", _INS_SS_NONE,
+		{1, 0xa0 | 0x05},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOVSQ", _INS_SS_NONE,
+		{1, 0xa0 | 0x05},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"CMPSB", _INS_SS_NONE,
+		{1, 0xa0 | 0x06},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"CMPSW", _INS_SS_NONE,
+		{1, 0xa0 | 0x07},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"CMPSD", _INS_SS_NONE,
+		{1, 0xa0 | 0x07},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"CMPSQ", _INS_SS_NONE,
+		{1, 0xa0 | 0x07},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+
+	// 0x0b, 0x00~0x07
+	// MOV immediate byte into byte register
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x00},
+		{
+			_INS_AM_AL,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x00},
+		{
+			_INS_AM_r8l,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+
+	// TODO: ...
+
 
 
 

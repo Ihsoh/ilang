@@ -181,20 +181,51 @@
 #define	_INS_AM_eDI		0x9400
 #define	_INS_AM_rDI		0x9500
 
-#define	_INS_AM_r8		0xa600
+#define	_INS_AM_r8l		0xa000
+#define	_INS_AM_r8w		0xa100
+#define	_INS_AM_r8d		0xa200
+#define	_INS_AM_r8		0xa300
+
+#define	_INS_AM_r9l		0xa400
+#define	_INS_AM_r9w		0xa500
+#define	_INS_AM_r9d		0xa600
 #define	_INS_AM_r9		0xa700
-#define	_INS_AM_r10		0xa800
-#define	_INS_AM_r11		0xa900
-#define	_INS_AM_r12		0xaa00
-#define	_INS_AM_r13		0xab00
-#define	_INS_AM_r14		0xac00
-#define	_INS_AM_r15		0xad00
+
+#define	_INS_AM_r10l	0xa800
+#define	_INS_AM_r10w	0xa900
+#define	_INS_AM_r10d	0xaa00
+#define	_INS_AM_r10		0xab00
+
+#define	_INS_AM_r11l	0xac00
+#define	_INS_AM_r11w	0xad00
+#define	_INS_AM_r11d	0xae00
+#define	_INS_AM_r11		0xaf00
+
+#define	_INS_AM_r12l	0xb000
+#define	_INS_AM_r12w	0xb100
+#define	_INS_AM_r12d	0xb200
+#define	_INS_AM_r12		0xb300
+
+#define	_INS_AM_r13l	0xb400
+#define	_INS_AM_r13w	0xb500
+#define	_INS_AM_r13d	0xb600
+#define	_INS_AM_r13		0xb700
+
+#define	_INS_AM_r14l	0xb800
+#define	_INS_AM_r14w	0xb900
+#define	_INS_AM_r14d	0xba00
+#define	_INS_AM_r14		0xbb00
+
+#define	_INS_AM_r15l	0xbc00
+#define	_INS_AM_r15w	0xbd00
+#define	_INS_AM_r15d	0xbe00
+#define	_INS_AM_r15		0xbf00
 
 
-#define	_INS_AM_AL		0xb000
+#define	_INS_AM_AL		0xc000
 
 
-#define	_INS_AM_LABEL	0xc000
+#define	_INS_AM_LABEL	0xd000
 
 
 
@@ -400,16 +431,16 @@ typedef struct _Instruction {
 	uint32_t	superscript;	// Opcode Map里的指令上标。
 
 	struct {
-		uint8_t		opcode_len;		// Opcode的长度。值：1、2、3。
-		uint8_t		opcode1;
-		uint8_t		opcode2;
-		uint8_t		opcode3;
+		uint8_t		len;		// Opcode的长度。值：1、2、3。
+		uint8_t		o1;
+		uint8_t		o2;
+		uint8_t		o3;
 	} opcode;
 	
 	struct {
-		uint16_t	oprd1;
-		uint16_t	oprd2;
-		uint16_t	oprd3;
+		uint16_t	o1;
+		uint16_t	o2;
+		uint16_t	o3;
 	} oprd;
 
 	InstructionEncoder	encoder;
@@ -424,6 +455,9 @@ typedef struct _Instruction {
 		uint8_t		mod_rm;
 
 	} opcode_ext;
+
+	bool oprd_reversible;			// 对于只有两个参数的指令，参数顺序任意。
+
 } Instruction;
 
 #endif

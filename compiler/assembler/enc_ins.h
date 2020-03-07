@@ -66,7 +66,16 @@ typedef struct {
 	// 当rex_prefix_used=true时，rex_prefix字段内各项有意义。
 	bool rex_prefix_used;
 	struct {
-		// REX Prefix用于访问64位时使用。
+		/*
+			REX Prefix用于访问64位时使用。
+			Field Name	Bit Position	Definition
+			-			7:4				0100
+			W			3				0 = Operand size determined by CS.D
+										1 = 64 Bit Operand Size
+			R			2				Extension of the ModR/M reg field
+			X			1				Extension of the SIB index field
+			B			0				Extension of the ModR/M r/m field, SIB base field, or Opcode reg field
+		*/
 		
 		// 0 = Operand size根据CS.D确定。
 		// 1 = 使用64位的Operand size
@@ -91,6 +100,13 @@ typedef struct {
 	// 当mod_rm_used=true时，mod_rm字段内各项有效。
 	bool mod_rm_used;
 	struct {
+		/*
+			Field Name	Bit Position	Definition
+			MOD			7:6				Mod
+			REG			5:3				Reg
+			R/M			2:0				R/M
+		*/
+
 		uint8_t mod;
 
 		uint8_t reg;
@@ -102,6 +118,12 @@ typedef struct {
 	// 当sib_used=true时，sib字段内各项有效。
 	bool sib_used;
 	struct {
+		/*
+			Field Name	Bit Position	Definition
+			SCALE		7:6				Scale
+			INDEX		5:3				Index
+			BASE		2:0				Base
+		*/
 		uint8_t scale;
 
 		uint8_t index;
