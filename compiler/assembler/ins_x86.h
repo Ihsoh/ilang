@@ -1,6 +1,0 @@
-#ifndef __COMPILER_ASSEMBLER_INS_X86_H__
-#define __COMPILER_ASSEMBLER_INS_X86_H__
-
-
-
-#endif
