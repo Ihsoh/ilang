@@ -1,6 +1,9 @@
 #ifndef __COMPILER_ASSEMBLER_INS_H__
 #define __COMPILER_ASSEMBLER_INS_H__
 
+
+#include <stdio.h>
+
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -499,5 +502,16 @@ typedef struct _Instruction {
 	bool oprd_reversible;			// 对于只有两个参数的指令，参数顺序任意。
 
 } Instruction;
+
+extern bool ins_enc_not_implemented(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+#define	INS_ENC_NOT_IMPLEMENTED		(ins_enc_not_implemented)
+
+extern void ins_print_all_ins_list(
+	FILE *file
+);
 
 #endif

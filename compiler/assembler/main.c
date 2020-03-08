@@ -65,6 +65,8 @@ static void _help(void) {
 	fputs(info, stdout);
 }
 
+#include "ins.h"
+
 int main(int argc, char *argv[]) {
 	
 
@@ -72,6 +74,8 @@ int main(int argc, char *argv[]) {
 	char *opt_action = NULL;
 	char *opt_target = NULL;
 	char *opt_output = NULL;
+
+	ins_print_all_ins_list(stdout);
 
 	return 0;
 }
