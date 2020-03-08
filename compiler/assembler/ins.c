@@ -1579,6 +1579,803 @@ static Instruction _ins[] = {
 		_ENC_NOT_IMPLEMENTED
 	},
 
+	// 0x0c, 0x00~0x07
+	// Shift Grp 2
+
+	// ROL
+	{
+		"ROL", _INS_SS_1A,
+		{1, 0xc0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x0
+		}
+	},
+	{
+		"ROL", _INS_SS_1A,
+		{1, 0xc0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x0
+		}
+	},
+
+	// ROR
+	{
+		"ROR", _INS_SS_1A,
+		{1, 0xc0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x1
+		}
+	},
+	{
+		"ROR", _INS_SS_1A,
+		{1, 0xc0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x1
+		}
+	},
+
+	// RCL
+	{
+		"RCL", _INS_SS_1A,
+		{1, 0xc0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x2
+		}
+	},
+	{
+		"RCL", _INS_SS_1A,
+		{1, 0xc0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x2
+		}
+	},
+
+	// RCR
+	{
+		"RCR", _INS_SS_1A,
+		{1, 0xc0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x3
+		}
+	},
+	{
+		"RCR", _INS_SS_1A,
+		{1, 0xc0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x3
+		}
+	},
+
+	// SHL/SAL
+	// SHL和SAL是同一条指令，指令码完全一样。
+	{
+		"SHL", _INS_SS_1A,
+		{1, 0xc0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SHL", _INS_SS_1A,
+		{1, 0xc0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SAL", _INS_SS_1A,
+		{1, 0xc0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SAL", _INS_SS_1A,
+		{1, 0xc0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+
+	// SHR
+	{
+		"SHR", _INS_SS_1A,
+		{1, 0xc0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x5
+		}
+	},
+	{
+		"SHR", _INS_SS_1A,
+		{1, 0xc0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x5
+		}
+	},
+
+	// SAR
+	{
+		"SAR", _INS_SS_1A,
+		{1, 0xc0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x7
+		}
+	},
+	{
+		"SAR", _INS_SS_1A,
+		{1, 0xc0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x7
+		}
+	},
+
+	{
+		"RET", _INS_SS_f64,
+		{1, 0xc0 | 0x02},
+		{
+			_INS_AM_NEAR,
+			_INS_AM_I | _INS_OT_w
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"RET", _INS_SS_f64,
+		{1, 0xc0 | 0x03},
+		{
+			_INS_AM_NEAR
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"LES", _INS_SS_i64,
+		{1, 0xc0 | 0x04},
+		{
+			_INS_AM_G | _INS_OT_z,
+			_INS_AM_M | _INS_OT_p
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"LDS", _INS_SS_i64,
+		{1, 0xc0 | 0x05},
+		{
+			_INS_AM_G | _INS_OT_z,
+			_INS_AM_M | _INS_OT_p
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+
+	// Grp 11 - MOV
+	// MOV
+	{
+		"MOV", _INS_SS_1A,
+		{1, 0xc0 | 0x06},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x0
+		}
+	},
+	{
+		"MOV", _INS_SS_1A,
+		{1, 0xc0 | 0x07},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_I | _INS_OT_z
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x0
+		}
+	},
+
+	// 0x0d, 0x00~0x07
+	// Shift Grp 2
+	// ROL
+	{
+		"ROL", _INS_SS_1A,
+		{1, 0xd0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x0
+		}
+	},
+	{
+		"ROL", _INS_SS_1A,
+		{1, 0xd0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x0
+		}
+	},
+	{
+		"ROL", _INS_SS_1A,
+		{1, 0xd0 | 0x02},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x0
+		}
+	},
+	{
+		"ROL", _INS_SS_1A,
+		{1, 0xd0 | 0x03},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x0
+		}
+	},
+
+	// ROR
+	{
+		"ROR", _INS_SS_1A,
+		{1, 0xd0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x1
+		}
+	},
+	{
+		"ROR", _INS_SS_1A,
+		{1, 0xd0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x1
+		}
+	},
+	{
+		"ROR", _INS_SS_1A,
+		{1, 0xd0 | 0x02},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x1
+		}
+	},
+	{
+		"ROR", _INS_SS_1A,
+		{1, 0xd0 | 0x03},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x1
+		}
+	},
+
+	// RCL
+	{
+		"RCL", _INS_SS_1A,
+		{1, 0xd0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x2
+		}
+	},
+	{
+		"RCL", _INS_SS_1A,
+		{1, 0xd0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x2
+		}
+	},
+	{
+		"RCL", _INS_SS_1A,
+		{1, 0xd0 | 0x02},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x2
+		}
+	},
+	{
+		"RCL", _INS_SS_1A,
+		{1, 0xd0 | 0x03},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x2
+		}
+	},
+
+	// RCR
+	{
+		"RCR", _INS_SS_1A,
+		{1, 0xd0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x3
+		}
+	},
+	{
+		"RCR", _INS_SS_1A,
+		{1, 0xd0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x3
+		}
+	},
+	{
+		"RCR", _INS_SS_1A,
+		{1, 0xd0 | 0x02},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x3
+		}
+	},
+	{
+		"RCR", _INS_SS_1A,
+		{1, 0xd0 | 0x03},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x3
+		}
+	},
+
+	// SHL/SAL
+	{
+		"SHL", _INS_SS_1A,
+		{1, 0xd0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SHL", _INS_SS_1A,
+		{1, 0xd0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SHL", _INS_SS_1A,
+		{1, 0xd0 | 0x02},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SHL", _INS_SS_1A,
+		{1, 0xd0 | 0x03},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SAL", _INS_SS_1A,
+		{1, 0xd0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SAL", _INS_SS_1A,
+		{1, 0xd0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SAL", _INS_SS_1A,
+		{1, 0xd0 | 0x02},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+	{
+		"SAL", _INS_SS_1A,
+		{1, 0xd0 | 0x03},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x4
+		}
+	},
+
+	// SHR
+	{
+		"SHR", _INS_SS_1A,
+		{1, 0xd0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x5
+		}
+	},
+	{
+		"SHR", _INS_SS_1A,
+		{1, 0xd0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x5
+		}
+	},
+	{
+		"SHR", _INS_SS_1A,
+		{1, 0xd0 | 0x02},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x5
+		}
+	},
+	{
+		"SHR", _INS_SS_1A,
+		{1, 0xd0 | 0x03},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x5
+		}
+	},
+
+	// SAR
+	{
+		"SAR", _INS_SS_1A,
+		{1, 0xd0 | 0x00},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x7
+		}
+	},
+	{
+		"SAR", _INS_SS_1A,
+		{1, 0xd0 | 0x01},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CONST_1
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x7
+		}
+	},
+	{
+		"SAR", _INS_SS_1A,
+		{1, 0xd0 | 0x02},
+		{
+			_INS_AM_E | _INS_OT_b,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x7
+		}
+	},
+	{
+		"SAR", _INS_SS_1A,
+		{1, 0xd0 | 0x03},
+		{
+			_INS_AM_E | _INS_OT_v,
+			_INS_AM_CL
+		},
+		_ENC_NOT_IMPLEMENTED,
+		.opcode_ext = {
+			.used = true,
+			.mod_rm = 0x7
+		}
+	},
+
+	{
+		"AAM", _INS_SS_i64,
+		{1, 0xd0 | 0x04},
+		{
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"AAD", _INS_SS_i64,
+		{1, 0xd0 | 0x05},
+		{
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"XLAT", _INS_SS_NONE,
+		{1, 0xd0 | 0x07},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"XLATB", _INS_SS_NONE,
+		{1, 0xd0 | 0x07},
+		{
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+
+	// 0x0e, 0x00~0x07
+	{
+		"LOOPNE", _INS_SS_f64,
+		{1, 0xe0 | 0x00},
+		{
+			_INS_AM_J | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"LOOPNZ", _INS_SS_f64,
+		{1, 0xe0 | 0x00},
+		{
+			_INS_AM_J | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"LOOPE", _INS_SS_f64,
+		{1, 0xe0 | 0x01},
+		{
+			_INS_AM_J | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"LOOPZ", _INS_SS_f64,
+		{1, 0xe0 | 0x01},
+		{
+			_INS_AM_J | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"LOOP", _INS_SS_f64,
+		{1, 0xe0 | 0x02},
+		{
+			_INS_AM_J | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+
+
 
 
 
