@@ -1452,6 +1452,135 @@ static Instruction _ins[] = {
 		},
 		_ENC_NOT_IMPLEMENTED
 	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x01},
+		{
+			_INS_AM_CL,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x01},
+		{
+			_INS_AM_r9l,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x02},
+		{
+			_INS_AM_DL,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x02},
+		{
+			_INS_AM_r10l,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x03},
+		{
+			_INS_AM_BL,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x03},
+		{
+			_INS_AM_r11l,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x04},
+		{
+			_INS_AM_AH,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x04},
+		{
+			_INS_AM_r12l,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x05},
+		{
+			_INS_AM_CH,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x05},
+		{
+			_INS_AM_r13l,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x06},
+		{
+			_INS_AM_DH,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x06},
+		{
+			_INS_AM_r14l,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x07},
+		{
+			_INS_AM_BH,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"MOV", _INS_SS_NONE,
+		{1, 0xb0 | 0x07},
+		{
+			_INS_AM_r15l,
+			_INS_AM_I | _INS_OT_b
+		},
+		_ENC_NOT_IMPLEMENTED
+	},
+
+
+
 
 	// TODO: ...
 

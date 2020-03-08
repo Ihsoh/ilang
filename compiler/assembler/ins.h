@@ -157,75 +157,109 @@
 #define	_INS_AM_FS		0x8400
 #define	_INS_AM_GS		0x8500
 
-#define	_INS_AM_eAX		0x8600
-#define	_INS_AM_rAX		0x8700
+#define	_INS_AM_AL		0x8600
+#define	_INS_AM_AH		0x8700
+#define	_INS_AM_AX		0x8800
+#define	_INS_AM_EAX		0x8900
+#define	_INS_AM_RAX		0x8a00
+#define	_INS_AM_eAX		0x8b00
+#define	_INS_AM_rAX		0x8c00
 
-#define	_INS_AM_eCX		0x8800
-#define	_INS_AM_rCX		0x8900
+#define	_INS_AM_CL		0x8d00
+#define	_INS_AM_CH		0x8e00
+#define	_INS_AM_CX		0x8f00
+#define	_INS_AM_ECX		0x9000
+#define	_INS_AM_RCX		0x9100
+#define	_INS_AM_eCX		0x9200
+#define	_INS_AM_rCX		0x9300
 
-#define	_INS_AM_eDX		0x8a00
-#define	_INS_AM_rDX		0x8b00
+#define	_INS_AM_DL		0x9400
+#define	_INS_AM_DH		0x9500
+#define	_INS_AM_DX		0x9600
+#define	_INS_AM_EDX		0x9700
+#define	_INS_AM_RDX		0x9800
+#define	_INS_AM_eDX		0x9900
+#define	_INS_AM_rDX		0x9a00
 
-#define	_INS_AM_eBX		0x8c00
-#define	_INS_AM_rBX		0x8d00
+#define	_INS_AM_BL		0x9b00
+#define	_INS_AM_BH		0x9c00
+#define	_INS_AM_BX		0x9d00
+#define	_INS_AM_EBX		0x9e00
+#define	_INS_AM_RBX		0x9f00
+#define	_INS_AM_eBX		0xa000
+#define	_INS_AM_rBX		0xa100
 
-#define	_INS_AM_eSP		0x8e00
-#define	_INS_AM_rSP		0x8f00
+#define	_INS_AM_SPL		0xa200
+#define	_INS_AM_SP		0xa300
+#define	_INS_AM_ESP		0xa400
+#define	_INS_AM_RSP		0xa500
+#define	_INS_AM_eSP		0xa600
+#define	_INS_AM_rSP		0xa700
 
-#define	_INS_AM_eBP		0x9000
-#define	_INS_AM_rBP		0x9100
+#define	_INS_AM_BPL		0xa800
+#define	_INS_AM_BP		0xa900
+#define	_INS_AM_EBP		0xaa00
+#define	_INS_AM_RBP		0xab00
+#define	_INS_AM_eBP		0xac00
+#define	_INS_AM_rBP		0xad00
 
-#define	_INS_AM_eSI		0x9200
-#define	_INS_AM_rSI		0x9300
+#define	_INS_AM_SIL		0xae00
+#define	_INS_AM_SI		0xaf00
+#define	_INS_AM_ESI		0xb000
+#define	_INS_AM_RSI		0xb100
+#define	_INS_AM_eSI		0xb200
+#define	_INS_AM_rSI		0xb300
 
-#define	_INS_AM_eDI		0x9400
-#define	_INS_AM_rDI		0x9500
+#define	_INS_AM_DIL		0xb400
+#define	_INS_AM_DI		0xb500
+#define	_INS_AM_EDI		0xb600
+#define	_INS_AM_RDI		0xb700
+#define	_INS_AM_eDI		0xb800
+#define	_INS_AM_rDI		0xb900
 
-#define	_INS_AM_r8l		0xa000
-#define	_INS_AM_r8w		0xa100
-#define	_INS_AM_r8d		0xa200
-#define	_INS_AM_r8		0xa300
+#define	_INS_AM_r8l		0xba00
+#define	_INS_AM_r8w		0xbb00
+#define	_INS_AM_r8d		0xbc00
+#define	_INS_AM_r8		0xbd00
 
-#define	_INS_AM_r9l		0xa400
-#define	_INS_AM_r9w		0xa500
-#define	_INS_AM_r9d		0xa600
-#define	_INS_AM_r9		0xa700
+#define	_INS_AM_r9l		0xbe00
+#define	_INS_AM_r9w		0xbf00
+#define	_INS_AM_r9d		0xc000
+#define	_INS_AM_r9		0xc100
 
-#define	_INS_AM_r10l	0xa800
-#define	_INS_AM_r10w	0xa900
-#define	_INS_AM_r10d	0xaa00
-#define	_INS_AM_r10		0xab00
+#define	_INS_AM_r10l	0xc200
+#define	_INS_AM_r10w	0xc300
+#define	_INS_AM_r10d	0xc400
+#define	_INS_AM_r10		0xc500
 
-#define	_INS_AM_r11l	0xac00
-#define	_INS_AM_r11w	0xad00
-#define	_INS_AM_r11d	0xae00
-#define	_INS_AM_r11		0xaf00
+#define	_INS_AM_r11l	0xc600
+#define	_INS_AM_r11w	0xc700
+#define	_INS_AM_r11d	0xc800
+#define	_INS_AM_r11		0xc900
 
-#define	_INS_AM_r12l	0xb000
-#define	_INS_AM_r12w	0xb100
-#define	_INS_AM_r12d	0xb200
-#define	_INS_AM_r12		0xb300
+#define	_INS_AM_r12l	0xca00
+#define	_INS_AM_r12w	0xcb00
+#define	_INS_AM_r12d	0xcc00
+#define	_INS_AM_r12		0xcd00
 
-#define	_INS_AM_r13l	0xb400
-#define	_INS_AM_r13w	0xb500
-#define	_INS_AM_r13d	0xb600
-#define	_INS_AM_r13		0xb700
+#define	_INS_AM_r13l	0xce00
+#define	_INS_AM_r13w	0xcf00
+#define	_INS_AM_r13d	0xd000
+#define	_INS_AM_r13		0xd100
 
-#define	_INS_AM_r14l	0xb800
-#define	_INS_AM_r14w	0xb900
-#define	_INS_AM_r14d	0xba00
-#define	_INS_AM_r14		0xbb00
+#define	_INS_AM_r14l	0xd200
+#define	_INS_AM_r14w	0xd300
+#define	_INS_AM_r14d	0xd400
+#define	_INS_AM_r14		0xd500
 
-#define	_INS_AM_r15l	0xbc00
-#define	_INS_AM_r15w	0xbd00
-#define	_INS_AM_r15d	0xbe00
-#define	_INS_AM_r15		0xbf00
-
-
-#define	_INS_AM_AL		0xc000
+#define	_INS_AM_r15l	0xd600
+#define	_INS_AM_r15w	0xd700
+#define	_INS_AM_r15d	0xd800
+#define	_INS_AM_r15		0xd900
 
 
-#define	_INS_AM_LABEL	0xd000
+
+#define	_INS_AM_LABEL	0xe000
 
 
 
