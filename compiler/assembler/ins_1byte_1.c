@@ -699,7 +699,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -713,7 +713,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -727,7 +727,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -741,7 +741,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -757,7 +757,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -771,7 +771,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -785,7 +785,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -799,7 +799,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -815,7 +815,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -829,7 +829,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -843,7 +843,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -857,7 +857,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -873,7 +873,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -887,7 +887,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -901,7 +901,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -915,7 +915,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -931,7 +931,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -945,7 +945,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -959,7 +959,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -973,7 +973,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -989,7 +989,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -1003,7 +1003,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -1017,7 +1017,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -1031,7 +1031,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -1047,7 +1047,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x6
 		}
@@ -1061,7 +1061,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x6
 		}
@@ -1075,7 +1075,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x6
 		}
@@ -1089,7 +1089,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x6
 		}
@@ -1105,7 +1105,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -1119,7 +1119,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -1133,7 +1133,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -1147,7 +1147,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -1612,7 +1612,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -1626,7 +1626,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -1642,7 +1642,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -1656,7 +1656,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -1672,7 +1672,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -1686,7 +1686,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -1702,7 +1702,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -1716,7 +1716,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -1733,7 +1733,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -1747,7 +1747,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -1761,7 +1761,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -1775,7 +1775,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -1791,7 +1791,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -1805,7 +1805,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -1821,7 +1821,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -1835,7 +1835,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -1888,7 +1888,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -1902,7 +1902,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -1920,7 +1920,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -1934,7 +1934,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -1948,7 +1948,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -1962,7 +1962,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -1978,7 +1978,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -1992,7 +1992,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -2006,7 +2006,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -2020,7 +2020,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
@@ -2036,7 +2036,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -2050,7 +2050,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -2064,7 +2064,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -2078,7 +2078,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -2094,7 +2094,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -2108,7 +2108,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -2122,7 +2122,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -2136,7 +2136,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -2152,7 +2152,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2166,7 +2166,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2180,7 +2180,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2194,7 +2194,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2208,7 +2208,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2222,7 +2222,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2236,7 +2236,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2250,7 +2250,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2266,7 +2266,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -2280,7 +2280,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -2294,7 +2294,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -2308,7 +2308,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -2324,7 +2324,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -2338,7 +2338,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -2352,7 +2352,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -2366,7 +2366,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -2580,7 +2580,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -2593,7 +2593,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
@@ -2608,7 +2608,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -2621,7 +2621,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
@@ -2636,7 +2636,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -2649,7 +2649,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
@@ -2664,7 +2664,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2677,7 +2677,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
@@ -2692,7 +2692,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -2705,7 +2705,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
@@ -2720,7 +2720,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x6
 		}
@@ -2733,7 +2733,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x6
 		}
@@ -2748,7 +2748,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
@@ -2761,7 +2761,7 @@ Instruction ins_1byte_1[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
 			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7
 		}
