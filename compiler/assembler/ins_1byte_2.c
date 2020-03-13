@@ -799,8 +799,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x0
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x0
 		}
 	},
 
@@ -1464,8 +1464,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x0
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x0
 		}
 	},
 	{
@@ -1476,8 +1476,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x1
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x1
 		}
 	},
 
@@ -1490,8 +1490,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x0
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x0
 		}
 	},
 	{
@@ -1502,8 +1502,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x1
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x1
 		}
 	},
 	{
@@ -1515,8 +1515,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x2
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x2
 		}
 	},
 	{
@@ -1528,8 +1528,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x3
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x3
 		}
 	},
 	{
@@ -1541,8 +1541,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x4
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x4
 		}
 	},
 	{
@@ -1554,8 +1554,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x5
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x5
 		}
 	},
 	{
@@ -1566,8 +1566,8 @@ Instruction ins_1byte_2[] = {
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.used = true,
-			.mod_rm = 0x6
+			.mask = _INS_OPCODE_EXT_MASK_REG,
+			.reg = 0x6
 		}
 	},
 

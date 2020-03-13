@@ -465,6 +465,11 @@ struct _Instruction;
 
 typedef bool (* InstructionEncoder)(struct _Instruction *ins, InstructionEncoderData *data);
 
+#define	_INS_OPCODE_EXT_MASK_RM		(1 << 0)
+#define	_INS_OPCODE_EXT_MASK_REG	(1 << 1)
+#define	_INS_OPCODE_EXT_MASK_MOD	(1 << 2)
+#define	_INS_OPCODE_EXT_MASK_PFX	(1 << 3)
+
 typedef struct _Instruction {
 	/*======================================================================
 		基本字段，不允许改变顺序。
@@ -495,9 +500,17 @@ typedef struct _Instruction {
 	======================================================================*/
 
 	struct {
-		bool		used;
-		uint8_t		mod_rm;
+		// _INS_OPCODE_EXT_MASK_PFX
+		// _INS_OPCODE_EXT_MASK_MOD
+		// _INS_OPCODE_EXT_MASK_REG
+		// _INS_OPCODE_EXT_MASK_RM
+		uint8_t		mask;
 
+		uint8_t		pfx;
+		
+		uint8_t		mod:2;
+		uint8_t		reg:3;
+		uint8_t		rm:3;
 	} opcode_ext;
 
 	bool oprd_reversible;			// 对于只有两个参数的指令，参数顺序任意。

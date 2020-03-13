@@ -11,6 +11,7 @@
 
 extern Instruction ins_1byte_1[];
 extern Instruction ins_1byte_2[];
+extern Instruction ins_2byte_1[];
 
 bool ins_enc_not_implemented(
 	Instruction *ins,
@@ -47,4 +48,5 @@ void ins_print_all_ins_list(
 ) {
 	_print_ins_list(&ins_1byte_1, file);
 	_print_ins_list(&ins_1byte_2, file);
+	_print_ins_list(&ins_2byte_1, file);
 }
