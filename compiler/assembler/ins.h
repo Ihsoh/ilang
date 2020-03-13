@@ -266,8 +266,9 @@
 
 #define	_INS_AM_NEAR	0xe100
 #define	_INS_AM_FAR		0xe200
+#define	_INS_AM_SHORT	0xe300
 
-#define	_INS_AM_CONST_1	0xe300
+#define	_INS_AM_CONST_1	0xe400
 
 
 
