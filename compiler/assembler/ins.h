@@ -470,6 +470,9 @@ typedef bool (* InstructionEncoder)(struct _Instruction *ins, InstructionEncoder
 #define	_INS_OPCODE_EXT_MASK_MOD	(1 << 2)
 #define	_INS_OPCODE_EXT_MASK_PFX	(1 << 3)
 
+#define	_INS_OPCODE_EXT_MOD_MEM		(1 << 0)
+#define	_INS_OPCODE_EXT_MOD_11B		(1 << 1)
+
 typedef struct _Instruction {
 	/*======================================================================
 		基本字段，不允许改变顺序。
@@ -508,8 +511,12 @@ typedef struct _Instruction {
 
 		uint8_t		pfx;
 		
+		// _INS_OPCODE_EXT_MOD_MEM
+		// _INS_OPCODE_EXT_MOD_11B
 		uint8_t		mod:2;
+
 		uint8_t		reg:3;
+
 		uint8_t		rm:3;
 	} opcode_ext;
 
