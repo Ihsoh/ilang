@@ -71,6 +71,13 @@
 #define	ASM_TOKEN_PNCT_AND						0x401b	// &&
 #define	ASM_TOKEN_PNCT_QUESTION_MARK			0x401c	// ?
 
+
+
+
+
+
+#define	ASM_TOKEN_PREPROCESS					0xd000	// #...\n
+
 #define	ASM_TOKEN_SINGLE_LINE_COMMENT			0xe000	// //...
 #define	ASM_TOKEN_MULTILINE_COMMENT				0xe001	// /* ... */
 

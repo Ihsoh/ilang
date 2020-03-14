@@ -535,4 +535,19 @@ extern void ins_print_all_ins_list(
 	FILE *file
 );
 
+typedef struct {
+	size_t			ins_table_index;
+	Instruction 	*next;
+} InstructionIterator;
+
+void ins_iter_init(
+	InstructionIterator *iter
+);
+Instruction * ins_iter_next(
+	InstructionIterator *iter
+);
+void ins_iter_free(
+	InstructionIterator *iter
+);
+
 #endif
