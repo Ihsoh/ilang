@@ -39,8 +39,6 @@
 #define	ASM_TOKEN_KEYWORD_DIRECTIVE_4BYTE		0x300f
 #define	ASM_TOKEN_KEYWORD_DIRECTIVE_8BYTE		0x3010
 
-#define	ASM_TOKEN_KEYWORD_INSTRUCTION			0x4000
-
 #define	ASM_TOKEN_PNCT_SEMICOLON				0x4000	// ;
 #define	ASM_TOKEN_PNCT_PARENTHESES_LEFT			0x4001	// (
 #define	ASM_TOKEN_PNCT_PARENTHESES_RIGHT		0x4002	// )
@@ -71,8 +69,8 @@
 #define	ASM_TOKEN_PNCT_AND						0x401b	// &&
 #define	ASM_TOKEN_PNCT_QUESTION_MARK			0x401c	// ?
 
-
-
+#define	ASM_TOKEN_KEYWORD_INSTRUCTION			0x5000
+#define	ASM_TOKEN_KEYWORD_REGISTER				0x5001
 
 
 
@@ -80,5 +78,17 @@
 
 #define	ASM_TOKEN_SINGLE_LINE_COMMENT			0xe000	// //...
 #define	ASM_TOKEN_MULTILINE_COMMENT				0xe001	// /* ... */
+
+
+
+
+extern LexerContext * asm_lexer_new_context(
+	const char *file,
+	const char *source,
+	int len
+);
+extern void asm_lexer_free_context(
+	LexerContext * ctx
+);
 
 #endif

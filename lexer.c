@@ -429,3 +429,38 @@ void lexer_change_file_by_token(
 	ctx->file = cstr;
 	rarr_append_with_raw(&(ctx->rarr_file), &cstr, 1);
 }
+
+void lexer_print_token_info(
+	LexerToken *token,
+	FILE *file
+) {
+	assert(token);
+	assert(file);
+
+	fputs("Name: ", file);
+	cmn_print_token(token, file);
+	fputc('\n', file);
+
+	fprintf(file, "Length: %d\n", token->len);
+	fprintf(file, "Type: 0x%x(%d)\n", token->type, token->type);
+	fprintf(file, "File: %s\n", token->file);
+	fprintf(file, "Line: %d\n", token->line);
+	fprintf(file, "Column: %d\n", token->column);
+}
+
+void lexer_print_tokens(
+	LexerContext * ctx,
+	FILE *file
+) {
+	assert(ctx);
+	assert(file);
+
+	LexerToken *token = ctx->head;
+	
+	while (token != NULL) {
+		lexer_print_token_info(token, file);
+		fputc('\n', file);
+
+		token = token->next;
+	}
+}

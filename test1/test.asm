@@ -1,0 +1,4 @@
+MOV	AX, BX;
+MOV	EAX, EBX;
+MOV	RAX, RBX;
+MOV RAX, 1;

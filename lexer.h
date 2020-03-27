@@ -124,6 +124,15 @@ extern void lexer_change_file_by_token(
 	LexerToken *token
 );
 
+extern void lexer_print_token_info(
+	LexerToken *token,
+	FILE *file
+);
+extern void lexer_print_tokens(
+	LexerContext * ctx,
+	FILE *file
+);
+
 #define	LEXER_MATCHER(name) 		static LexerToken * name##_matcher(LexerContext *ctx, int *abandon) {	\
 										assert(ctx); assert(abandon); {
 #define	LEXER_ABANDON_TOKEN			{ *abandon = 1; }

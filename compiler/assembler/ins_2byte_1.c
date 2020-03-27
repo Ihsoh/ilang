@@ -4,106 +4,106 @@ Instruction ins_2byte_1[] = {
 	// 0x0f | 0x00, 0x00~0x07
 	// Grp 6
 	{
-		"SLDT", _INS_SS_1A,
+		"SLDT", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x00},
 		{
-			_INS_AM_R | _INS_OT_v
+			INS_AM_R | INS_OT_v
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
 	},
 	{
-		"SLDT", _INS_SS_1A,
+		"SLDT", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x00},
 		{
-			_INS_AM_M | _INS_OT_w
+			INS_AM_M | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0
 		}
 	},
 	{
-		"STR", _INS_SS_1A,
+		"STR", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x00},
 		{
-			_INS_AM_R | _INS_OT_v
+			INS_AM_R | INS_OT_v
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
 	},
 	{
-		"STR", _INS_SS_1A,
+		"STR", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x00},
 		{
-			_INS_AM_M | _INS_OT_v
+			INS_AM_M | INS_OT_v
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1
 		}
 	},
 	{
-		"LLDT", _INS_SS_1A,
+		"LLDT", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x00},
 		{
-			_INS_AM_E | _INS_OT_w
+			INS_AM_E | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
 	},
 	{
-		"LTR", _INS_SS_1A,
+		"LTR", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x00},
 		{
-			_INS_AM_E | _INS_OT_w
+			INS_AM_E | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x3
 		}
 	},
 	{
-		"VERR", _INS_SS_1A,
+		"VERR", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x00},
 		{
-			_INS_AM_E | _INS_OT_w
+			INS_AM_E | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
 	},
 	{
-		"VERW", _INS_SS_1A,
+		"VERW", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x00},
 		{
-			_INS_AM_E | _INS_OT_w
+			INS_AM_E | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x5
 		}
 	},
@@ -111,66 +111,66 @@ Instruction ins_2byte_1[] = {
 	// Grp 7
 	// reg=0x0
 	{
-		"SGDT", _INS_SS_1A,
+		"SGDT", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
-			_INS_AM_M | _INS_OT_s
+			INS_AM_M | INS_OT_s
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM,
 			.reg = 0x0
 		}
 	},
 	{
-		"VMCALL", _INS_SS_1A,
+		"VMCALL", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0,
 			.rm = 0x1
 		}
 	},
 	{
-		"VMLAUNCH", _INS_SS_1A,
+		"VMLAUNCH", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0,
 			.rm = 0x2
 		}
 	},
 	{
-		"VMRESUME", _INS_SS_1A,
+		"VMRESUME", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0,
 			.rm = 0x3
 		}
 	},
 	{
-		"VMXOFF", _INS_SS_1A,
+		"VMXOFF", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x0,
 			.rm = 0x4
 		}
@@ -178,79 +178,79 @@ Instruction ins_2byte_1[] = {
 	
 	// reg=0x1
 	{
-		"SIDT", _INS_SS_1A,
+		"SIDT", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
-			_INS_AM_M | _INS_OT_s
+			INS_AM_M | INS_OT_s
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM,
 			.reg = 0x1
 		}
 	},
 	{
-		"MONITOR", _INS_SS_1A,
+		"MONITOR", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1,
 			.rm = 0x0
 		}
 	},
 	{
-		"MWAIT", _INS_SS_1A,
+		"MWAIT", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1,
 			.rm = 0x1
 		}
 	},
 	{
-		"CLAC", _INS_SS_1A,
+		"CLAC", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1,
 			.rm = 0x2
 		}
 	},
 	{
-		"STAC", _INS_SS_1A,
+		"STAC", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1,
 			.rm = 0x3
 		}
 	},
 	{
-		"ENCLS", _INS_SS_1A,
+		"ENCLS", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x1,
 			.rm = 0x7
 		}
@@ -258,92 +258,92 @@ Instruction ins_2byte_1[] = {
 
 	// reg=0x2
 	{
-		"LGDT", _INS_SS_1A,
+		"LGDT", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
-			_INS_AM_M | _INS_OT_s
+			INS_AM_M | INS_OT_s
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM,
 			.reg = 0x2
 		}
 	},
 	{
-		"XGETBV", _INS_SS_1A,
+		"XGETBV", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2,
 			.rm = 0x0
 		}
 	},
 	{
-		"XSETBV", _INS_SS_1A,
+		"XSETBV", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2,
 			.rm = 0x1
 		}
 	},
 	{
-		"VMFUNC", _INS_SS_1A,
+		"VMFUNC", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2,
 			.rm = 0x4
 		}
 	},
 	{
-		"XEND", _INS_SS_1A,
+		"XEND", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2,
 			.rm = 0x5
 		}
 	},
 	{
-		"XTEST", _INS_SS_1A,
+		"XTEST", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2,
 			.rm = 0x6
 		}
 	},
 	{
-		"ENCLU", _INS_SS_1A,
+		"ENCLU", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2,
 			.rm = 0x7
 		}
@@ -351,137 +351,137 @@ Instruction ins_2byte_1[] = {
 
 	// reg=0x3
 	{
-		"LIDT", _INS_SS_1A,
+		"LIDT", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
-			_INS_AM_M | _INS_OT_s
+			INS_AM_M | INS_OT_s
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM,
 			.reg = 0x3
 		}
 	},
 
 	// reg=0x4
 	{
-		"SMSW", _INS_SS_1A,
+		"SMSW", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
-			_INS_AM_M | _INS_OT_w
+			INS_AM_M | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
 	},
 	{
-		"SMSW", _INS_SS_1A,
+		"SMSW", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
-			_INS_AM_R | _INS_OT_v
+			INS_AM_R | INS_OT_v
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x4
 		}
 	},
 
 	// reg=0x6
 	{
-		"LMSW", _INS_SS_1A,
+		"LMSW", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
-			_INS_AM_E | _INS_OT_w
+			INS_AM_E | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM | _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x6
 		}
 	},
 
 	// reg=0x7
 	{
-		"INVLPG", _INS_SS_1A,
+		"INVLPG", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
-			_INS_AM_M | _INS_OT_b
+			INS_AM_M | INS_OT_b
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG,
-			.mod = _INS_OPCODE_EXT_MOD_MEM,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
+			.mod = INS_OPCODE_EXT_MOD_MEM,
 			.reg = 0x7
 		}
 	},
 	{
-		"SWAPGS", _INS_SS_1A | _INS_SS_o64,
+		"SWAPGS", INS_SS_1A | INS_SS_o64,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7,
 			.rm = 0x0
 		}
 	},
 	{
-		"RDTSCP", _INS_SS_1A,
+		"RDTSCP", INS_SS_1A,
 		{2, 0x0f, 0x00 | 0x01},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED,
 		.opcode_ext = {
-			.mask = _INS_OPCODE_EXT_MASK_MOD | _INS_OPCODE_EXT_MASK_REG | _INS_OPCODE_EXT_MASK_RM,
-			.mod = _INS_OPCODE_EXT_MOD_11B,
+			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
+			.mod = INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x7,
 			.rm = 0x1
 		}
 	},
 
 	{
-		"LAR", _INS_SS_NONE,
+		"LAR", INS_SS_NONE,
 		{2, 0x0f, 0x00 | 0x02},
 		{
-			_INS_AM_G | _INS_OT_v,
-			_INS_AM_E | _INS_OT_w
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED
 	},
 	{
-		"LSL", _INS_SS_NONE,
+		"LSL", INS_SS_NONE,
 		{2, 0x0f, 0x00 | 0x03},
 		{
-			_INS_AM_G | _INS_OT_v,
-			_INS_AM_E | _INS_OT_w
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_w
 		},
 		INS_ENC_NOT_IMPLEMENTED
 	},
 	{
-		"SYSCALL", _INS_SS_o64,
+		"SYSCALL", INS_SS_o64,
 		{2, 0x0f, 0x00 | 0x05},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED
 	},
 	{
-		"CLTS", _INS_SS_NONE,
+		"CLTS", INS_SS_NONE,
 		{2, 0x0f, 0x00 | 0x06},
 		{
 		},
 		INS_ENC_NOT_IMPLEMENTED
 	},
 	{
-		"SYSRET", _INS_SS_o64,
+		"SYSRET", INS_SS_o64,
 		{2, 0x0f, 0x00 | 0x07},
 		{
 		},
