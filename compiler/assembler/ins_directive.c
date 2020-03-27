@@ -1,0 +1,65 @@
+#include "ins.h"
+
+Instruction ins_directive[] = {
+	{
+		"INT8", INS_SS_DIRECTIVE,
+		{0},
+		{
+			INS_DIRECTIVE_OPRD_INT
+		},
+		INS_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"INT16", INS_SS_DIRECTIVE,
+		{0},
+		{
+			INS_DIRECTIVE_OPRD_INT
+		},
+		INS_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"INT32", INS_SS_DIRECTIVE,
+		{0},
+		{
+			INS_DIRECTIVE_OPRD_INT
+		},
+		INS_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"INT64", INS_SS_DIRECTIVE,
+		{0},
+		{
+			INS_DIRECTIVE_OPRD_INT
+		},
+		INS_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"FLOAT", INS_SS_DIRECTIVE,
+		{0},
+		{
+			INS_DIRECTIVE_OPRD_REAL
+		},
+		INS_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"DOUBLE", INS_SS_DIRECTIVE,
+		{0},
+		{
+			INS_DIRECTIVE_OPRD_REAL
+		},
+		INS_ENC_NOT_IMPLEMENTED
+	},
+	{
+		"STRING", INS_SS_DIRECTIVE,
+		{0},
+		{
+			INS_DIRECTIVE_OPRD_STRING
+		},
+		INS_ENC_NOT_IMPLEMENTED
+	},
+
+
+	{
+		NULL
+	}
+};

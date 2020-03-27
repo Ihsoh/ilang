@@ -455,7 +455,20 @@
 	0x0x ~ 0xfx
 ====================================================================================================*/
 
-#define	INS_SS_PREFIX	(1 << 9)
+#define	INS_SS_PREFIX		(1 << 9)
+
+#define	INS_SS_DIRECTIVE	(1 << 10)
+
+
+
+
+#define	INS_DIRECTIVE_OPRD_INT			0x0100
+#define	INS_DIRECTIVE_OPRD_REAL			0x0200
+#define	INS_DIRECTIVE_OPRD_CHAR			0x0300
+#define	INS_DIRECTIVE_OPRD_STRING		0x0400
+
+
+
 
 typedef struct {
 	
@@ -466,9 +479,9 @@ struct _Instruction;
 typedef bool (* InstructionEncoder)(struct _Instruction *ins, InstructionEncoderData *data);
 
 #define	INS_OPCODE_EXT_MASK_RM		(1 << 0)
-#define	INS_OPCODE_EXT_MASK_REG	(1 << 1)
-#define	INS_OPCODE_EXT_MASK_MOD	(1 << 2)
-#define	INS_OPCODE_EXT_MASK_PFX	(1 << 3)
+#define	INS_OPCODE_EXT_MASK_REG		(1 << 1)
+#define	INS_OPCODE_EXT_MASK_MOD		(1 << 2)
+#define	INS_OPCODE_EXT_MASK_PFX		(1 << 3)
 
 #define	INS_OPCODE_EXT_MOD_MEM		(1 << 0)
 #define	INS_OPCODE_EXT_MOD_11B		(1 << 1)
