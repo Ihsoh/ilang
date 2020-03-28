@@ -129,7 +129,7 @@ static bool _is_mnemonic(
 		assert(ins->mnemonic);
 
 		if (strlen(ins->mnemonic) == token->len
-				&& strncmp(ins->mnemonic, token->content, token->len)) {
+				&& strncmp(ins->mnemonic, token->content, token->len) == 0) {
 			return true;
 		}
 	}
@@ -149,7 +149,7 @@ static bool _is_register(
 		assert(reg->name);
 
 		if (strlen(reg->name) == token->len
-				&& strncmp(reg->name, token->content, token->len)) {
+				&& strncmp(reg->name, token->content, token->len) == 0) {
 			return true;
 		}
 	}
@@ -183,7 +183,7 @@ LEXER_MATCHER(keyword)
 		if (_is_mnemonic(&token)) {
 			token.type = ASM_TOKEN_KEYWORD_INSTRUCTION;
 		}
-
+		
 		if (_is_register(&token)) {
 			token.type = ASM_TOKEN_KEYWORD_REGISTER;
 		}

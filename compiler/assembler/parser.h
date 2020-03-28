@@ -20,6 +20,7 @@
 #define	ASM_NODE_LITERAL_CHAR			0x0302
 #define	ASM_NODE_LITERAL_STRING			0x0303
 
+#define	ASM_NODE_INSTRUCTION			0x0400
 
 
 
@@ -78,6 +79,11 @@ extern void asm_parser_free_context(
 );
 extern void asm_parser_parse(
 	ParserContext * ctx
+);
+
+extern void asm_parser_print_ast(
+	ParserContext * ctx,
+	FILE *file
 );
 
 #endif

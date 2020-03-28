@@ -238,7 +238,8 @@ int main(int argc, char *argv[]) {
 		if (strcmp(opt_action, _OPT_ACTION_COMPILE) == 0) {
 			assert(0);
 		} else if (strcmp(opt_action, _OPT_ACTION_PRINTAST) == 0) {
-			assert(0);
+			// 打印语法树。
+			asm_parser_print_ast(ctx, output);
 		} else {
 			assert(0);
 		}

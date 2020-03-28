@@ -10,6 +10,7 @@
 #include <stdbool.h>
 
 #include "lexer.h"
+#include "ins.h"
 
 #include "../../lexer.h"
 #include "../../parser.h"
@@ -443,8 +444,100 @@ _RULE(expr_wrapper)
 	}
 _RULE_END
 
+static Instruction * _get_ins(
+	LexerToken *token
+) {
+	assert(token);
+
+	InstructionIterator iter;
+	ins_iter_init(&iter);
+	for (Instruction *ins = ins_iter_next(&iter); ins != NULL; ins = ins_iter_next(&iter)) {
+		assert(ins->mnemonic);
+
+		if (strlen(ins->mnemonic) == token->len
+				&& strncmp(ins->mnemonic, token->content, token->len) == 0) {
+			return ins;
+		}
+	}
+	ins_iter_free(&iter);
+
+	return NULL;
+}
+
+static bool _is_expr_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == INS_DIRECTIVE_OPRD_INT
+			|| oprd_type == INS_DIRECTIVE_OPRD_REAL
+			|| oprd_type == INS_DIRECTIVE_OPRD_STRING;
+}
+
+static bool _is_id_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == INS_DIRECTIVE_OPRD_ID;
+}
+
 _RULE(ins)
-	
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_KEYWORD_INSTRUCTION) {
+		_RULE_NOT_MATCHED
+	}
+
+	LexerToken *token = _RULE_TOKEN;
+
+	InstructionIterator iter;
+	ins_iter_init(&iter);
+	for (Instruction *ins = ins_iter_next(&iter); ins != NULL; ins = ins_iter_next(&iter)) {
+		assert(ins->mnemonic);
+
+		if (strlen(ins->mnemonic) == token->len
+				&& strncmp(ins->mnemonic, token->content, token->len) == 0) {
+			_RULE_PUSH_LEXCTX
+			
+			_RULE_NODE(ASM_NODE_INSTRUCTION, token)
+
+			uint16_t oprd_type[3] = {ins->oprd.o1, ins->oprd.o2, ins->oprd.o3};
+			for (int i = 0; i < 3; i++) {
+				if (oprd_type[i] != 0) {
+					// 检测逗号。
+					if (i > 0) {
+						_RULE_NEXT_TOKEN
+						if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_COMMA) {
+							goto not_matched;
+						}
+					}
+
+					if (_is_expr_oprd(oprd_type[i])) {
+						ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+						if (node_oprd == NULL) {
+							goto not_matched;
+						}
+						_RULE_ADD_CHILD(node_oprd)
+					} else if (_is_id_oprd(oprd_type[i])) {
+						ParserASTNode *node_oprd = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+						if (node_oprd == NULL) {
+							goto not_matched;
+						}
+						_RULE_ADD_CHILD(node_oprd)
+					} else {
+						goto not_matched;
+					}
+				}
+			}
+
+			_RULE_NEXT_TOKEN
+			if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_SEMICOLON) {
+				goto not_matched;
+			}
+
+			_RULE_ABANDON_LEXCTX
+			break;
+not_matched:
+			_RULE_POP_LEXCTX
+		}
+	}
+	ins_iter_free(&iter);
 _RULE_END
 
 _RULE(module_item)
@@ -505,5 +598,52 @@ void asm_parser_parse(
 	assert(ctx);
 	assert(ctx->ast == NULL);
 
-	// TODO: 解析符号流，生成抽象语法树。
+	ctx->ast = _rule_module(ctx);
+}
+
+static void _print_ast(
+	ParserASTNode *node,
+	FILE *file,
+	int level,
+	char padchr
+) {
+	assert(node);
+	assert(file);
+	assert(level >= 0);
+
+	for (int i = 0; i < level; i++) {
+		fputc(padchr, file);
+	}
+
+	fprintf(
+		file,
+		"@%s#%x#%p#%p",
+		node->type_name != NULL ? node->type_name : "N/A",
+		node->type,
+		node->parent,
+		node
+	);
+	if (node->token != NULL) {
+		fputc('(', file);
+		for (int i = 0; i < node->token->len; i++) {
+			fputc(*(node->token->content + i), file);
+		}
+		fprintf(file, "#%x)", node->token->type);
+	}
+	fputc('\n', file);
+
+	for (int i = 0; i < node->nchilds; i++) {
+		_print_ast(node->childs[i], file, level + 1, padchr);
+	}
+}
+
+void asm_parser_print_ast(
+	ParserContext * ctx,
+	FILE *file
+) {
+	assert(ctx);
+	assert(ctx->ast);
+	assert(file);
+
+	_print_ast(ctx->ast, file, 0, '\t');
 }
