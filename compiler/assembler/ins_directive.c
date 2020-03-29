@@ -88,7 +88,7 @@ Instruction ins_directive[] = {
 			INS_DIRECTIVE_OPRD_INT,
 			INS_DIRECTIVE_OPRD_INT
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_int8s
 	},
 	{
 		"INT16S", INS_SS_DIRECTIVE,

@@ -1,8 +1,4 @@
 BIT16;
-SET abc, 123;
-PRINT abc;
-SET abc, 12345;
-PRINT abc;
-
-PRINT -1;
-
+INT8S 3, 0xab;
+INT8S 2, 0xac;
+INT8S 1, 0xad;

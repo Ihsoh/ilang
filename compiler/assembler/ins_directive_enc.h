@@ -48,6 +48,10 @@ extern void ins_enc_string(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_int8s(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
 
 
 
