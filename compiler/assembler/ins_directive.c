@@ -1,4 +1,5 @@
 #include "ins.h"
+#include "ins_directive_enc.h"
 
 Instruction ins_directive[] = {
 	{
@@ -6,21 +7,21 @@ Instruction ins_directive[] = {
 		{0},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_bit16
 	},
 	{
 		"BIT32", INS_SS_DIRECTIVE,
 		{0},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_bit32
 	},
 	{
 		"BIT64", INS_SS_DIRECTIVE,
 		{0},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_bit64
 	},
 
 	{
@@ -165,9 +166,9 @@ Instruction ins_directive[] = {
 		"PRINT", INS_SS_DIRECTIVE,
 		{0},
 		{
-			INS_DIRECTIVE_OPRD_ID
+			INS_DIRECTIVE_OPRD_EXPR
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_print
 	},
 
 

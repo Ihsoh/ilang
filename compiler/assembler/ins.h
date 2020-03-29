@@ -8,6 +8,9 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "../../lexer.h"
+#include "../../parser.h"
+
 #define	INS_OPRD_NONE	0x0000
 
 /*====================================================================================================
@@ -467,12 +470,14 @@
 #define	INS_DIRECTIVE_OPRD_CHAR			0x0300
 #define	INS_DIRECTIVE_OPRD_STRING		0x0400
 #define	INS_DIRECTIVE_OPRD_ID			0x0500
+#define	INS_DIRECTIVE_OPRD_EXPR			0x0500
 
 
 
 
 typedef struct {
-	
+	ParserASTNode	*ins_node;
+	ParserContext	*ctx;
 } InstructionEncoderData;
 
 struct _Instruction;

@@ -66,8 +66,10 @@
 #define	ASM_NODE_EXPR_ATOM					0x0ee0
 
 
+
+
 typedef struct {
-	Instruction *ins;
+	Instruction 	*ins;
 } AsmParserInsASTNodeData;
 
 #define	ASM_INS_AST_NODE_GET_INS(node)			(((AsmParserInsASTNodeData *)&((node)->data[0]))->ins)
@@ -76,12 +78,70 @@ typedef struct {
 
 
 
+
+#define	ASM_EXPR_EVAL_RESULT_TYPE_NULL		0
+#define	ASM_EXPR_EVAL_RESULT_TYPE_UINT64	1
+#define	ASM_EXPR_EVAL_RESULT_TYPE_DOUBLE	2
+#define	ASM_EXPR_EVAL_RESULT_TYPE_STRING	3
+
 typedef struct {
-	Map		symtable;
+	uint8_t			type;
+	union {
+		uint64_t	u64;
+		double		d;
+		struct {
+			const char	*ptr;
+			size_t		len;
+		} str;
+	} value;
+} AsmExprEvalResult;
+
+typedef struct {
+	AsmExprEvalResult	result;
+} AsmParserExprASTNodeData;
+
+#define	ASM_EXPR_AST_NODE_GET_RESULT(node)			(((AsmParserExprASTNodeData *)&((node)->data[0]))->result)
+
+
+
+
+
+#define	ASM_ARCH_BIT16		1
+#define	ASM_ARCH_BIT32		2
+#define	ASM_ARCH_BIT64		3
+
+#define	ASM_STEP_SCAN		1
+#define	ASM_STEP_ENCODE		2
+
+typedef struct {
+	Map				symtable;
+	int				arch;
+	FILE			*out;
+	uint64_t		address_counter;
+	int				step;
 } AsmParserContextData;
 
 #define	ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->symtable)
+#define	ASM_PARSER_CONTEXT_DATA_GET_ARCH(ctx)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->arch)
+#define	ASM_PARSER_CONTEXT_DATA_GET_OUT(ctx)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->out)
+#define	ASM_PARSER_CONTEXT_DATA_GET_ADDRESS_COUNTER(ctx)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->address_counter)
+#define	ASM_PARSER_CONTEXT_DATA_GET_STEP(ctx)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->step)
+
+#define	ASM_PARSER_CONTEXT_DATA_SET_ARCH(ctx, v)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->arch = (v))
+#define	ASM_PARSER_CONTEXT_DATA_SET_OUT(ctx, v)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->out = (v))
+#define	ASM_PARSER_CONTEXT_DATA_SET_ADDRESS(ctx, v)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->address_counter = (v))
+#define	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS(ctx, v)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->address_counter += (v))
+#define	ASM_PARSER_CONTEXT_DATA_SET_STEP(ctx, v)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->step = (v))
 
 
 

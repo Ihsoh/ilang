@@ -204,6 +204,7 @@ bool ins_enc_not_implemented(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
+	printf("ERROR, NOT IMPLEMENTED: %s\n", ins->mnemonic);
 	assert(0);
 	return false;
 }

@@ -33,6 +33,13 @@ static ParserASTNode * _new_node(
 		return parser_new_node(
 			ctx, type, type_name, token, sizeof(AsmParserInsASTNodeData), &data
 		);
+	} else if (type == ASM_NODE_EXPR) {
+		AsmParserExprASTNodeData data;
+		data.result.type = ASM_EXPR_EVAL_RESULT_TYPE_NULL;
+
+		return parser_new_node(
+			ctx, type, type_name, token, sizeof(AsmParserExprASTNodeData), &data
+		);
 	} else {
 		return parser_new_node(
 			ctx, type, type_name, token, 0, NULL
@@ -456,7 +463,8 @@ static bool _is_expr_oprd(
 ) {
 	return oprd_type == INS_DIRECTIVE_OPRD_INT
 			|| oprd_type == INS_DIRECTIVE_OPRD_REAL
-			|| oprd_type == INS_DIRECTIVE_OPRD_STRING;
+			|| oprd_type == INS_DIRECTIVE_OPRD_STRING
+			|| oprd_type == INS_DIRECTIVE_OPRD_EXPR;
 }
 
 static bool _is_id_oprd(
@@ -572,6 +580,10 @@ ParserContext * asm_parser_new_context(
 		map_rstr_comparer, NULL,
 		(MapReleaser) rstr_delete, (MapReleaser) map_primitive_box_free
 	);
+	data.arch = ASM_ARCH_BIT16;
+	data.out = NULL;
+	data.address_counter = 0;
+	data.step = ASM_STEP_SCAN;
 
 	ParserContext *ctx = parser_new_context_with_data(
 		lexctx, sizeof(data), &data

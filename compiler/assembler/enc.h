@@ -5,10 +5,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-typedef struct {
-	
-} EncoderContext;
+#include "parser.h"
 
-
+extern void enc_encode(
+	ParserContext *ctx
+);
 
 #endif

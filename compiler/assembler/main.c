@@ -14,7 +14,7 @@
 #include "version.h"
 #include "lexer.h"
 #include "parser.h"
-#include "semantics.h"
+#include "enc.h"
 
 #include "../preprocessor/preprocessor.h"
 
@@ -230,13 +230,11 @@ int main(int argc, char *argv[]) {
 		ctx = asm_parser_new_context(
 			opt_file, RSTR_CSTR(&preprocessed_source), RSTR_LEN(&preprocessed_source)
 		);
+		ASM_PARSER_CONTEXT_DATA_SET_OUT(ctx, output);
 		asm_parser_parse(ctx);
 
-		// 语义解析。
-		asm_sem_process(ctx);
-
 		if (strcmp(opt_action, _OPT_ACTION_COMPILE) == 0) {
-			assert(0);
+			enc_encode(ctx);
 		} else if (strcmp(opt_action, _OPT_ACTION_PRINTAST) == 0) {
 			// 打印语法树。
 			asm_parser_print_ast(ctx, output);
