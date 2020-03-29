@@ -136,9 +136,9 @@ typedef struct {
 	(((AsmParserContextData *)&((ctx)->data[0]))->arch = (v))
 #define	ASM_PARSER_CONTEXT_DATA_SET_OUT(ctx, v)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->out = (v))
-#define	ASM_PARSER_CONTEXT_DATA_SET_ADDRESS(ctx, v)	\
+#define	ASM_PARSER_CONTEXT_DATA_SET_ADDRESS_COUNTER(ctx, v)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->address_counter = (v))
-#define	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS(ctx, v)	\
+#define	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(ctx, v)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->address_counter += (v))
 #define	ASM_PARSER_CONTEXT_DATA_SET_STEP(ctx, v)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->step = (v))

@@ -43,6 +43,156 @@ void ins_enc_bit64(
 	ASM_PARSER_CONTEXT_DATA_SET_ARCH(data->ctx, ASM_ARCH_BIT64);
 }
 
+void ins_enc_int8(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 1);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		return;
+	}
+
+	ParserASTNode *child = data->ins_node->childs[0];
+	
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	fwrite(&result->value.u64, 1, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_int16(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 1);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		return;
+	}
+
+	ParserASTNode *child = data->ins_node->childs[0];
+	
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	fwrite(&result->value.u64, 2, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_int32(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 1);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		return;
+	}
+
+	ParserASTNode *child = data->ins_node->childs[0];
+	
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	fwrite(&result->value.u64, 4, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_int64(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 1);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		return;
+	}
+
+	ParserASTNode *child = data->ins_node->childs[0];
+	
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	fwrite(&result->value.u64, 8, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_float(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 1);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		return;
+	}
+
+	ParserASTNode *child = data->ins_node->childs[0];
+	
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_DOUBLE);
+
+	float f = (float) result->value.d;
+
+	fwrite(&f, 4, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_double(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 1);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		return;
+	}
+
+	ParserASTNode *child = data->ins_node->childs[0];
+	
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_DOUBLE);
+
+	fwrite(&result->value.d, 8, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_string(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 1);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		return;
+	}
+
+	ParserASTNode *child = data->ins_node->childs[0];
+	
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_STRING);
+
+	fwrite(result->value.str.ptr, result->value.str.len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+
 
 
 

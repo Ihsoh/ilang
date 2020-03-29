@@ -19,6 +19,38 @@ extern void ins_enc_bit64(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_int8(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_int16(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_int32(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_int64(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_float(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_double(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_string(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+
+
+
 
 
 
