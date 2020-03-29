@@ -73,7 +73,7 @@ void ins_enc_int16(
 	assert(data->ins_node->nchilds == 1);
 
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 2);
 		return;
 	}
 
@@ -94,7 +94,7 @@ void ins_enc_int32(
 	assert(data->ins_node->nchilds == 1);
 
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 4);
 		return;
 	}
 
@@ -115,7 +115,7 @@ void ins_enc_int64(
 	assert(data->ins_node->nchilds == 1);
 
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 8);
 		return;
 	}
 
@@ -136,7 +136,7 @@ void ins_enc_float(
 	assert(data->ins_node->nchilds == 1);
 
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 4);
 		return;
 	}
 
@@ -159,7 +159,7 @@ void ins_enc_double(
 	assert(data->ins_node->nchilds == 1);
 
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 8);
 		return;
 	}
 
@@ -179,15 +179,15 @@ void ins_enc_string(
 	assert(data);
 	assert(data->ins_node->nchilds == 1);
 
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
-		return;
-	}
-
 	ParserASTNode *child = data->ins_node->childs[0];
 	
 	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
 	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_STRING);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result->value.str.len);
+		return;
+	}
 
 	fwrite(result->value.str.ptr, result->value.str.len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
