@@ -200,13 +200,13 @@ void ins_iter_free(
 
 
 
-bool ins_enc_not_implemented(
+void ins_enc_not_implemented(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
 	printf("ERROR, NOT IMPLEMENTED: %s\n", ins->mnemonic);
 	assert(0);
-	return false;
+	exit(-1);
 }
 
 static void _print_ins(

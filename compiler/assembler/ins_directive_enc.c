@@ -13,7 +13,7 @@
 
 #include "ins.h"
 
-bool ins_enc_bit16(
+void ins_enc_bit16(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
@@ -21,11 +21,9 @@ bool ins_enc_bit16(
 	assert(data);
 
 	ASM_PARSER_CONTEXT_DATA_SET_ARCH(data->ctx, ASM_ARCH_BIT16);
-
-	return true;
 }
 
-bool ins_enc_bit32(
+void ins_enc_bit32(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
@@ -33,11 +31,9 @@ bool ins_enc_bit32(
 	assert(data);
 
 	ASM_PARSER_CONTEXT_DATA_SET_ARCH(data->ctx, ASM_ARCH_BIT32);
-
-	return true;
 }
 
-bool ins_enc_bit64(
+void ins_enc_bit64(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
@@ -45,8 +41,6 @@ bool ins_enc_bit64(
 	assert(data);
 
 	ASM_PARSER_CONTEXT_DATA_SET_ARCH(data->ctx, ASM_ARCH_BIT64);
-
-	return true;
 }
 
 
@@ -58,7 +52,7 @@ bool ins_enc_bit64(
 
 
 
-bool ins_enc_print(
+void ins_enc_print(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
@@ -67,7 +61,7 @@ bool ins_enc_print(
 	assert(data->ins_node->nchilds == 1);
 
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return true;
+		return;
 	}
 
 	ParserASTNode *child = data->ins_node->childs[0];
@@ -95,6 +89,4 @@ bool ins_enc_print(
 			break;
 		}
 	}
-
-	return true;
 }

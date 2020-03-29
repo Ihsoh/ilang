@@ -6,15 +6,15 @@
 
 #include "ins.h"
 
-extern bool ins_enc_bit16(
+extern void ins_enc_bit16(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
-extern bool ins_enc_bit32(
+extern void ins_enc_bit32(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
-extern bool ins_enc_bit64(
+extern void ins_enc_bit64(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
@@ -22,7 +22,7 @@ extern bool ins_enc_bit64(
 
 
 
-extern bool ins_enc_print(
+extern void ins_enc_print(
 	Instruction *ins,
 	InstructionEncoderData *data
 );

@@ -482,7 +482,7 @@ typedef struct {
 
 struct _Instruction;
 
-typedef bool (* InstructionEncoder)(struct _Instruction *ins, InstructionEncoderData *data);
+typedef void (* InstructionEncoder)(struct _Instruction *ins, InstructionEncoderData *data);
 
 #define	INS_OPCODE_EXT_MASK_RM		(1 << 0)
 #define	INS_OPCODE_EXT_MASK_REG		(1 << 1)
@@ -543,7 +543,7 @@ typedef struct _Instruction {
 
 } Instruction;
 
-extern bool ins_enc_not_implemented(
+extern void ins_enc_not_implemented(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
