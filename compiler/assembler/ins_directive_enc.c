@@ -222,6 +222,193 @@ void ins_enc_int8s(
 	}
 }
 
+void ins_enc_int16s(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *node_count = data->ins_node->childs[0];
+	assert(node_count->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
+	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 2);
+		return;
+	}
+
+	ParserASTNode *node_val = data->ins_node->childs[1];
+	assert(node_val->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_val = &ASM_EXPR_AST_NODE_GET_RESULT(node_val);
+	assert(result_val->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	for (uint64_t i = 0; i < result_count->value.u64; i++) {
+		fwrite(&result_val->value.u64, 2, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	}
+}
+
+void ins_enc_int32s(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *node_count = data->ins_node->childs[0];
+	assert(node_count->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
+	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 4);
+		return;
+	}
+
+	ParserASTNode *node_val = data->ins_node->childs[1];
+	assert(node_val->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_val = &ASM_EXPR_AST_NODE_GET_RESULT(node_val);
+	assert(result_val->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	for (uint64_t i = 0; i < result_count->value.u64; i++) {
+		fwrite(&result_val->value.u64, 4, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	}
+}
+
+void ins_enc_int64s(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *node_count = data->ins_node->childs[0];
+	assert(node_count->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
+	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 8);
+		return;
+	}
+
+	ParserASTNode *node_val = data->ins_node->childs[1];
+	assert(node_val->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_val = &ASM_EXPR_AST_NODE_GET_RESULT(node_val);
+	assert(result_val->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	for (uint64_t i = 0; i < result_count->value.u64; i++) {
+		fwrite(&result_val->value.u64, 8, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	}
+}
+
+void ins_enc_floats(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *node_count = data->ins_node->childs[0];
+	assert(node_count->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
+	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 4);
+		return;
+	}
+
+	ParserASTNode *node_val = data->ins_node->childs[1];
+	assert(node_val->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_val = &ASM_EXPR_AST_NODE_GET_RESULT(node_val);
+	assert(result_val->type == ASM_EXPR_EVAL_RESULT_TYPE_DOUBLE);
+
+	float value = (float) result_val->value.d;
+
+	for (uint64_t i = 0; i < result_count->value.u64; i++) {
+		fwrite(&value, 4, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	}
+}
+
+void ins_enc_doubles(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *node_count = data->ins_node->childs[0];
+	assert(node_count->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
+	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 8);
+		return;
+	}
+
+	ParserASTNode *node_val = data->ins_node->childs[1];
+	assert(node_val->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_val = &ASM_EXPR_AST_NODE_GET_RESULT(node_val);
+	assert(result_val->type == ASM_EXPR_EVAL_RESULT_TYPE_DOUBLE);
+
+	for (uint64_t i = 0; i < result_count->value.u64; i++) {
+		fwrite(&result_val->value.d, 8, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	}
+}
+
+void ins_enc_strings(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *node_count = data->ins_node->childs[0];
+	assert(node_count->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
+	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	ParserASTNode *node_val = data->ins_node->childs[1];
+	assert(node_val->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result_val = &ASM_EXPR_AST_NODE_GET_RESULT(node_val);
+	assert(result_val->type == ASM_EXPR_EVAL_RESULT_TYPE_STRING);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * result_val->value.str.len);
+		return;
+	}
+
+	for (uint64_t i = 0; i < result_count->value.u64; i++) {
+		fwrite(
+			result_val->value.str.ptr,
+			result_val->value.str.len,
+			1,
+			ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx)
+		);
+	}
+}
+
 
 
 

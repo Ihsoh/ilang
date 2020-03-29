@@ -1,4 +1,2 @@
 BIT16;
-INT8S 3, 0xab;
-INT8S 2, 0xac;
-INT8S 1, 0xad;
+INT64S 2, 0x12345678aabbccdd;

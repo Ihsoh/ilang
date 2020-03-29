@@ -97,7 +97,7 @@ Instruction ins_directive[] = {
 			INS_DIRECTIVE_OPRD_INT,
 			INS_DIRECTIVE_OPRD_INT
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_int16s
 	},
 	{
 		"INT32S", INS_SS_DIRECTIVE,
@@ -106,7 +106,7 @@ Instruction ins_directive[] = {
 			INS_DIRECTIVE_OPRD_INT,
 			INS_DIRECTIVE_OPRD_INT
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_int32s
 	},
 	{
 		"INT64S", INS_SS_DIRECTIVE,
@@ -115,7 +115,7 @@ Instruction ins_directive[] = {
 			INS_DIRECTIVE_OPRD_INT,
 			INS_DIRECTIVE_OPRD_INT
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_int64s
 	},
 	{
 		"FLOATS", INS_SS_DIRECTIVE,
@@ -124,7 +124,7 @@ Instruction ins_directive[] = {
 			INS_DIRECTIVE_OPRD_INT,
 			INS_DIRECTIVE_OPRD_REAL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_floats
 	},
 	{
 		"DOUBLES", INS_SS_DIRECTIVE,
@@ -133,7 +133,7 @@ Instruction ins_directive[] = {
 			INS_DIRECTIVE_OPRD_INT,
 			INS_DIRECTIVE_OPRD_REAL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_doubles
 	},
 	{
 		"STRINGS", INS_SS_DIRECTIVE,
@@ -142,7 +142,7 @@ Instruction ins_directive[] = {
 			INS_DIRECTIVE_OPRD_INT,
 			INS_DIRECTIVE_OPRD_STRING
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_strings
 	},
 
 	{

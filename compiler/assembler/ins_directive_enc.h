@@ -52,6 +52,30 @@ extern void ins_enc_int8s(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
+extern void ins_enc_int16s(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_int32s(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_int64s(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_floats(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_doubles(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+extern void ins_enc_strings(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
 
 
 
