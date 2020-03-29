@@ -1,2 +1,2 @@
 BIT16;
-INT64S 2, 0x12345678aabbccdd;
+STRINGS 2, "Hello, World!";

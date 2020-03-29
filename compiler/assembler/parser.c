@@ -473,6 +473,54 @@ static bool _is_id_oprd(
 	return oprd_type == INS_DIRECTIVE_OPRD_ID;
 }
 
+static bool _is_Eb_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_E | INS_OT_b);
+}
+
+static bool _is_Gb_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_G | INS_OT_b);
+}
+
+static bool _is_Ev_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_E | INS_OT_v);
+}
+
+static bool _is_Gv_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_G | INS_OT_v);
+}
+
+static bool _is_AL_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == INS_AM_AL;
+}
+
+static bool _is_Ib_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_I | INS_OT_b);
+}
+
+static bool _is_rAX_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == INS_AM_rAX;
+}
+
+static bool _is_Iz_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_I | INS_OT_z);
+}
+
 _RULE(ins)
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != ASM_TOKEN_KEYWORD_INSTRUCTION) {
