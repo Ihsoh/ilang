@@ -66,6 +66,10 @@ bool ins_enc_print(
 	assert(data);
 	assert(data->ins_node->nchilds == 1);
 
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return true;
+	}
+
 	ParserASTNode *child = data->ins_node->childs[0];
 	
 	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
