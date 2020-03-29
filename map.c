@@ -237,6 +237,37 @@ MapEntry * map_iter_next(
 	return (MapEntry *)current->data;
 }
 
+#define	_MAP_PRIMITIVE_BOX_xxxx(xxxx, param_type, box_type, union_member)	\
+	MapPrimitiveBox * map_primitive_box_##xxxx(	\
+		param_type value	\
+	) {	\
+		MapPrimitiveBox *box = (MapPrimitiveBox *)malloc(sizeof(MapPrimitiveBox));	\
+		assert(box);	\
+		\
+		box->type = (box_type);	\
+		box->value.union_member = value;	\
+		\
+		return box;	\
+	}
+
+_MAP_PRIMITIVE_BOX_xxxx(char, char, MAP_PRIMITIVE_BOX_TYPE_CHAR, c)
+_MAP_PRIMITIVE_BOX_xxxx(uint8, uint8_t, MAP_PRIMITIVE_BOX_TYPE_UINT8, u8)
+_MAP_PRIMITIVE_BOX_xxxx(uint16, uint16_t, MAP_PRIMITIVE_BOX_TYPE_UINT16, u16)
+_MAP_PRIMITIVE_BOX_xxxx(uint32, uint32_t, MAP_PRIMITIVE_BOX_TYPE_UINT32, u32)
+_MAP_PRIMITIVE_BOX_xxxx(uint64, uint64_t, MAP_PRIMITIVE_BOX_TYPE_UINT64, u64)
+_MAP_PRIMITIVE_BOX_xxxx(int8, int8_t, MAP_PRIMITIVE_BOX_TYPE_INT8, i8)
+_MAP_PRIMITIVE_BOX_xxxx(int16, int16_t, MAP_PRIMITIVE_BOX_TYPE_INT16, i16)
+_MAP_PRIMITIVE_BOX_xxxx(int32, int32_t, MAP_PRIMITIVE_BOX_TYPE_INT32, i32)
+_MAP_PRIMITIVE_BOX_xxxx(int64, int64_t, MAP_PRIMITIVE_BOX_TYPE_INT64, i64)
+_MAP_PRIMITIVE_BOX_xxxx(float, float, MAP_PRIMITIVE_BOX_TYPE_FLOAT, f)
+_MAP_PRIMITIVE_BOX_xxxx(double, double, MAP_PRIMITIVE_BOX_TYPE_DOUBLE, d)
+
+void map_primitive_box_free(
+	MapPrimitiveBox *box
+) {
+	free(box);
+}
+
 
 
 

@@ -9,6 +9,10 @@
 #include "../../parser.h"
 #include "../../string.h"
 
+#include "../../map.h"
+
+#include "ins.h"
+
 #define	ASM_NODE_INVALID				0x0000
 
 #define	ASM_NODE_MODULE					0x0100
@@ -62,12 +66,25 @@
 #define	ASM_NODE_EXPR_ATOM					0x0ee0
 
 
+typedef struct {
+	Instruction *ins;
+} AsmParserInsASTNodeData;
+
+#define	ASM_INS_AST_NODE_GET_INS(node)			(((AsmParserInsASTNodeData *)&((node)->data[0]))->ins)
+
+#define	ASM_INS_AST_NODE_SET_INS(node, v)		(((AsmParserInsASTNodeData *)&((node)->data[0]))->ins = (v))
 
 
 
 typedef struct {
-	int dummy;
+	Map		symtable;
 } AsmParserContextData;
+
+#define	ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->symtable)
+
+
+
 
 extern ParserContext * asm_parser_new_context(
 	const char *file,
@@ -84,6 +101,25 @@ extern void asm_parser_parse(
 extern void asm_parser_print_ast(
 	ParserContext * ctx,
 	FILE *file
+);
+
+extern void asm_parser_set_symbol_by_rstr_key(
+	ParserContext *ctx,
+	ResizableString *key,
+	uint64_t value
+);
+extern void asm_parser_set_symbol_by_token_key(
+	ParserContext *ctx,
+	LexerToken *key,
+	uint64_t value
+);
+extern uint64_t asm_parser_get_symbol_by_rstr_key(
+	ParserContext *ctx,
+	ResizableString *key
+);
+extern uint64_t asm_parser_get_symbol_by_token_key(
+	ParserContext *ctx,
+	LexerToken *key
 );
 
 #endif

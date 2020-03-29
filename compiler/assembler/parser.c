@@ -12,6 +12,8 @@
 #include "lexer.h"
 #include "ins.h"
 
+#include "../../map.h"
+
 #include "../../lexer.h"
 #include "../../parser.h"
 
@@ -24,8 +26,13 @@ static ParserASTNode * _new_node(
 	assert(ctx);
 	assert(type_name);
 
-	if (false) {
-		// TODO: dummy....
+	if (type == ASM_NODE_INSTRUCTION) {
+		AsmParserInsASTNodeData data;
+		data.ins = NULL;
+
+		return parser_new_node(
+			ctx, type, type_name, token, sizeof(AsmParserInsASTNodeData), &data
+		);
 	} else {
 		return parser_new_node(
 			ctx, type, type_name, token, 0, NULL
@@ -444,26 +451,6 @@ _RULE(expr_wrapper)
 	}
 _RULE_END
 
-static Instruction * _get_ins(
-	LexerToken *token
-) {
-	assert(token);
-
-	InstructionIterator iter;
-	ins_iter_init(&iter);
-	for (Instruction *ins = ins_iter_next(&iter); ins != NULL; ins = ins_iter_next(&iter)) {
-		assert(ins->mnemonic);
-
-		if (strlen(ins->mnemonic) == token->len
-				&& strncmp(ins->mnemonic, token->content, token->len) == 0) {
-			return ins;
-		}
-	}
-	ins_iter_free(&iter);
-
-	return NULL;
-}
-
 static bool _is_expr_oprd(
 	uint16_t oprd_type
 ) {
@@ -508,20 +495,24 @@ _RULE(ins)
 						}
 					}
 
-					if (_is_expr_oprd(oprd_type[i])) {
-						ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
-						if (node_oprd == NULL) {
+					if (ins->superscript & INS_SS_DIRECTIVE) {
+						if (_is_expr_oprd(oprd_type[i])) {
+							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+							if (node_oprd == NULL) {
+								goto not_matched;
+							}
+							_RULE_ADD_CHILD(node_oprd)
+						} else if (_is_id_oprd(oprd_type[i])) {
+							ParserASTNode *node_oprd = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+							if (node_oprd == NULL) {
+								goto not_matched;
+							}
+							_RULE_ADD_CHILD(node_oprd)
+						} else {
 							goto not_matched;
 						}
-						_RULE_ADD_CHILD(node_oprd)
-					} else if (_is_id_oprd(oprd_type[i])) {
-						ParserASTNode *node_oprd = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
-						if (node_oprd == NULL) {
-							goto not_matched;
-						}
-						_RULE_ADD_CHILD(node_oprd)
 					} else {
-						goto not_matched;
+						
 					}
 				}
 			}
@@ -530,6 +521,8 @@ _RULE(ins)
 			if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_SEMICOLON) {
 				goto not_matched;
 			}
+
+			ASM_INS_AST_NODE_SET_INS(_RULE_CURRENT_NODE, ins);
 
 			_RULE_ABANDON_LEXCTX
 			break;
@@ -574,7 +567,11 @@ ParserContext * asm_parser_new_context(
 	lexer_parse(lexctx);
 
 	AsmParserContextData data;
-	data.dummy = 0;
+	map_init(
+		&data.symtable,
+		map_rstr_comparer, NULL,
+		(MapReleaser) rstr_delete, (MapReleaser) map_primitive_box_free
+	);
 
 	ParserContext *ctx = parser_new_context_with_data(
 		lexctx, sizeof(data), &data
@@ -587,6 +584,10 @@ void asm_parser_free_context(
 	ParserContext * ctx
 ) {
 	assert(ctx);
+
+	map_free(
+		&ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx), true, false
+	);
 
 	asm_lexer_free_context(ctx->lexctx);
 	parser_free_context(ctx);
@@ -646,4 +647,66 @@ void asm_parser_print_ast(
 	assert(file);
 
 	_print_ast(ctx->ast, file, 0, '\t');
+}
+
+void asm_parser_set_symbol_by_rstr_key(
+	ParserContext *ctx,
+	ResizableString *key,
+	uint64_t value
+) {
+	assert(ctx);
+	assert(key);
+
+	Map *symtable = &ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx);
+
+	MapPrimitiveBox *box = map_primitive_box_uint64(value);
+
+	map_set(symtable, key, box, true);
+}
+
+void asm_parser_set_symbol_by_token_key(
+	ParserContext *ctx,
+	LexerToken *key,
+	uint64_t value
+) {
+	assert(ctx);
+	assert(key);
+
+	ResizableString rstr_key;
+	rstr_init_with_raw(&rstr_key, key->content, key->len);
+	asm_parser_set_symbol_by_rstr_key(ctx, &rstr_key, value);
+	rstr_free(&rstr_key);
+}
+
+uint64_t asm_parser_get_symbol_by_rstr_key(
+	ParserContext *ctx,
+	ResizableString *key
+) {
+	assert(ctx);
+	assert(key);
+
+	Map *symtable = &ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx);
+
+	MapPrimitiveBox *box = (MapPrimitiveBox *) map_get(symtable, key);
+	if (box != NULL) {
+		assert(box->type == MAP_PRIMITIVE_BOX_TYPE_UINT64);
+		return box->value.u64;
+	} else {
+		return 0;
+	}
+}
+
+uint64_t asm_parser_get_symbol_by_token_key(
+	ParserContext *ctx,
+	LexerToken *key
+) {
+	assert(ctx);
+	assert(key);
+
+	ResizableString rstr_key;
+	rstr_init_with_raw(&rstr_key, key->content, key->len);
+	uint64_t value = asm_parser_get_symbol_by_rstr_key(ctx, &rstr_key);
+	rstr_free(&rstr_key);
+
+	return value;
 }
