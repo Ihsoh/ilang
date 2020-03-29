@@ -202,6 +202,50 @@ void ins_enc_string(
 
 
 
+void ins_enc_label(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 1);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		ParserASTNode *node_id = data->ins_node->childs[0];
+		assert(node_id->type == ASM_NODE_IDENTIFIER);
+
+		asm_parser_set_symbol_by_token_key(
+			data->ctx, node_id->token, ASM_PARSER_CONTEXT_DATA_GET_ADDRESS_COUNTER(data->ctx)
+		);
+	}
+}
+
+void ins_enc_set(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node->nchilds == 2);
+
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	ParserASTNode *node_id = data->ins_node->childs[0];
+	assert(node_id->type == ASM_NODE_IDENTIFIER);
+
+	ParserASTNode *node_val = data->ins_node->childs[1];
+	assert(node_val->type == ASM_NODE_EXPR);
+
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_val);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	asm_parser_set_symbol_by_token_key(
+		data->ctx, node_id->token, result->value.u64
+	);
+}
+
 void ins_enc_print(
 	Instruction *ins,
 	InstructionEncoderData *data
@@ -220,7 +264,7 @@ void ins_enc_print(
 
 	switch (result->type) {
 		case ASM_EXPR_EVAL_RESULT_TYPE_UINT64: {
-			printf("%llu\n", result->value.u64);
+			printf("0x%llx, %llu\n", result->value.u64, result->value.u64);
 			break;
 		}
 		case ASM_EXPR_EVAL_RESULT_TYPE_DOUBLE: {

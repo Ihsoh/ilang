@@ -684,10 +684,8 @@ void asm_parser_set_symbol_by_token_key(
 	assert(ctx);
 	assert(key);
 
-	ResizableString rstr_key;
-	rstr_init_with_raw(&rstr_key, key->content, key->len);
-	asm_parser_set_symbol_by_rstr_key(ctx, &rstr_key, value);
-	rstr_free(&rstr_key);
+	ResizableString *rstr_key = rstr_new_with_raw(key->content, key->len);
+	asm_parser_set_symbol_by_rstr_key(ctx, rstr_key, value);
 }
 
 uint64_t asm_parser_get_symbol_by_rstr_key(

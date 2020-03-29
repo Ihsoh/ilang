@@ -151,7 +151,7 @@ Instruction ins_directive[] = {
 		{
 			INS_DIRECTIVE_OPRD_ID
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_label
 	},
 	{
 		"SET", INS_SS_DIRECTIVE,
@@ -160,7 +160,7 @@ Instruction ins_directive[] = {
 			INS_DIRECTIVE_OPRD_ID,
 			INS_DIRECTIVE_OPRD_INT
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_set
 	},
 	{
 		"PRINT", INS_SS_DIRECTIVE,

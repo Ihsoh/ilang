@@ -53,6 +53,15 @@ extern void ins_enc_string(
 
 
 
+extern void ins_enc_label(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_set(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
 
 extern void ins_enc_print(
 	Instruction *ins,

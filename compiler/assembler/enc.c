@@ -81,6 +81,27 @@ static void _eval_expr(
 	ParserContext *ctx,
 	ParserASTNode *node,
 	AsmExprEvalResult *result
+);
+
+static void _expect_integer(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	AsmExprEvalResult *result
+) {
+	assert(ctx);
+	assert(node);
+	assert(result);
+
+	_eval_expr(ctx, node, result);
+	if (result->type != ASM_EXPR_EVAL_RESULT_TYPE_UINT64) {
+		_SYNERR_NODE(ctx, node, "expect integer!");
+	}
+}
+
+static void _eval_expr(
+	ParserContext *ctx,
+	ParserASTNode *node,
+	AsmExprEvalResult *result
 ) {
 	assert(ctx);
 	assert(node);
@@ -91,20 +112,295 @@ static void _eval_expr(
 			assert(node->nchilds == 2);
 			
 			AsmExprEvalResult oprd1;
-			_eval_expr(ctx, node->childs[0], &oprd1);
-			if (oprd1.type != ASM_EXPR_EVAL_RESULT_TYPE_UINT64) {
-				_SYNERR_NODE(ctx, node->childs[0], "expect integer!");
-			}
+			_expect_integer(ctx, node->childs[0], &oprd1);
 
 			AsmExprEvalResult oprd2;
-			_eval_expr(ctx, node->childs[1], &oprd1);
-			if (oprd2.type != ASM_EXPR_EVAL_RESULT_TYPE_UINT64) {
-				_SYNERR_NODE(ctx, node->childs[1], "expect integer!");
-			}
+			_expect_integer(ctx, node->childs[1], &oprd2);
 
 			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
 			result->value.u64 = oprd1.value.u64 || oprd2.value.u64;
+			break;
+		}
 
+		case ASM_NODE_EXPR_AND: {
+			assert(node->nchilds == 2);
+			
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 && oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_BOR: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 | oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_BXOR: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 ^ oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_BAND: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 & oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_EQ: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 == oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_NEQ: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 != oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_LT: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 < oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_LE: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 <= oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_GT: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 > oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_GE: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 >= oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_SHIFT_LEFT: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 << oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_SHIFT_RIGHT: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 >> oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_ADD: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 + oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_SUB: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 - oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_MUL: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 * oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_DIV: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 / oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_MOD: {
+			assert(node->nchilds == 2);
+
+			AsmExprEvalResult oprd1;
+			_expect_integer(ctx, node->childs[0], &oprd1);
+
+			AsmExprEvalResult oprd2;
+			_expect_integer(ctx, node->childs[1], &oprd2);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd1.value.u64 % oprd2.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_NOT: {
+			assert(node->nchilds == 1);
+
+			AsmExprEvalResult oprd;
+			_expect_integer(ctx, node->childs[0], &oprd);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = !oprd.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_BNOT: {
+			assert(node->nchilds == 1);
+
+			AsmExprEvalResult oprd;
+			_expect_integer(ctx, node->childs[0], &oprd);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = ~oprd.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_POSITIVE: {
+			assert(node->nchilds == 1);
+
+			AsmExprEvalResult oprd;
+			_expect_integer(ctx, node->childs[0], &oprd);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = oprd.value.u64;
+			break;
+		}
+
+		case ASM_NODE_EXPR_NEGATIVE: {
+			assert(node->nchilds == 1);
+
+			AsmExprEvalResult oprd;
+			_expect_integer(ctx, node->childs[0], &oprd);
+
+			result->type = ASM_EXPR_EVAL_RESULT_TYPE_UINT64;
+			result->value.u64 = -oprd.value.u64;
 			break;
 		}
 
@@ -113,6 +409,7 @@ static void _eval_expr(
 			break;
 		}
 		default: {
+			printf("ERROR: NODE-TYPE: %x, %s\n", node->type, node->type_name);
 			assert(0);
 			return;
 		}
