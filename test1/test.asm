@@ -1,2 +1,3 @@
 BIT16;
-STRINGS 2, "Hello, World!";
+MOV AX, BX;
+MOV EAX, EBX;

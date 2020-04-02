@@ -444,20 +444,20 @@ static void _encode(
 
 	ASM_PARSER_CONTEXT_DATA_SET_STEP(ctx, step);
 	for (int i = 0; i < ctx->ast->nchilds; i++) {
-		ParserASTNode *child = ctx->ast->childs[i];
-		if (child->type == ASM_NODE_INSTRUCTION) {
-			for (int j = 0; j < child->nchilds; j++) {
-				if (child->childs[j]->type == ASM_NODE_EXPR) {
-					_eval_expr_wrapper(ctx, child->childs[j]);
+		ParserASTNode *ins_node = ctx->ast->childs[i];
+		if (ins_node->type == ASM_NODE_INSTRUCTION) {
+			for (int j = 0; j < ins_node->nchilds; j++) {
+				if (ins_node->childs[j]->type == ASM_NODE_EXPR) {
+					_eval_expr_wrapper(ctx, ins_node->childs[j]);
 				}
 			}
 		}
 
-		Instruction *ins = ASM_INS_AST_NODE_GET_INS(child);
+		Instruction *ins = ASM_INS_AST_NODE_GET_INS(ins_node);
 
 		InstructionEncoderData data;
 		data.ctx = ctx;
-		data.ins_node = child;
+		data.ins_node = ins_node;
 
 		ins->encoder(ins, &data);
 	}

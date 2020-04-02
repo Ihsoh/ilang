@@ -569,9 +569,19 @@ void ins_iter_free(
 	InstructionIterator *iter
 );
 
+
+
+
+#define	INS_REGISTER_SEG				1
+#define	INS_REGISTER_GENERAL_1BYTE		2
+#define	INS_REGISTER_GENERAL_2BYTE		3
+#define	INS_REGISTER_GENERAL_4BYTE		4
+#define	INS_REGISTER_GENERAL_8BYTE		5
+
 typedef struct {
 	char	*name;
 	int		id;
+	int		type;
 } InsRegister;
 
 typedef struct {

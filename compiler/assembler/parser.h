@@ -26,6 +26,8 @@
 
 #define	ASM_NODE_INSTRUCTION			0x0400
 
+#define	ASM_NODE_REG					0x0500
+
 
 
 #define	ASM_NODE_EXPR						0x0e00
@@ -75,6 +77,17 @@ typedef struct {
 #define	ASM_INS_AST_NODE_GET_INS(node)			(((AsmParserInsASTNodeData *)&((node)->data[0]))->ins)
 
 #define	ASM_INS_AST_NODE_SET_INS(node, v)		(((AsmParserInsASTNodeData *)&((node)->data[0]))->ins = (v))
+
+
+
+
+typedef struct {
+	InsRegister		*reg;
+} AsmParserRegASTNodeData;
+
+#define	ASM_REG_AST_NODE_GET_REG(node)			(((AsmParserRegASTNodeData *)&((node)->data[0]))->reg)
+
+#define	ASM_REG_AST_NODE_SET_REG(node, v)		(((AsmParserRegASTNodeData *)&((node)->data[0]))->reg = (v))
 
 
 
