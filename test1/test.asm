@@ -1,5 +1,5 @@
 BIT16;
-ADD BYTE [BX + SI], AL;
-// ADC BYTE [BX + SI], CL;
+ADD BYTE [BX + SI], DL;
+ADC BYTE [BX + SI], CL;
 // AND BYTE [BX + SI], DL;
 // XOR BYTE [BX + SI], BL;
