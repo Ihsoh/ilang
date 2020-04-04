@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include <inttypes.h>
 
@@ -30,6 +31,7 @@ void ins_enc_XXX_Eb_Gb(
 	
 
 	EncoderInstruction enc_ins;
+	memset(&enc_ins, 0, sizeof(EncoderInstruction));
 
 	// Group 1
 	enc_ins.legacy_prefix.lock = false;
@@ -37,7 +39,7 @@ void ins_enc_XXX_Eb_Gb(
 	enc_ins.legacy_prefix.rep = false;
 
 	// Group 2
-	int seg = ASM_MEM16_AST_NODE_GET_SEG(ins_node);
+	int seg = ASM_MEM16_AST_NODE_GET_SEG(eb_node);
 	if (seg == INS_AM_CS) {
 		enc_ins.legacy_prefix.cs = true;
 	}
