@@ -135,6 +135,46 @@ void ins_reg_iter_free(
 	iter->next = NULL;
 }
 
+InsRegister * ins_reg_get_by_name(
+	const char *name
+) {
+	assert(name);
+
+	InsRegister *ins_reg = NULL;
+
+	InsRegisterIterator iter;
+	ins_reg_iter_init(&iter);
+	for (InsRegister *reg = ins_reg_iter_next(&iter); reg != NULL; reg = ins_reg_iter_next(&iter)) {
+		assert(reg->name);
+
+		if (strcmp(reg->name, name) == 0) {
+			ins_reg = reg;
+		}
+	}
+	ins_reg_iter_free(&iter);
+
+	return ins_reg;
+}
+
+InsRegister * ins_reg_get_by_id(
+	int id
+) {
+	InsRegister *ins_reg = NULL;
+
+	InsRegisterIterator iter;
+	ins_reg_iter_init(&iter);
+	for (InsRegister *reg = ins_reg_iter_next(&iter); reg != NULL; reg = ins_reg_iter_next(&iter)) {
+		assert(reg->name);
+
+		if (reg->id == id) {
+			ins_reg = reg;
+		}
+	}
+	ins_reg_iter_free(&iter);
+
+	return ins_reg;
+}
+
 
 
 

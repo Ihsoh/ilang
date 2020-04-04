@@ -1,3 +1,2 @@
 BIT16;
-MOV AX, BX;
-MOV EAX, EBX;
+ADD BYTE [BX + SI], AL;

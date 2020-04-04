@@ -166,6 +166,23 @@ LEXER_MATCHER(keyword)
 
 	LexerToken token;
 
+	#define	_KEYWORD(text, type)	{(text), sizeof((text)) - 1, (type)}
+
+	static struct _Keyword {
+		const char	*text;
+		const int	len;
+		const int	type;
+	} keywords[] = {
+		_KEYWORD("BYTE", ASM_TOKEN_KEYWORD_BYTE),
+		_KEYWORD("WORD", ASM_TOKEN_KEYWORD_WORD),
+		_KEYWORD("DWORD", ASM_TOKEN_KEYWORD_DWORD),
+		_KEYWORD("QWORD", ASM_TOKEN_KEYWORD_QWORD),
+
+		{NULL, 0, ASM_TOKEN_INVALID}
+	};
+
+	#undef	_KEYWORD
+
 	char chr = lexer_next_char(ctx);
 
 	if (isalpha(chr) || chr == '_' || chr == '$') {
@@ -178,6 +195,14 @@ LEXER_MATCHER(keyword)
 				// NOT MATCHED
 				break;
 			})
+		}
+
+		for (struct _Keyword *keyword = keywords; keyword->text != NULL; keyword++) {
+			if (keyword->len == token.len
+					&& strncmp(keyword->text, token.content, keyword->len) == 0) {
+				token.type = keyword->type;
+				break;
+			}
 		}
 
 		if (_is_mnemonic(&token)) {

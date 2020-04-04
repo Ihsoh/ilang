@@ -28,6 +28,10 @@
 
 #define	ASM_NODE_REG					0x0500
 
+#define	ASM_NODE_MEM16					0x0600
+
+
+
 
 
 #define	ASM_NODE_EXPR						0x0e00
@@ -88,6 +92,50 @@ typedef struct {
 #define	ASM_REG_AST_NODE_GET_REG(node)			(((AsmParserRegASTNodeData *)&((node)->data[0]))->reg)
 
 #define	ASM_REG_AST_NODE_SET_REG(node, v)		(((AsmParserRegASTNodeData *)&((node)->data[0]))->reg = (v))
+
+
+
+
+#define	ASM_MEM_TYPE_BYTE	1
+#define	ASM_MEM_TYPE_WORD	2
+#define	ASM_MEM_TYPE_DWORD	3
+#define	ASM_MEM_TYPE_QWORD	4
+
+typedef struct {
+	int				type;		// ASM_MEM_TYPE_*
+	int				seg;		// INS_AM_*
+
+	int				reg1;		// INS_AM_*
+	int				reg2;		// INS_AM_*
+	ParserASTNode	*node_disp;
+
+	int				mod;		// 00B 01B 10B
+								// 0   1   2
+	int				rm;			// 0 ~ 7
+	uint32_t		disp;
+} AsmParserMem16ASTNodeData;
+
+#define	ASM_MEM16_AST_NODE_GET_TYPE(node)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->type)
+#define	ASM_MEM16_AST_NODE_GET_SEG(node)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->seg)
+#define	ASM_MEM16_AST_NODE_GET_REG1(node)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->reg1)
+#define	ASM_MEM16_AST_NODE_GET_REG2(node)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->reg2)
+#define	ASM_MEM16_AST_NODE_GET_NODE_DISP(node)		(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->node_disp)
+#define	ASM_MEM16_AST_NODE_GET_MOD(node)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->mod)
+#define	ASM_MEM16_AST_NODE_GET_RM(node)				(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->rm)
+#define	ASM_MEM16_AST_NODE_GET_DISP(node)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->disp)
+
+#define	ASM_MEM16_AST_NODE_SET_TYPE(node, v)		(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->type = (v))
+#define	ASM_MEM16_AST_NODE_SET_SEG(node, v)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->seg = (v))
+#define	ASM_MEM16_AST_NODE_SET_REG1(node, v)		(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->reg1 = (v))
+#define	ASM_MEM16_AST_NODE_SET_REG2(node, v)		(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->reg2 = (v))
+#define	ASM_MEM16_AST_NODE_SET_NODE_DISP(node, v)	(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->node_disp = (v))
+#define	ASM_MEM16_AST_NODE_SET_MOD(node, v)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->mod = (v))
+#define	ASM_MEM16_AST_NODE_SET_RM(node, v)			(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->rm = (v))
+#define	ASM_MEM16_AST_NODE_SET_DISP(node, v)		(((AsmParserMem16ASTNodeData *)&((node)->data[0]))->disp = (v))
+
+
+
+
 
 
 

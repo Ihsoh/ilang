@@ -597,5 +597,11 @@ extern InsRegister * ins_reg_iter_next(
 extern void ins_reg_iter_free(
 	InsRegisterIterator *iter
 );
+extern InsRegister * ins_reg_get_by_name(
+	const char *name
+);
+extern InsRegister * ins_reg_get_by_id(
+	int id
+);
 
 #endif
