@@ -924,12 +924,16 @@ void asm_parser_free_context(
 ) {
 	assert(ctx);
 
-	map_free(
-		&ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx), true, false
-	);
+	//
+	// TODO: BUG!!!!!!
+	//
+	
+	// map_free(
+	// 	&ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx), true, false
+	// );
 
-	asm_lexer_free_context(ctx->lexctx);
-	parser_free_context(ctx);
+	// asm_lexer_free_context(ctx->lexctx);
+	// parser_free_context(ctx);
 }
 
 void asm_parser_parse(

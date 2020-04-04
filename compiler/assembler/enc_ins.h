@@ -146,4 +146,10 @@ typedef struct {
 	uint64_t imm;
 } EncoderInstruction;
 
+extern size_t enc_ins_encode(
+	EncoderInstruction *ins,
+	uint8_t *buffer,
+	size_t buffer_size
+);
+
 #endif

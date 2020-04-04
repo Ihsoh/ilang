@@ -454,19 +454,23 @@ static void _encode(
 				} else if (node_child->type == ASM_NODE_REG) {
 
 				} else if (node_child->type == ASM_NODE_MEM16) {
+					uint32_t disp = 0;
 					ParserASTNode *node_disp = ASM_MEM16_AST_NODE_GET_NODE_DISP(node_child);
-					_eval_expr_wrapper(ctx, node_disp);
+					if (node_disp != NULL) {
+						_eval_expr_wrapper(ctx, node_disp);
 
-					AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_disp);
-					assert(result);
-					assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+						AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_disp);
+						assert(result);
+						assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+						disp = (uint32_t) (result->value.u64 & 0xffff);
+					}
 
 					int reg1 = ASM_MEM16_AST_NODE_GET_REG1(node_child);
 					int reg2 = ASM_MEM16_AST_NODE_GET_REG2(node_child);
 
 					int mod = 0;
 					int rm = 0;
-					uint32_t disp = (uint32_t) (result->value.u64 & 0xffff);
 
 					if (disp == 0) {
 						mod = 0;

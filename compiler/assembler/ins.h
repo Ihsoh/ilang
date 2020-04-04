@@ -582,6 +582,7 @@ typedef struct {
 	char	*name;
 	int		id;
 	int		type;
+	int		index;
 } InsRegister;
 
 typedef struct {
