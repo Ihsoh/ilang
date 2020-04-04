@@ -1,7 +1,5 @@
 #include "enc_ins.h"
 
-#include "asm_ctx.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -10,12 +8,10 @@
 #include <stdbool.h>
 
 size_t enc_ins_encode(
-	AssemblerContext *asm_ctx,
 	EncoderInstruction *ins,
 	uint8_t *buffer,
 	size_t buffer_size
 ) {
-	assert(asm_ctx);
 	assert(ins);
 	assert(buffer);
 	assert(buffer_size > 0);

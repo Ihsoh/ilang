@@ -1,5 +1,5 @@
-#ifndef __COMPILER_ASSEMBLER_LEXER_H__
-#define __COMPILER_ASSEMBLER_LEXER_H__
+#ifndef __COMPILER_ASSEMBLER_INS_DIRECTIVE_ENC_H__
+#define __COMPILER_ASSEMBLER_INS_DIRECTIVE_ENC_H__
 
 #include <inttypes.h>
 #include <stddef.h>

@@ -447,8 +447,44 @@ static void _encode(
 		ParserASTNode *ins_node = ctx->ast->childs[i];
 		if (ins_node->type == ASM_NODE_INSTRUCTION) {
 			for (int j = 0; j < ins_node->nchilds; j++) {
-				if (ins_node->childs[j]->type == ASM_NODE_EXPR) {
-					_eval_expr_wrapper(ctx, ins_node->childs[j]);
+				ParserASTNode *node_child = ins_node->childs[j];
+
+				if (node_child->type == ASM_NODE_EXPR) {
+					_eval_expr_wrapper(ctx, node_child);
+				} else if (node_child->type == ASM_NODE_REG) {
+
+				} else if (node_child->type == ASM_NODE_MEM16) {
+					ParserASTNode *node_disp = ASM_MEM16_AST_NODE_GET_NODE_DISP(node_child);
+					_eval_expr_wrapper(ctx, node_disp);
+
+					AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_disp);
+					assert(result);
+					assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+					int reg1 = ASM_MEM16_AST_NODE_GET_REG1(node_child);
+					int reg2 = ASM_MEM16_AST_NODE_GET_REG2(node_child);
+
+					int mod = 0;
+					int rm = 0;
+					uint32_t disp = (uint32_t) (result->value.u64 & 0xffff);
+
+					if (disp == 0) {
+						mod = 0;
+					} else if (disp <= 0xff) {
+						mod = 1;
+					} else if (disp <= 0xffff) {
+						mod = 2;
+					} else {
+						assert(0);
+					}
+
+					if (reg1 == INS_AM_BX && reg2 == INS_AM_SI) {
+						rm = 0;
+					} else if (reg1 == INS_AM_BX && reg2 == INS_AM_DI) {
+						rm = 1;
+					} else {
+						assert(0);
+					}
 				}
 			}
 		}

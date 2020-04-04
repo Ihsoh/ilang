@@ -1,5 +1,7 @@
 #include "ins.h"
 
+#include "ins_1byte_1_enc.h"
+
 Instruction ins_1byte_1[] = {
 	// 0x00, 0x00~0x07
 	{
@@ -9,7 +11,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_E | INS_OT_b,
 			INS_AM_G | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Eb_Gb
 	},
 	{
 		"ADD", INS_SS_NONE,
