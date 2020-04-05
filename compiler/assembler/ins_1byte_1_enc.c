@@ -25,8 +25,13 @@ void ins_enc_XXX_Eb_Gb(
 	assert(data->ins_node->nchilds == 2);
 
 	ParserASTNode *ins_node = data->ins_node;
+	assert(ins_node->type == ASM_NODE_INSTRUCTION);
+
 	ParserASTNode *eb_node = data->ins_node->childs[0];
+	assert(eb_node->type == ASM_NODE_MEM16 || eb_node->type == ASM_NODE_REG);
+
 	ParserASTNode *gb_node = data->ins_node->childs[1];
+	assert(gb_node->type == ASM_NODE_REG);
 
 	
 

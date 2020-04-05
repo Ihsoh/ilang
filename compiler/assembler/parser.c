@@ -40,7 +40,7 @@ static ParserASTNode * _new_node(
 		return parser_new_node(
 			ctx, type, type_name, token, sizeof(AsmParserExprASTNodeData), &data
 		);
-	} else if (type == ASM_TOKEN_KEYWORD_REGISTER) {
+	} else if (type == ASM_NODE_REG) {
 		AsmParserRegASTNodeData data;
 		data.reg = NULL;
 
@@ -747,7 +747,9 @@ _RULE(ins)
 
 			uint16_t oprd_type[3] = {ins->oprd.o1, ins->oprd.o2, ins->oprd.o3};
 			for (int i = 0; i < 3; i++) {
-				if (oprd_type[i] != 0) {
+				uint16_t ot = oprd_type[i];
+
+				if (ot != 0) {
 					// 检测逗号。
 					if (i > 0) {
 						_RULE_NEXT_TOKEN
@@ -755,8 +757,6 @@ _RULE(ins)
 							goto not_matched;
 						}
 					}
-
-					uint16_t ot = oprd_type[i];
 
 					if (ins->superscript & INS_SS_DIRECTIVE) {
 						if (_is_expr_oprd(ot)) {
@@ -797,13 +797,14 @@ _RULE(ins)
 							if (node_reg == NULL) {
 								goto not_matched;
 							}
-							_RULE_ADD_CHILD(node_reg)
 
 							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
 							assert(reg);
 							if (reg->type != INS_REGISTER_GENERAL_1BYTE) {
 								goto not_matched;
 							}
+
+							_RULE_ADD_CHILD(node_reg)
 						} else if (_is_Ev_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
 							if (node_reg != NULL) {
@@ -828,7 +829,6 @@ _RULE(ins)
 							if (node_reg == NULL) {
 								goto not_matched;
 							}
-							_RULE_ADD_CHILD(node_reg)
 
 							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
 							assert(reg);
@@ -837,6 +837,8 @@ _RULE(ins)
 									&& reg->type != INS_REGISTER_GENERAL_8BYTE) {
 								goto not_matched;
 							}
+
+							_RULE_ADD_CHILD(node_reg)
 						} else if (_is_AL_oprd(ot)) {
 							goto not_matched;
 						} else if (_is_Ib_oprd(ot)) {
@@ -927,7 +929,7 @@ void asm_parser_free_context(
 	//
 	// TODO: BUG!!!!!!
 	//
-	
+
 	// map_free(
 	// 	&ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx), true, false
 	// );
