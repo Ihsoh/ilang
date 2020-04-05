@@ -486,9 +486,17 @@ static void _encode(
 						rm = 0;
 					} else if (reg1 == INS_AM_BX && reg2 == INS_AM_DI) {
 						rm = 1;
+					} else if (reg1 == INS_AM_BP && reg2 == INS_AM_SI) {
+						rm = 2;
+					} else if (reg1 == INS_AM_BP && reg2 == INS_AM_DI) {
+						rm = 3;
 					} else {
 						assert(0);
 					}
+
+					ASM_MEM16_AST_NODE_SET_MOD(node_child, mod);
+					ASM_MEM16_AST_NODE_SET_RM(node_child, rm);
+					ASM_MEM16_AST_NODE_SET_DISP(node_child, disp);
 				}
 			}
 		}

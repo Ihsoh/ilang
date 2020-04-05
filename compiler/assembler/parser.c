@@ -535,24 +535,43 @@ static bool _is_reg(
 	return reg != NULL && reg->id == id;
 }
 
-_RULE(mem16_BX_SI_disp)
+_RULE(mem16_X_X_disp)
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_LEFT) {
 		_RULE_NOT_MATCHED
 	}
 
 	_RULE_NEXT_TOKEN
-	if (!_is_reg(_RULE_TOKEN, INS_AM_BX)) {
-		_RULE_NOT_MATCHED
-	}
-
+	LexerToken *token_reg1 = _RULE_TOKEN;
+	
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_ADD) {
 		_RULE_NOT_MATCHED
 	}
 
 	_RULE_NEXT_TOKEN
-	if (!_is_reg(_RULE_TOKEN, INS_AM_SI)) {
+	LexerToken *token_reg2 = _RULE_TOKEN;
+
+	// [BX+SI]
+	// [BX+DI]
+	// [BP+SI]
+	// [BP+DI]
+
+	int reg1 = 0;
+	int reg2 = 0;
+	if (_is_reg(token_reg1, INS_AM_BX) && _is_reg(token_reg2, INS_AM_SI)) {
+		reg1 = INS_AM_BX;
+		reg2 = INS_AM_SI;
+	} else if (_is_reg(token_reg1, INS_AM_BX) && _is_reg(token_reg2, INS_AM_DI)) {
+		reg1 = INS_AM_BX;
+		reg2 = INS_AM_DI;
+	} else if (_is_reg(token_reg1, INS_AM_BP) && _is_reg(token_reg2, INS_AM_SI)) {
+		reg1 = INS_AM_BP;
+		reg2 = INS_AM_SI;
+	} else if (_is_reg(token_reg1, INS_AM_BP) && _is_reg(token_reg2, INS_AM_DI)) {
+		reg1 = INS_AM_BP;
+		reg2 = INS_AM_DI;
+	} else {
 		_RULE_NOT_MATCHED
 	}
 
@@ -576,8 +595,8 @@ _RULE(mem16_BX_SI_disp)
 	}
 
 	_RULE_NODE(ASM_NODE_MEM16, NULL)
-	ASM_MEM16_AST_NODE_SET_REG1(_RULE_CURRENT_NODE, INS_AM_BX);
-	ASM_MEM16_AST_NODE_SET_REG2(_RULE_CURRENT_NODE, INS_AM_SI);
+	ASM_MEM16_AST_NODE_SET_REG1(_RULE_CURRENT_NODE, reg1);
+	ASM_MEM16_AST_NODE_SET_REG2(_RULE_CURRENT_NODE, reg2);
 	ASM_MEM16_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
 _RULE_END
 
@@ -627,7 +646,7 @@ _RULE(mem16)
 	ParserASTNode *node = NULL;
 
 	if (node == NULL) {
-		node = _RULE_NAME(mem16_BX_SI_disp)(_RULE_PARSER_CTX);
+		node = _RULE_NAME(mem16_X_X_disp)(_RULE_PARSER_CTX);
 	}
 
 
@@ -636,6 +655,8 @@ _RULE(mem16)
 	if (node != NULL) {
 		ASM_MEM16_AST_NODE_SET_TYPE(node, type);
 		ASM_MEM16_AST_NODE_SET_SEG(node, seg);
+	} else {
+		assert(0);
 	}
 
 	_RULE_RETURNED_NODE(node)
