@@ -29,6 +29,9 @@
 #define	ASM_NODE_REG					0x0500
 
 #define	ASM_NODE_MEM16					0x0600
+#define	ASM_NODE_MEM32					0x0610
+#define	ASM_NODE_MEM64					0x0620
+
 
 
 

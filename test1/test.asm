@@ -1,11 +1,5 @@
 BIT16;
 
-ADD BYTE [BX + SI], AL;
-ADD BYTE [BX + DI], AL;
-ADD BYTE [BP + SI], AL;
-ADD BYTE [BP + DI], AL;
-
-ADD BYTE [BX + SI + 0x11], AL;
-ADD BYTE [BX + DI + 0x22], AL;
-ADD BYTE [BP + SI + 0xaabb], AL;
-ADD BYTE [BP + DI + 0xccdd], AL;
+ADD BYTE [BP], BL;
+ADD BYTE [0xabcd], BL;
+ADD BYTE [BP + 0x1234], BL;

@@ -478,8 +478,6 @@ static void _encode(
 						mod = 1;
 					} else if (disp <= 0xffff) {
 						mod = 2;
-					} else {
-						assert(0);
 					}
 
 					if (reg1 == INS_AM_BX && reg2 == INS_AM_SI) {
@@ -490,8 +488,30 @@ static void _encode(
 						rm = 2;
 					} else if (reg1 == INS_AM_BP && reg2 == INS_AM_DI) {
 						rm = 3;
-					} else {
-						assert(0);
+					} else if (reg1 == INS_AM_SI && reg2 == INS_OPRD_NONE) {
+						rm = 4;
+					} else if (reg1 == INS_AM_DI && reg2 == INS_OPRD_NONE) {
+						rm = 5;
+					} else if (reg1 == INS_AM_BP && reg2 == INS_OPRD_NONE) {
+						rm = 6;
+					} else if (reg1 == INS_AM_BX && reg2 == INS_OPRD_NONE) {
+						rm = 7;
+					}
+
+					// disp16
+					if (reg1 == INS_OPRD_NONE
+							&& reg2 == INS_OPRD_NONE
+							&& node_disp != NULL) {
+						mod = 0;
+						rm = 6;
+					}
+
+					// [BP] -> [BP + 0]
+					if (reg1 == INS_AM_BP
+							&& reg2 == INS_OPRD_NONE
+							&& node_disp == NULL) {
+						mod = -1;
+						rm = -1;
 					}
 
 					ASM_MEM16_AST_NODE_SET_MOD(node_child, mod);

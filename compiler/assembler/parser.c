@@ -600,6 +600,81 @@ _RULE(mem16_X_X_disp)
 	ASM_MEM16_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
 _RULE_END
 
+_RULE(mem16_X_disp)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_LEFT) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	LexerToken *token_reg1 = _RULE_TOKEN;
+
+	// [SI]
+	// [DI]
+	// [BP]
+	// [BX]
+
+	int reg1 = 0;
+	int reg2 = INS_OPRD_NONE;
+	if (_is_reg(token_reg1, INS_AM_SI)) {
+		reg1 = INS_AM_SI;
+	} else if (_is_reg(token_reg1, INS_AM_DI)) {
+		reg1 = INS_AM_DI;
+	} else if (_is_reg(token_reg1, INS_AM_BP)) {
+		reg1 = INS_AM_BP;
+	} else if (_is_reg(token_reg1, INS_AM_BX)) {
+		reg1 = INS_AM_BX;
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_disp = NULL;
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_PNCT_ADD) {
+		node_disp = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+		if (node_disp != NULL) {
+			_RULE_ABANDON_LEXCTX
+		} else {
+			_RULE_NOT_MATCHED
+		}
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_RIGHT) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(ASM_NODE_MEM16, NULL)
+	ASM_MEM16_AST_NODE_SET_REG1(_RULE_CURRENT_NODE, reg1);
+	ASM_MEM16_AST_NODE_SET_REG2(_RULE_CURRENT_NODE, reg2);
+	ASM_MEM16_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
+_RULE_END
+
+_RULE(mem16_disp)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_LEFT) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_disp = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+	if (node_disp == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_RIGHT) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(ASM_NODE_MEM16, NULL)
+	ASM_MEM16_AST_NODE_SET_REG1(_RULE_CURRENT_NODE, INS_OPRD_NONE);
+	ASM_MEM16_AST_NODE_SET_REG2(_RULE_CURRENT_NODE, INS_OPRD_NONE);
+	ASM_MEM16_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
+_RULE_END
+
 
 
 
@@ -649,8 +724,13 @@ _RULE(mem16)
 		node = _RULE_NAME(mem16_X_X_disp)(_RULE_PARSER_CTX);
 	}
 
+	if (node == NULL) {
+		node = _RULE_NAME(mem16_X_disp)(_RULE_PARSER_CTX);
+	}
 
-
+	if (node == NULL) {
+		node = _RULE_NAME(mem16_disp)(_RULE_PARSER_CTX);
+	}
 
 	if (node != NULL) {
 		ASM_MEM16_AST_NODE_SET_TYPE(node, type);
