@@ -266,7 +266,7 @@ void ins_init(
 	enc_ins->opcode[2] = ins->opcode.o3;
 }
 
-void ins_fill_Gb(
+void ins_fill_GX(
 	ParserContext *ctx,
 	Instruction *ins,
 	ParserASTNode *node,
@@ -317,7 +317,7 @@ void ins_fill_Gb(
 	}
 }
 
-void ins_fill_Eb(
+void ins_fill_EX(
 	ParserContext *ctx,
 	Instruction *ins,
 	ParserASTNode *node,
@@ -332,10 +332,8 @@ void ins_fill_Eb(
 
 	enc_ins->mod_rm_used = true;
 
-	if (node->type == ASM_NODE_MEM16
-			|| node->type == ASM_NODE_MEM32
-			|| node->type == ASM_NODE_MEM64) {
-		int seg = ASM_MEM16_AST_NODE_GET_SEG(node);
+	if (node->type == ASM_NODE_MEM) {
+		int seg = ASM_MEM_AST_NODE_GET_SEG(node);
 		if (seg == INS_AM_CS) {
 			enc_ins->legacy_prefix.cs = true;
 		}
@@ -400,11 +398,12 @@ void ins_fill_Eb(
 				}
 			}
 		}
-	} else if (node->type == ASM_NODE_MEM16) {
-		int type = ASM_MEM16_AST_NODE_GET_TYPE(node);
-		int mod = ASM_MEM16_AST_NODE_GET_MOD(node);
-		int rm = ASM_MEM16_AST_NODE_GET_RM(node);
-		uint32_t disp = ASM_MEM16_AST_NODE_GET_DISP(node);
+	} else if (node->type == ASM_NODE_MEM
+					&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node) == ASM_MEM_ADDR_SIZE_16) {
+		int type = ASM_MEM_AST_NODE_GET_TYPE(node);
+		int mod = ASM_MEM_AST_NODE_GET_MOD(node);
+		int rm = ASM_MEM_AST_NODE_GET_RM(node);
+		uint32_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
 
 		if (mod == -1 && rm == -1) {
 			mod = 1;
@@ -449,9 +448,11 @@ void ins_fill_Eb(
 		} else if (arch == ASM_ARCH_BIT64) {
 			assert(0);
 		}
-	} else if (node->type == ASM_NODE_MEM32) {
+	} else if (node->type == ASM_NODE_MEM
+					&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node) == ASM_MEM_ADDR_SIZE_32) {
 		assert(0);
-	} else if (node->type == ASM_NODE_MEM64) {
+	} else if (node->type == ASM_NODE_MEM
+					&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node) == ASM_MEM_ADDR_SIZE_64) {
 		assert(0);
 	} else {
 		assert(0);

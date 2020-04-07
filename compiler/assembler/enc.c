@@ -453,9 +453,10 @@ static void _encode(
 					_eval_expr_wrapper(ctx, node_child);
 				} else if (node_child->type == ASM_NODE_REG) {
 
-				} else if (node_child->type == ASM_NODE_MEM16) {
+				} else if (node_child->type == ASM_NODE_MEM
+								&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node_child) == ASM_MEM_ADDR_SIZE_16) {
 					uint32_t disp = 0;
-					ParserASTNode *node_disp = ASM_MEM16_AST_NODE_GET_NODE_DISP(node_child);
+					ParserASTNode *node_disp = ASM_MEM_AST_NODE_GET_NODE_DISP(node_child);
 					if (node_disp != NULL) {
 						_eval_expr_wrapper(ctx, node_disp);
 
@@ -466,8 +467,8 @@ static void _encode(
 						disp = (uint32_t) (result->value.u64 & 0xffff);
 					}
 
-					int reg1 = ASM_MEM16_AST_NODE_GET_REG1(node_child);
-					int reg2 = ASM_MEM16_AST_NODE_GET_REG2(node_child);
+					int reg1 = ASM_MEM_AST_NODE_GET_REG1(node_child);
+					int reg2 = ASM_MEM_AST_NODE_GET_REG2(node_child);
 
 					int mod = 0;
 					int rm = 0;
@@ -514,9 +515,162 @@ static void _encode(
 						rm = -1;
 					}
 
-					ASM_MEM16_AST_NODE_SET_MOD(node_child, mod);
-					ASM_MEM16_AST_NODE_SET_RM(node_child, rm);
-					ASM_MEM16_AST_NODE_SET_DISP(node_child, disp);
+					ASM_MEM_AST_NODE_SET_MOD(node_child, mod);
+					ASM_MEM_AST_NODE_SET_RM(node_child, rm);
+					ASM_MEM_AST_NODE_SET_DISP(node_child, disp);
+				} else if (node_child->type == ASM_NODE_MEM
+								&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node_child) == ASM_MEM_ADDR_SIZE_32) {
+					uint32_t scale = 0;
+					ParserASTNode *node_scale = ASM_MEM_AST_NODE_GET_NODE_SCALE(node_child);
+					if (node_scale != NULL) {
+						_eval_expr_wrapper(ctx, node_scale);
+
+						AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_scale);
+						assert(result);
+						assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+						scale = result->value.u64;
+						if (scale != 2 && scale != 4 && scale != 8) {
+							assert(0);
+						}
+					}
+					
+					uint32_t disp = 0;
+					ParserASTNode *node_disp = ASM_MEM_AST_NODE_GET_NODE_DISP(node_child);
+					if (node_disp != NULL) {
+						_eval_expr_wrapper(ctx, node_disp);
+
+						AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_disp);
+						assert(result);
+						assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+						disp = (uint32_t) (result->value.u64 & 0xffffffff);
+					}
+
+					int reg1 = ASM_MEM_AST_NODE_GET_REG1(node_child);
+					int reg2 = ASM_MEM_AST_NODE_GET_REG2(node_child);
+
+					int mod = 0;
+					int rm = 0;
+					int sib_base = -1;
+					int sib_index = -1;
+
+					if (reg1 == INS_OPRD_NONE
+							&& reg2 == INS_OPRD_NONE
+							&& node_scale == NULL
+							&& node_disp != NULL) {
+						// [disp32]
+						mod = 0;
+						rm = 5;
+					} else if (reg1 != INS_OPRD_NONE
+									&& reg2 == INS_OPRD_NONE
+									&& node_scale == NULL) {
+						if (node_disp == NULL
+								|| disp == 0) {
+							mod = 0;
+						} else {
+							if (disp <= 0xff) {
+								mod = 1;
+							} else {
+								mod = 2;
+							}
+						}
+
+						switch (reg1) {
+							case INS_AM_EAX: {
+								rm = 0;
+								break;
+							}
+							case INS_AM_ECX: {
+								rm = 1;
+								break;
+							}
+							case INS_AM_EDX: {
+								rm = 2;
+								break;
+							}
+							case INS_AM_EBX: {
+								rm = 3;
+								break;
+							}
+							case INS_AM_ESP: {
+								rm = 4;
+								break;
+							}
+							case INS_AM_EBP: {
+								rm = 5;
+								break;
+							}
+							case INS_AM_ESI: {
+								rm = 6;
+								break;
+							}
+							case INS_AM_EDI: {
+								rm = 7;
+								break;
+							}
+						}
+					} else if (reg1 == INS_OPRD_NONE
+									&& reg2 != INS_OPRD_NONE
+									&& node_scale != NULL) {
+						if (node_disp == NULL
+								|| disp == 0) {
+							mod = 0;
+						} else {
+							if (disp <= 0xff) {
+								mod = 1;
+							} else {
+								mod = 2;
+							}
+						}
+
+						rm = 4;
+
+						switch (reg2) {
+							case INS_AM_EAX: {
+								
+								break;
+							}
+							case INS_AM_ECX: {
+								
+								break;
+							}
+							case INS_AM_EDX: {
+								
+								break;
+							}
+							case INS_AM_EBX: {
+								
+								break;
+							}
+							case INS_AM_ESP: {
+								
+								break;
+							}
+							case INS_AM_EBP: {
+								
+								break;
+							}
+							case INS_AM_ESI: {
+								
+								break;
+							}
+							case INS_AM_EDI: {
+								rm = 7;
+								break;
+							}
+						}
+					}
+
+					ASM_MEM_AST_NODE_SET_MOD(node_child, mod);
+					ASM_MEM_AST_NODE_SET_RM(node_child, rm);
+					ASM_MEM_AST_NODE_SET_DISP(node_child, disp);
+					ASM_MEM_AST_NODE_SET_SCALE(node_child, scale);
+					ASM_MEM_AST_NODE_SET_SIB_BASE(node_child, sib_base);
+					ASM_MEM_AST_NODE_SET_SIB_INDEX(node_child, sib_index);
+				} else if (node_child->type == ASM_NODE_MEM
+								&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node_child) == ASM_MEM_ADDR_SIZE_64) {
+					assert(0);
 				}
 			}
 		}

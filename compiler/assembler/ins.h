@@ -615,13 +615,13 @@ extern void ins_init(
 	ParserASTNode *node,
 	EncoderInstruction *enc_ins
 );
-extern void ins_fill_Gb(
+extern void ins_fill_GX(
 	ParserContext *ctx,
 	Instruction *ins,
 	ParserASTNode *node,
 	EncoderInstruction *enc_ins
 );
-extern void ins_fill_Eb(
+extern void ins_fill_EX(
 	ParserContext *ctx,
 	Instruction *ins,
 	ParserASTNode *node,

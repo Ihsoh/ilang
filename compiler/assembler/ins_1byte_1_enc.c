@@ -34,9 +34,9 @@ void ins_enc_XXX_Eb_Gb(
 	
 	ins_init(data->ctx, ins, ins_node, &enc_ins);
 
-	ins_fill_Eb(data->ctx, ins, eb_node, &enc_ins);
+	ins_fill_EX(data->ctx, ins, eb_node, &enc_ins);
 
-	ins_fill_Gb(data->ctx, ins, gb_node, &enc_ins);
+	ins_fill_GX(data->ctx, ins, gb_node, &enc_ins);
 
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
