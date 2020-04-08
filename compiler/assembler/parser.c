@@ -1066,6 +1066,8 @@ _RULE(mem32)
 	_RULE_RETURNED_NODE(node)
 _RULE_END
 
+
+
 _RULE(mem64)
 
 _RULE_END
@@ -1207,11 +1209,16 @@ _RULE(ins)
 								_RULE_ADD_CHILD(node_reg)
 							} else {
 								ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
-								if (node_mem != NULL) {
-									_RULE_ADD_CHILD(node_mem)
-								} else {
+
+								if (node_mem == NULL) {
 									goto not_matched;
 								}
+								
+								if (ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_BYTE) {
+									goto not_matched;
+								}
+
+								_RULE_ADD_CHILD(node_mem)
 							}
 						} else if (_is_Gb_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
@@ -1239,11 +1246,18 @@ _RULE(ins)
 								_RULE_ADD_CHILD(node_reg)
 							} else {
 								ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
-								if (node_mem != NULL) {
-									_RULE_ADD_CHILD(node_mem)
-								} else {
+
+								if (node_mem == NULL) {
 									goto not_matched;
 								}
+								
+								if (ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_WORD
+										&& ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_DWORD
+										&& ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_QWORD) {
+									goto not_matched;
+								}
+
+								_RULE_ADD_CHILD(node_mem)
 							}
 						} else if (_is_Gv_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
