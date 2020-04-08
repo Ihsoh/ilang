@@ -138,6 +138,7 @@ typedef struct {
 
 	int				sib_base;	// -1无效。
 	int				sib_index;	// -1无效。
+	int				sib_ss;		// -1无效。
 } AsmParserMemASTNodeData;
 
 #define	ASM_MEM_AST_NODE_GET_ADDR_SIZE(node)		(((AsmParserMemASTNodeData *)&((node)->data[0]))->addr_size)
@@ -153,6 +154,7 @@ typedef struct {
 #define	ASM_MEM_AST_NODE_GET_RM(node)				(((AsmParserMemASTNodeData *)&((node)->data[0]))->rm)
 #define	ASM_MEM_AST_NODE_GET_SIB_BASE(node)			(((AsmParserMemASTNodeData *)&((node)->data[0]))->sib_base)
 #define	ASM_MEM_AST_NODE_GET_SIB_INDEX(node)		(((AsmParserMemASTNodeData *)&((node)->data[0]))->sib_index)
+#define	ASM_MEM_AST_NODE_GET_SIB_SS(node)			(((AsmParserMemASTNodeData *)&((node)->data[0]))->sib_ss)
 
 #define	ASM_MEM_AST_NODE_SET_ADDR_SIZE(node, v)		(((AsmParserMemASTNodeData *)&((node)->data[0]))->addr_size = (v))
 #define	ASM_MEM_AST_NODE_SET_TYPE(node, v)			(((AsmParserMemASTNodeData *)&((node)->data[0]))->type = (v))
@@ -167,6 +169,7 @@ typedef struct {
 #define	ASM_MEM_AST_NODE_SET_RM(node, v)			(((AsmParserMemASTNodeData *)&((node)->data[0]))->rm = (v))
 #define	ASM_MEM_AST_NODE_SET_SIB_BASE(node, v)		(((AsmParserMemASTNodeData *)&((node)->data[0]))->sib_base = (v))
 #define	ASM_MEM_AST_NODE_SET_SIB_INDEX(node, v)		(((AsmParserMemASTNodeData *)&((node)->data[0]))->sib_index = (v))
+#define	ASM_MEM_AST_NODE_SET_SIB_SS(node, v)		(((AsmParserMemASTNodeData *)&((node)->data[0]))->sib_ss = (v))
 
 
 

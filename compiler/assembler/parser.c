@@ -583,6 +583,7 @@ _RULE(mem16_X_X_disp)
 		if (node_disp != NULL) {
 			_RULE_ABANDON_LEXCTX
 		} else {
+			_RULE_POP_LEXCTX
 			_RULE_NOT_MATCHED
 		}
 	} else {
@@ -636,6 +637,7 @@ _RULE(mem16_X_disp)
 		if (node_disp != NULL) {
 			_RULE_ABANDON_LEXCTX
 		} else {
+			_RULE_POP_LEXCTX
 			_RULE_NOT_MATCHED
 		}
 	} else {
@@ -736,7 +738,7 @@ _RULE(mem16)
 		ASM_MEM_AST_NODE_SET_TYPE(node, type);
 		ASM_MEM_AST_NODE_SET_SEG(node, seg);
 	} else {
-		assert(0);
+		_RULE_NOT_MATCHED
 	}
 
 	_RULE_RETURNED_NODE(node)
@@ -749,9 +751,9 @@ _RULE(mem32_disp)
 	}
 
 	ParserASTNode *node_disp = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
-		if (node_disp == NULL) {
-			_RULE_NOT_MATCHED
-		}
+	if (node_disp == NULL) {
+		_RULE_NOT_MATCHED
+	}
 
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_RIGHT) {
@@ -805,6 +807,7 @@ _RULE(mem32_base_disp)
 		if (node_disp != NULL) {
 			_RULE_ABANDON_LEXCTX
 		} else {
+			_RULE_POP_LEXCTX
 			_RULE_NOT_MATCHED
 		}
 	} else {
@@ -861,7 +864,7 @@ _RULE(mem32_index_scale_disp)
 	}
 
 	ParserASTNode *node_scale = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
-	if (node_scale) {
+	if (node_scale == NULL) {
 		_RULE_NOT_MATCHED
 	}
 
@@ -873,6 +876,7 @@ _RULE(mem32_index_scale_disp)
 		if (node_disp != NULL) {
 			_RULE_ABANDON_LEXCTX
 		} else {
+			_RULE_POP_LEXCTX
 			_RULE_NOT_MATCHED
 		}
 	} else {
@@ -959,6 +963,7 @@ _RULE(mem32_base_index_scale_disp)
 		if (node_scale != NULL) {
 			_RULE_ABANDON_LEXCTX
 		} else {
+			_RULE_POP_LEXCTX
 			_RULE_NOT_MATCHED
 		}
 	} else {
@@ -973,6 +978,7 @@ _RULE(mem32_base_index_scale_disp)
 		if (node_disp != NULL) {
 			_RULE_ABANDON_LEXCTX
 		} else {
+			_RULE_POP_LEXCTX
 			_RULE_NOT_MATCHED
 		}
 	} else {
@@ -1054,7 +1060,7 @@ _RULE(mem32)
 		ASM_MEM_AST_NODE_SET_TYPE(node, type);
 		ASM_MEM_AST_NODE_SET_SEG(node, seg);
 	} else {
-		assert(0);
+		_RULE_NOT_MATCHED
 	}
 
 	_RULE_RETURNED_NODE(node)

@@ -531,6 +531,7 @@ static void _encode(
 
 						scale = result->value.u64;
 						if (scale != 2 && scale != 4 && scale != 8) {
+							printf("ERROR: %u, %x\n", scale, scale);
 							assert(0);
 						}
 					}
@@ -554,6 +555,7 @@ static void _encode(
 					int rm = 0;
 					int sib_base = -1;
 					int sib_index = -1;
+					int sib_ss = -1;
 
 					if (reg1 == INS_OPRD_NONE
 							&& reg2 == INS_OPRD_NONE
@@ -625,38 +627,165 @@ static void _encode(
 						}
 
 						rm = 4;
+						sib_base = 5;
+
+						switch (scale)
+						{
+							case 2: {
+								sib_ss = 1;
+								break;
+							}
+							case 4: {
+								sib_ss = 2;
+								break;
+							}
+							case 8: {
+								sib_ss = 3;
+								break;
+							}
+							default: {
+								assert(0);
+								break;
+							}
+						}
 
 						switch (reg2) {
 							case INS_AM_EAX: {
-								
+								sib_index = 0;
 								break;
 							}
 							case INS_AM_ECX: {
-								
+								sib_index = 1;
 								break;
 							}
 							case INS_AM_EDX: {
-								
+								sib_index = 2;
 								break;
 							}
 							case INS_AM_EBX: {
-								
+								sib_index = 3;
 								break;
 							}
 							case INS_AM_ESP: {
-								
+								sib_index = 4;
 								break;
 							}
 							case INS_AM_EBP: {
-								
+								sib_index = 5;
 								break;
 							}
 							case INS_AM_ESI: {
-								
+								sib_index = 6;
 								break;
 							}
 							case INS_AM_EDI: {
-								rm = 7;
+								sib_index = 7;
+								break;
+							}
+						}
+					} else if (reg1 != INS_OPRD_NONE
+									&& reg2 != INS_OPRD_NONE) {
+						if (node_disp == NULL
+								|| disp == 0) {
+							mod = 0;
+						} else {
+							if (disp <= 0xff) {
+								mod = 1;
+							} else {
+								mod = 2;
+							}
+						}
+
+						rm = 4;
+
+						if (node_scale != NULL) {
+							switch (scale)
+							{
+								case 2: {
+									sib_ss = 1;
+									break;
+								}
+								case 4: {
+									sib_ss = 2;
+									break;
+								}
+								case 8: {
+									sib_ss = 3;
+									break;
+								}
+								default: {
+									assert(0);
+									break;
+								}
+							}
+						}
+
+						switch (reg1) {
+							case INS_AM_EAX: {
+								sib_base = 0;
+								break;
+							}
+							case INS_AM_ECX: {
+								sib_base = 1;
+								break;
+							}
+							case INS_AM_EDX: {
+								sib_base = 2;
+								break;
+							}
+							case INS_AM_EBX: {
+								sib_base = 3;
+								break;
+							}
+							case INS_AM_ESP: {
+								sib_base = 4;
+								break;
+							}
+							case INS_AM_EBP: {
+								sib_base = 5;
+								break;
+							}
+							case INS_AM_ESI: {
+								sib_base = 6;
+								break;
+							}
+							case INS_AM_EDI: {
+								sib_base = 7;
+								break;
+							}
+						}
+
+						switch (reg2) {
+							case INS_AM_EAX: {
+								sib_index = 0;
+								break;
+							}
+							case INS_AM_ECX: {
+								sib_index = 1;
+								break;
+							}
+							case INS_AM_EDX: {
+								sib_index = 2;
+								break;
+							}
+							case INS_AM_EBX: {
+								sib_index = 3;
+								break;
+							}
+							case INS_AM_ESP: {
+								sib_index = 4;
+								break;
+							}
+							case INS_AM_EBP: {
+								sib_index = 5;
+								break;
+							}
+							case INS_AM_ESI: {
+								sib_index = 6;
+								break;
+							}
+							case INS_AM_EDI: {
+								sib_index = 7;
 								break;
 							}
 						}
@@ -668,6 +797,7 @@ static void _encode(
 					ASM_MEM_AST_NODE_SET_SCALE(node_child, scale);
 					ASM_MEM_AST_NODE_SET_SIB_BASE(node_child, sib_base);
 					ASM_MEM_AST_NODE_SET_SIB_INDEX(node_child, sib_index);
+					ASM_MEM_AST_NODE_SET_SIB_SS(node_child, sib_ss);
 				} else if (node_child->type == ASM_NODE_MEM
 								&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node_child) == ASM_MEM_ADDR_SIZE_64) {
 					assert(0);

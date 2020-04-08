@@ -1,7 +1,3 @@
 BIT16;
 
-ADD BYTE [BP], BL;
-ADD BYTE [0xabcd], BL;
-ADD BYTE [BP + 0x1234], BL;
-
-// ADD BYTE [EAX + EBX * 2 + 0x12345678], BL;
+ADD BYTE [EDX + ECX * 4], BL;
