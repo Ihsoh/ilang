@@ -1066,10 +1066,326 @@ _RULE(mem32)
 	_RULE_RETURNED_NODE(node)
 _RULE_END
 
+_RULE(mem64_disp)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_LEFT) {
+		_RULE_NOT_MATCHED
+	}
 
+	ParserASTNode *node_disp = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+	if (node_disp == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_RIGHT) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(ASM_NODE_MEM, NULL)
+	ASM_MEM_AST_NODE_SET_REG1(_RULE_CURRENT_NODE, INS_OPRD_NONE);
+	ASM_MEM_AST_NODE_SET_REG2(_RULE_CURRENT_NODE, INS_OPRD_NONE);
+	ASM_MEM_AST_NODE_SET_NODE_SCALE(_RULE_CURRENT_NODE, NULL);
+	ASM_MEM_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
+_RULE_END
+
+_RULE(mem64_base_disp)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_LEFT) {
+		_RULE_NOT_MATCHED
+	}
+
+	int reg1 = 0;
+	int reg2 = INS_OPRD_NONE;
+
+	_RULE_NEXT_TOKEN
+	LexerToken *token_reg1 = _RULE_TOKEN;
+	
+	if (_is_reg(token_reg1, INS_AM_RAX)) {
+		reg1 = INS_AM_RAX;
+	} else if (_is_reg(token_reg1, INS_AM_RCX)) {
+		reg1 = INS_AM_RCX;
+	} else if (_is_reg(token_reg1, INS_AM_RDX)) {
+		reg1 = INS_AM_RDX;
+	} else if (_is_reg(token_reg1, INS_AM_RBX)) {
+		reg1 = INS_AM_RBX;
+	} else if (_is_reg(token_reg1, INS_AM_RSP)) {
+		reg1 = INS_AM_RSP;
+	} else if (_is_reg(token_reg1, INS_AM_RBP)) {
+		reg1 = INS_AM_RBP;
+	} else if (_is_reg(token_reg1, INS_AM_RSI)) {
+		reg1 = INS_AM_RSI;
+	} else if (_is_reg(token_reg1, INS_AM_RDI)) {
+		reg1 = INS_AM_RDI;
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_disp = NULL;
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_PNCT_ADD) {
+		node_disp = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+		if (node_disp != NULL) {
+			_RULE_ABANDON_LEXCTX
+		} else {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_RIGHT) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(ASM_NODE_MEM, NULL)
+	ASM_MEM_AST_NODE_SET_REG1(_RULE_CURRENT_NODE, reg1);
+	ASM_MEM_AST_NODE_SET_REG2(_RULE_CURRENT_NODE, reg2);
+	ASM_MEM_AST_NODE_SET_NODE_SCALE(_RULE_CURRENT_NODE, NULL);
+	ASM_MEM_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
+_RULE_END
+
+_RULE(mem64_index_scale_disp)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_LEFT) {
+		_RULE_NOT_MATCHED
+	}
+
+	int reg1 = INS_OPRD_NONE;
+	int reg2 = 0;
+
+	_RULE_NEXT_TOKEN
+	LexerToken *token_reg2 = _RULE_TOKEN;
+	
+	if (_is_reg(token_reg2, INS_AM_RAX)) {
+		reg2 = INS_AM_RAX;
+	} else if (_is_reg(token_reg2, INS_AM_RCX)) {
+		reg2 = INS_AM_RCX;
+	} else if (_is_reg(token_reg2, INS_AM_RDX)) {
+		reg2 = INS_AM_RDX;
+	} else if (_is_reg(token_reg2, INS_AM_RBX)) {
+		reg2 = INS_AM_RBX;
+	} else if (_is_reg(token_reg2, INS_AM_RSP)) {
+		reg2 = INS_AM_RSP;
+	} else if (_is_reg(token_reg2, INS_AM_RBP)) {
+		reg2 = INS_AM_RBP;
+	} else if (_is_reg(token_reg2, INS_AM_RSI)) {
+		reg2 = INS_AM_RSI;
+	} else if (_is_reg(token_reg2, INS_AM_RDI)) {
+		reg2 = INS_AM_RDI;
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_MUL) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_scale = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+	if (node_scale == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_disp = NULL;
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_PNCT_ADD) {
+		node_disp = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+		if (node_disp != NULL) {
+			_RULE_ABANDON_LEXCTX
+		} else {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_RIGHT) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(ASM_NODE_MEM, NULL)
+	ASM_MEM_AST_NODE_SET_REG1(_RULE_CURRENT_NODE, reg1);
+	ASM_MEM_AST_NODE_SET_REG2(_RULE_CURRENT_NODE, reg2);
+	ASM_MEM_AST_NODE_SET_NODE_SCALE(_RULE_CURRENT_NODE, node_scale);
+	ASM_MEM_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
+_RULE_END
+
+_RULE(mem64_base_index_scale_disp)
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_LEFT) {
+		_RULE_NOT_MATCHED
+	}
+
+	int reg1 = 0;
+	int reg2 = 0;
+
+	_RULE_NEXT_TOKEN
+	LexerToken *token_reg1 = _RULE_TOKEN;
+
+	if (_is_reg(token_reg1, INS_AM_RAX)) {
+		reg1 = INS_AM_RAX;
+	} else if (_is_reg(token_reg1, INS_AM_RCX)) {
+		reg1 = INS_AM_RCX;
+	} else if (_is_reg(token_reg1, INS_AM_RDX)) {
+		reg1 = INS_AM_RDX;
+	} else if (_is_reg(token_reg1, INS_AM_RBX)) {
+		reg1 = INS_AM_RBX;
+	} else if (_is_reg(token_reg1, INS_AM_RSP)) {
+		reg1 = INS_AM_RSP;
+	} else if (_is_reg(token_reg1, INS_AM_RBP)) {
+		reg1 = INS_AM_RBP;
+	} else if (_is_reg(token_reg1, INS_AM_RSI)) {
+		reg1 = INS_AM_RSI;
+	} else if (_is_reg(token_reg1, INS_AM_RDI)) {
+		reg1 = INS_AM_RDI;
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_ADD) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	LexerToken *token_reg2 = _RULE_TOKEN;
+	
+	if (_is_reg(token_reg2, INS_AM_RAX)) {
+		reg2 = INS_AM_RAX;
+	} else if (_is_reg(token_reg2, INS_AM_RCX)) {
+		reg2 = INS_AM_RCX;
+	} else if (_is_reg(token_reg2, INS_AM_RDX)) {
+		reg2 = INS_AM_RDX;
+	} else if (_is_reg(token_reg2, INS_AM_RBX)) {
+		reg2 = INS_AM_RBX;
+	} else if (_is_reg(token_reg2, INS_AM_RSP)) {
+		reg2 = INS_AM_RSP;
+	} else if (_is_reg(token_reg2, INS_AM_RBP)) {
+		reg2 = INS_AM_RBP;
+	} else if (_is_reg(token_reg2, INS_AM_RSI)) {
+		reg2 = INS_AM_RSI;
+	} else if (_is_reg(token_reg2, INS_AM_RDI)) {
+		reg2 = INS_AM_RDI;
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_scale = NULL;
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_PNCT_MUL) {
+		node_scale = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+		if (node_scale != NULL) {
+			_RULE_ABANDON_LEXCTX
+		} else {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	ParserASTNode *node_disp = NULL;
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_PNCT_ADD) {
+		node_disp = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+		if (node_disp != NULL) {
+			_RULE_ABANDON_LEXCTX
+		} else {
+			_RULE_POP_LEXCTX
+			_RULE_NOT_MATCHED
+		}
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_BRACKETS_RIGHT) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(ASM_NODE_MEM, NULL)
+	ASM_MEM_AST_NODE_SET_REG1(_RULE_CURRENT_NODE, reg1);
+	ASM_MEM_AST_NODE_SET_REG2(_RULE_CURRENT_NODE, reg2);
+	ASM_MEM_AST_NODE_SET_NODE_SCALE(_RULE_CURRENT_NODE, node_scale);
+	ASM_MEM_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
+_RULE_END
 
 _RULE(mem64)
+	int type = 0;
+	int seg = 0;
 
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_BYTE) {
+		type = ASM_MEM_TYPE_BYTE;
+		_RULE_ABANDON_LEXCTX
+	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_WORD) {
+		type = ASM_MEM_TYPE_WORD;
+		_RULE_ABANDON_LEXCTX
+	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_DWORD) {
+		type = ASM_MEM_TYPE_DWORD;
+		_RULE_ABANDON_LEXCTX
+	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_QWORD) {
+		type = ASM_MEM_TYPE_QWORD;
+		_RULE_ABANDON_LEXCTX
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_REGISTER) {
+		seg = _get_seg_reg_id(_RULE_TOKEN);
+		if (seg != 0) {
+			_RULE_NEXT_TOKEN
+			if (_RULE_TOKEN_TYPE == ASM_TOKEN_PNCT_COLON) {
+				_RULE_ABANDON_LEXCTX
+			} else {
+				_RULE_POP_LEXCTX
+			}
+		} else {
+			_RULE_POP_LEXCTX
+		}
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	ParserASTNode *node = NULL;
+
+	if (node == NULL) {
+		node = _RULE_NAME(mem64_disp)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(mem64_base_disp)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(mem64_index_scale_disp)(_RULE_PARSER_CTX);
+	}
+
+	if (node == NULL) {
+		node = _RULE_NAME(mem64_base_index_scale_disp)(_RULE_PARSER_CTX);
+	}
+
+	if (node != NULL) {
+		ASM_MEM_AST_NODE_SET_ADDR_SIZE(node, ASM_MEM_ADDR_SIZE_64);
+		ASM_MEM_AST_NODE_SET_TYPE(node, type);
+		ASM_MEM_AST_NODE_SET_SEG(node, seg);
+	} else {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_RETURNED_NODE(node)
 _RULE_END
 
 _RULE(mem)
