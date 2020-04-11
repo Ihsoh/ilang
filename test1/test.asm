@@ -1,3 +1,3 @@
-BIT16;
+BIT64;
 
-ADD BYTE [EDX + ECX * 4], BL;
+ADD BYTE [R10 + R12 * 4], R15B;

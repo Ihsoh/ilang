@@ -1117,6 +1117,22 @@ _RULE(mem64_base_disp)
 		reg1 = INS_AM_RSI;
 	} else if (_is_reg(token_reg1, INS_AM_RDI)) {
 		reg1 = INS_AM_RDI;
+	} else if (_is_reg(token_reg1, INS_AM_r8)) {
+		reg1 = INS_AM_r8;
+	} else if (_is_reg(token_reg1, INS_AM_r9)) {
+		reg1 = INS_AM_r9;
+	} else if (_is_reg(token_reg1, INS_AM_r10)) {
+		reg1 = INS_AM_r10;	
+	} else if (_is_reg(token_reg1, INS_AM_r11)) {
+		reg1 = INS_AM_r11;
+	} else if (_is_reg(token_reg1, INS_AM_r12)) {
+		reg1 = INS_AM_r12;
+	} else if (_is_reg(token_reg1, INS_AM_r13)) {
+		reg1 = INS_AM_r13;
+	} else if (_is_reg(token_reg1, INS_AM_r14)) {
+		reg1 = INS_AM_r14;
+	} else if (_is_reg(token_reg1, INS_AM_r15)) {
+		reg1 = INS_AM_r15;
 	} else {
 		_RULE_NOT_MATCHED
 	}
@@ -1176,6 +1192,22 @@ _RULE(mem64_index_scale_disp)
 		reg2 = INS_AM_RSI;
 	} else if (_is_reg(token_reg2, INS_AM_RDI)) {
 		reg2 = INS_AM_RDI;
+	} else if (_is_reg(token_reg2, INS_AM_r8)) {
+		reg2 = INS_AM_r8;
+	} else if (_is_reg(token_reg2, INS_AM_r9)) {
+		reg2 = INS_AM_r9;
+	} else if (_is_reg(token_reg2, INS_AM_r10)) {
+		reg2 = INS_AM_r10;	
+	} else if (_is_reg(token_reg2, INS_AM_r11)) {
+		reg2 = INS_AM_r11;
+	} else if (_is_reg(token_reg2, INS_AM_r12)) {
+		reg2 = INS_AM_r12;
+	} else if (_is_reg(token_reg2, INS_AM_r13)) {
+		reg2 = INS_AM_r13;
+	} else if (_is_reg(token_reg2, INS_AM_r14)) {
+		reg2 = INS_AM_r14;
+	} else if (_is_reg(token_reg2, INS_AM_r15)) {
+		reg2 = INS_AM_r15;
 	} else {
 		_RULE_NOT_MATCHED
 	}
@@ -1245,6 +1277,22 @@ _RULE(mem64_base_index_scale_disp)
 		reg1 = INS_AM_RSI;
 	} else if (_is_reg(token_reg1, INS_AM_RDI)) {
 		reg1 = INS_AM_RDI;
+	} else if (_is_reg(token_reg1, INS_AM_r8)) {
+		reg1 = INS_AM_r8;
+	} else if (_is_reg(token_reg1, INS_AM_r9)) {
+		reg1 = INS_AM_r9;
+	} else if (_is_reg(token_reg1, INS_AM_r10)) {
+		reg1 = INS_AM_r10;	
+	} else if (_is_reg(token_reg1, INS_AM_r11)) {
+		reg1 = INS_AM_r11;
+	} else if (_is_reg(token_reg1, INS_AM_r12)) {
+		reg1 = INS_AM_r12;
+	} else if (_is_reg(token_reg1, INS_AM_r13)) {
+		reg1 = INS_AM_r13;
+	} else if (_is_reg(token_reg1, INS_AM_r14)) {
+		reg1 = INS_AM_r14;
+	} else if (_is_reg(token_reg1, INS_AM_r15)) {
+		reg1 = INS_AM_r15;
 	} else {
 		_RULE_NOT_MATCHED
 	}
@@ -1273,6 +1321,22 @@ _RULE(mem64_base_index_scale_disp)
 		reg2 = INS_AM_RSI;
 	} else if (_is_reg(token_reg2, INS_AM_RDI)) {
 		reg2 = INS_AM_RDI;
+	} else if (_is_reg(token_reg2, INS_AM_r8)) {
+		reg2 = INS_AM_r8;
+	} else if (_is_reg(token_reg2, INS_AM_r9)) {
+		reg2 = INS_AM_r9;
+	} else if (_is_reg(token_reg2, INS_AM_r10)) {
+		reg2 = INS_AM_r10;	
+	} else if (_is_reg(token_reg2, INS_AM_r11)) {
+		reg2 = INS_AM_r11;
+	} else if (_is_reg(token_reg2, INS_AM_r12)) {
+		reg2 = INS_AM_r12;
+	} else if (_is_reg(token_reg2, INS_AM_r13)) {
+		reg2 = INS_AM_r13;
+	} else if (_is_reg(token_reg2, INS_AM_r14)) {
+		reg2 = INS_AM_r14;
+	} else if (_is_reg(token_reg2, INS_AM_r15)) {
+		reg2 = INS_AM_r15;
 	} else {
 		_RULE_NOT_MATCHED
 	}

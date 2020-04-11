@@ -504,7 +504,61 @@ void ins_fill_EX(
 		}
 	} else if (node->type == ASM_NODE_MEM
 					&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node) == ASM_MEM_ADDR_SIZE_64) {
-		assert(0);
+		int type = ASM_MEM_AST_NODE_GET_TYPE(node);
+		int mod = ASM_MEM_AST_NODE_GET_MOD(node);
+		int rm = ASM_MEM_AST_NODE_GET_RM(node);
+		int sib_base = ASM_MEM_AST_NODE_GET_SIB_BASE(node);
+		int sib_index = ASM_MEM_AST_NODE_GET_SIB_INDEX(node);
+		int sib_ss = ASM_MEM_AST_NODE_GET_SIB_SS(node);
+		uint32_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
+
+		enc_ins->mod_rm.mod = mod;
+		enc_ins->mod_rm.rm = rm & 0x7;	// 0x7 == 0b0111
+		if (rm & 0x8) {	// 0x8 == 0b1000
+			enc_ins->rex_prefix_used = true;
+			enc_ins->rex_prefix.b = true;
+		}
+
+		if (sib_base != -1 && sib_index != -1 && sib_ss != -1) {
+			enc_ins->sib_used = true;
+			
+			enc_ins->sib.base = sib_base & 0x7;	// 0x7 == 0b0111
+			if (sib_base & 0x8) {	// 0x8 == 0b1000
+				enc_ins->rex_prefix_used = true;
+				enc_ins->rex_prefix.b = true;
+			}
+
+			enc_ins->sib.index = sib_index & 0x7;	// 0x7 == 0b0111
+			if (sib_index & 0x8) {	// 0x8 == 0b1000
+				enc_ins->rex_prefix_used = true;
+				enc_ins->rex_prefix.x = true;
+			}
+
+			enc_ins->sib.scale = sib_ss;
+		}
+
+		if (arch == ASM_ARCH_BIT16) {
+			assert(0);
+		} else if (arch == ASM_ARCH_BIT32) {
+			assert(0);
+		} else if (arch == ASM_ARCH_BIT64) {
+			// Operand size
+			if (ins->defult_oprd_sz_64bits) {
+				if (type == ASM_MEM_TYPE_WORD) {
+					enc_ins->legacy_prefix.operand_size_override = true;
+				}
+			} else {
+				if (type == ASM_MEM_TYPE_WORD) {
+					enc_ins->legacy_prefix.operand_size_override = true;
+				} else if (type == ASM_MEM_TYPE_QWORD) {
+					enc_ins->rex_prefix_used = true;
+					enc_ins->rex_prefix.w = true;
+				}
+			}
+
+			// Address size
+			// None
+		}
 	} else {
 		assert(0);
 	}

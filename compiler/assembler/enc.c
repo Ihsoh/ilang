@@ -531,7 +531,6 @@ static void _encode(
 
 						scale = result->value.u64;
 						if (scale != 2 && scale != 4 && scale != 8) {
-							printf("ERROR: %u, %x\n", scale, scale);
 							assert(0);
 						}
 					}
@@ -800,7 +799,411 @@ static void _encode(
 					ASM_MEM_AST_NODE_SET_SIB_SS(node_child, sib_ss);
 				} else if (node_child->type == ASM_NODE_MEM
 								&& ASM_MEM_AST_NODE_GET_ADDR_SIZE(node_child) == ASM_MEM_ADDR_SIZE_64) {
-					assert(0);
+					uint32_t scale = 0;
+					ParserASTNode *node_scale = ASM_MEM_AST_NODE_GET_NODE_SCALE(node_child);
+					if (node_scale != NULL) {
+						_eval_expr_wrapper(ctx, node_scale);
+
+						AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_scale);
+						assert(result);
+						assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+						scale = result->value.u64;
+						if (scale != 2 && scale != 4 && scale != 8) {
+							assert(0);
+						}
+					}
+					
+					uint32_t disp = 0;
+					ParserASTNode *node_disp = ASM_MEM_AST_NODE_GET_NODE_DISP(node_child);
+					if (node_disp != NULL) {
+						_eval_expr_wrapper(ctx, node_disp);
+
+						AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_disp);
+						assert(result);
+						assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+						disp = (uint32_t) (result->value.u64 & 0xffffffff);
+					}
+
+					int reg1 = ASM_MEM_AST_NODE_GET_REG1(node_child);
+					int reg2 = ASM_MEM_AST_NODE_GET_REG2(node_child);
+
+					int mod = 0;
+					int rm = 0;
+					int sib_base = -1;
+					int sib_index = -1;
+					int sib_ss = -1;
+
+					if (reg1 == INS_OPRD_NONE
+							&& reg2 == INS_OPRD_NONE
+							&& node_scale == NULL
+							&& node_disp != NULL) {
+						// [disp32]
+						mod = 0;
+						rm = 5;
+					} else if (reg1 != INS_OPRD_NONE
+									&& reg2 == INS_OPRD_NONE
+									&& node_scale == NULL) {
+						if (node_disp == NULL
+								|| disp == 0) {
+							mod = 0;
+						} else {
+							if (disp <= 0xff) {
+								mod = 1;
+							} else {
+								mod = 2;
+							}
+						}
+
+						switch (reg1) {
+							case INS_AM_RAX: {
+								rm = 0;
+								break;
+							}
+							case INS_AM_RCX: {
+								rm = 1;
+								break;
+							}
+							case INS_AM_RDX: {
+								rm = 2;
+								break;
+							}
+							case INS_AM_RBX: {
+								rm = 3;
+								break;
+							}
+							case INS_AM_RSP: {
+								rm = 4;
+								break;
+							}
+							case INS_AM_RBP: {
+								rm = 5;
+								break;
+							}
+							case INS_AM_RSI: {
+								rm = 6;
+								break;
+							}
+							case INS_AM_RDI: {
+								rm = 7;
+								break;
+							}
+							case INS_AM_r8: {
+								rm = 8;
+								break;
+							}
+							case INS_AM_r9: {
+								rm = 9;
+								break;
+							}
+							case INS_AM_r10: {
+								rm = 10;
+								break;
+							}
+							case INS_AM_r11: {
+								rm = 11;
+								break;
+							}
+							case INS_AM_r12: {
+								rm = 12;
+								break;
+							}
+							case INS_AM_r13: {
+								rm = 13;
+								break;
+							}
+							case INS_AM_r14: {
+								rm = 14;
+								break;
+							}
+							case INS_AM_r15: {
+								rm = 15;
+								break;
+							}
+						}
+					} else if (reg1 == INS_OPRD_NONE
+									&& reg2 != INS_OPRD_NONE
+									&& node_scale != NULL) {
+						if (node_disp == NULL
+								|| disp == 0) {
+							mod = 0;
+						} else {
+							if (disp <= 0xff) {
+								mod = 1;
+							} else {
+								mod = 2;
+							}
+						}
+
+						rm = 4;
+						sib_base = 5;
+
+						switch (scale)
+						{
+							case 2: {
+								sib_ss = 1;
+								break;
+							}
+							case 4: {
+								sib_ss = 2;
+								break;
+							}
+							case 8: {
+								sib_ss = 3;
+								break;
+							}
+							default: {
+								assert(0);
+								break;
+							}
+						}
+
+						switch (reg2) {
+							case INS_AM_RAX: {
+								sib_index = 0;
+								break;
+							}
+							case INS_AM_RCX: {
+								sib_index = 1;
+								break;
+							}
+							case INS_AM_RDX: {
+								sib_index = 2;
+								break;
+							}
+							case INS_AM_RBX: {
+								sib_index = 3;
+								break;
+							}
+							case INS_AM_RSP: {
+								sib_index = 4;
+								break;
+							}
+							case INS_AM_RBP: {
+								sib_index = 5;
+								break;
+							}
+							case INS_AM_RSI: {
+								sib_index = 6;
+								break;
+							}
+							case INS_AM_RDI: {
+								sib_index = 7;
+								break;
+							}
+							case INS_AM_r8: {
+								sib_index = 8;
+								break;
+							}
+							case INS_AM_r9: {
+								sib_index = 9;
+								break;
+							}
+							case INS_AM_r10: {
+								sib_index = 10;
+								break;
+							}
+							case INS_AM_r11: {
+								sib_index = 11;
+								break;
+							}
+							case INS_AM_r12: {
+								sib_index = 12;
+								break;
+							}
+							case INS_AM_r13: {
+								sib_index = 13;
+								break;
+							}
+							case INS_AM_r14: {
+								sib_index = 14;
+								break;
+							}
+							case INS_AM_r15: {
+								sib_index = 15;
+								break;
+							}
+						}
+					} else if (reg1 != INS_OPRD_NONE
+									&& reg2 != INS_OPRD_NONE) {
+						if (node_disp == NULL
+								|| disp == 0) {
+							mod = 0;
+						} else {
+							if (disp <= 0xff) {
+								mod = 1;
+							} else {
+								mod = 2;
+							}
+						}
+
+						rm = 4;
+
+						if (node_scale != NULL) {
+							switch (scale)
+							{
+								case 2: {
+									sib_ss = 1;
+									break;
+								}
+								case 4: {
+									sib_ss = 2;
+									break;
+								}
+								case 8: {
+									sib_ss = 3;
+									break;
+								}
+								default: {
+									assert(0);
+									break;
+								}
+							}
+						}
+
+						switch (reg1) {
+							case INS_AM_RAX: {
+								sib_base = 0;
+								break;
+							}
+							case INS_AM_RCX: {
+								sib_base = 1;
+								break;
+							}
+							case INS_AM_RDX: {
+								sib_base = 2;
+								break;
+							}
+							case INS_AM_RBX: {
+								sib_base = 3;
+								break;
+							}
+							case INS_AM_RSP: {
+								sib_base = 4;
+								break;
+							}
+							case INS_AM_RBP: {
+								sib_base = 5;
+								break;
+							}
+							case INS_AM_RSI: {
+								sib_base = 6;
+								break;
+							}
+							case INS_AM_RDI: {
+								sib_base = 7;
+								break;
+							}
+							case INS_AM_r8: {
+								sib_base = 8;
+								break;
+							}
+							case INS_AM_r9: {
+								sib_base = 9;
+								break;
+							}
+							case INS_AM_r10: {
+								sib_base = 10;
+								break;
+							}
+							case INS_AM_r11: {
+								sib_base = 11;
+								break;
+							}
+							case INS_AM_r12: {
+								sib_base = 12;
+								break;
+							}
+							case INS_AM_r13: {
+								sib_base = 13;
+								break;
+							}
+							case INS_AM_r14: {
+								sib_base = 14;
+								break;
+							}
+							case INS_AM_r15: {
+								sib_base = 15;
+								break;
+							}
+						}
+
+						switch (reg2) {
+							case INS_AM_RAX: {
+								sib_index = 0;
+								break;
+							}
+							case INS_AM_RCX: {
+								sib_index = 1;
+								break;
+							}
+							case INS_AM_RDX: {
+								sib_index = 2;
+								break;
+							}
+							case INS_AM_RBX: {
+								sib_index = 3;
+								break;
+							}
+							case INS_AM_RSP: {
+								sib_index = 4;
+								break;
+							}
+							case INS_AM_RBP: {
+								sib_index = 5;
+								break;
+							}
+							case INS_AM_RSI: {
+								sib_index = 6;
+								break;
+							}
+							case INS_AM_RDI: {
+								sib_index = 7;
+								break;
+							}
+							case INS_AM_r8: {
+								sib_index = 8;
+								break;
+							}
+							case INS_AM_r9: {
+								sib_index = 9;
+								break;
+							}
+							case INS_AM_r10: {
+								sib_index = 10;
+								break;
+							}
+							case INS_AM_r11: {
+								sib_index = 11;
+								break;
+							}
+							case INS_AM_r12: {
+								sib_index = 12;
+								break;
+							}
+							case INS_AM_r13: {
+								sib_index = 13;
+								break;
+							}
+							case INS_AM_r14: {
+								sib_index = 14;
+								break;
+							}
+							case INS_AM_r15: {
+								sib_index = 15;
+								break;
+							}
+						}
+					}
+
+					ASM_MEM_AST_NODE_SET_MOD(node_child, mod);
+					ASM_MEM_AST_NODE_SET_RM(node_child, rm);
+					ASM_MEM_AST_NODE_SET_DISP(node_child, disp);
+					ASM_MEM_AST_NODE_SET_SCALE(node_child, scale);
+					ASM_MEM_AST_NODE_SET_SIB_BASE(node_child, sib_base);
+					ASM_MEM_AST_NODE_SET_SIB_INDEX(node_child, sib_index);
+					ASM_MEM_AST_NODE_SET_SIB_SS(node_child, sib_ss);
 				}
 			}
 		}
