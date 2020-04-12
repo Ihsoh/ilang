@@ -11,4 +11,9 @@ extern void ins_enc_XXX_Eb_Gb(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_XXX_Ev_Gv(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

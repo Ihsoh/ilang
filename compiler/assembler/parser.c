@@ -703,6 +703,14 @@ _RULE(mem16)
 
 	_RULE_PUSH_LEXCTX
 	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_ADDR16) {
+		_RULE_ABANDON_LEXCTX
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_REGISTER) {
 		seg = _get_seg_reg_id(_RULE_TOKEN);
 		if (seg != 0) {
@@ -1014,6 +1022,14 @@ _RULE(mem32)
 		_RULE_ABANDON_LEXCTX
 	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_QWORD) {
 		type = ASM_MEM_TYPE_QWORD;
+		_RULE_ABANDON_LEXCTX
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_ADDR32) {
 		_RULE_ABANDON_LEXCTX
 	} else {
 		_RULE_POP_LEXCTX
@@ -1407,6 +1423,14 @@ _RULE(mem64)
 
 	_RULE_PUSH_LEXCTX
 	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_ADDR64) {
+		_RULE_ABANDON_LEXCTX
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_REGISTER) {
 		seg = _get_seg_reg_id(_RULE_TOKEN);
 		if (seg != 0) {
@@ -1792,6 +1816,60 @@ static void _print_ast(
 		fprintf(file, "#%x)", node->token->type);
 	}
 	fputc('\n', file);
+
+	if (node->type == ASM_NODE_MEM) {
+		for (int i = 0; i < level; i++) {
+			fputc(padchr, file);
+		}
+		fputs("|MemAddrSize: ", file);
+		switch (ASM_MEM_AST_NODE_GET_ADDR_SIZE(node)) {
+			case ASM_MEM_ADDR_SIZE_16: {
+				fputs("ADDR16", file);
+				break;
+			}
+			case ASM_MEM_ADDR_SIZE_32: {
+				fputs("ADDR32", file);
+				break;
+			}
+			case ASM_MEM_ADDR_SIZE_64: {
+				fputs("ADDR64", file);
+				break;
+			}
+			default: {
+				assert(0);
+				break;
+			}
+		}
+		fputc('\n', file);
+
+		for (int i = 0; i < level; i++) {
+			fputc(padchr, file);
+		}
+		fputs("|MemSize: ", file);
+		switch (ASM_MEM_AST_NODE_GET_TYPE(node)) {
+			case ASM_MEM_TYPE_BYTE: {
+				fputs("BYTE", file);
+				break;
+			}
+			case ASM_MEM_TYPE_WORD: {
+				fputs("WORD", file);
+				break;
+			}
+			case ASM_MEM_TYPE_DWORD: {
+				fputs("DWORD", file);
+				break;
+			}
+			case ASM_MEM_TYPE_QWORD: {
+				fputs("QWORD", file);
+				break;
+			}
+			default: {
+				assert(0);
+				break;
+			}
+		}
+		fputc('\n', file);
+	}
 
 	for (int i = 0; i < node->nchilds; i++) {
 		_print_ast(node->childs[i], file, level + 1, padchr);

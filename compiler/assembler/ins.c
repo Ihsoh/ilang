@@ -458,6 +458,21 @@ void ins_fill_EX(
 		int sib_ss = ASM_MEM_AST_NODE_GET_SIB_SS(node);
 		uint32_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
 
+		if (false) {
+			// TODO: ....
+		} else {
+			if (mod == 0) {
+				enc_ins->disp_len = 0;
+			} else if (mod == 1) {
+				enc_ins->disp_len = 1;
+			} else if (mod == 2) {
+				enc_ins->disp_len = 4;
+			} else {
+				assert(0);
+			}
+			enc_ins->disp = disp;
+		}
+
 		enc_ins->mod_rm.mod = mod;
 		enc_ins->mod_rm.rm = rm;
 
@@ -511,6 +526,21 @@ void ins_fill_EX(
 		int sib_index = ASM_MEM_AST_NODE_GET_SIB_INDEX(node);
 		int sib_ss = ASM_MEM_AST_NODE_GET_SIB_SS(node);
 		uint32_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
+
+		if (false) {
+			// TODO: ....
+		} else {
+			if (mod == 0) {
+				enc_ins->disp_len = 0;
+			} else if (mod == 1) {
+				enc_ins->disp_len = 1;
+			} else if (mod == 2) {
+				enc_ins->disp_len = 4;
+			} else {
+				assert(0);
+			}
+			enc_ins->disp = disp;
+		}
 
 		enc_ins->mod_rm.mod = mod;
 		enc_ins->mod_rm.rm = rm & 0x7;	// 0x7 == 0b0111
