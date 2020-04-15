@@ -47,7 +47,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_AL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_AL_Ib
 	},
 	{
 		"ADD", INS_SS_NONE,
@@ -56,7 +56,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rAX,
 			INS_AM_I | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_rAX_Iz
 	},
 	{
 		"PUSH", INS_SS_i64,
@@ -119,7 +119,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_AL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_AL_Ib
 	},
 	{
 		"ADC", INS_SS_NONE,
@@ -128,7 +128,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rAX,
 			INS_AM_I | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_rAX_Iz
 	},
 	{
 		"PUSH", INS_SS_i64,
@@ -191,7 +191,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_AL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_AL_Ib
 	},
 	{
 		"AND", INS_SS_NONE,
@@ -200,7 +200,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rAX,
 			INS_AM_I | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_rAX_Iz
 	},
 	{
 		"ES", INS_SS_PREFIX,
@@ -261,7 +261,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_AL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_AL_Ib
 	},
 	{
 		"XOR", INS_SS_NONE,
@@ -270,7 +270,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rAX,
 			INS_AM_I | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_rAX_Iz
 	},
 	{
 		"SS", INS_SS_PREFIX,

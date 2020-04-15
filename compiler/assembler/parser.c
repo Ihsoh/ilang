@@ -1679,13 +1679,39 @@ _RULE(ins)
 
 							_RULE_ADD_CHILD(node_reg)
 						} else if (_is_AL_oprd(ot)) {
-							goto not_matched;
-						} else if (_is_Ib_oprd(ot)) {
-							goto not_matched;
+							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
+							if (node_reg == NULL) {
+								goto not_matched;
+							}
+
+							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
+							assert(reg);
+							if (reg->id == INS_AM_AL) {
+								_RULE_ADD_CHILD(node_reg)
+							} else {
+								goto not_matched;
+							}
 						} else if (_is_rAX_oprd(ot)) {
-							goto not_matched;
-						} else if (_is_Iz_oprd(ot)) {
-							goto not_matched;
+							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
+							if (node_reg == NULL) {
+								goto not_matched;
+							}
+
+							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
+							assert(reg);
+							if (reg->id == INS_AM_AX
+									|| reg->id == INS_AM_EAX
+									|| reg->id == INS_AM_RAX) {
+								_RULE_ADD_CHILD(node_reg)
+							} else {
+								goto not_matched;
+							}
+						} else if (_is_Ib_oprd(ot) || _is_Iz_oprd(ot)) {
+							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+							if (node_oprd == NULL) {
+								goto not_matched;
+							}
+							_RULE_ADD_CHILD(node_oprd)
 						} else {
 							goto not_matched;
 						}

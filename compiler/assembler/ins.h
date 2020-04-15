@@ -635,5 +635,30 @@ extern void ins_fill_EX(
 	ParserASTNode *node,
 	EncoderInstruction *enc_ins
 );
+extern void ins_fill_imm8(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+);
+extern void ins_fill_imm16(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+);
+extern void ins_fill_imm32(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+);
+extern void ins_fill_imm64(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+);
+
 
 #endif

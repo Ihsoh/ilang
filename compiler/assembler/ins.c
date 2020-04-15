@@ -596,6 +596,81 @@ void ins_fill_EX(
 	}
 }
 
+void ins_fill_imm8(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+) {
+	assert(ctx);
+	assert(ins);
+	assert(node);
+	assert(node->type == ASM_NODE_EXPR);
+	assert(enc_ins);
+
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	enc_ins->imm_len = 1;
+	enc_ins->imm = result->value.u64 & 0xff;
+}
+
+void ins_fill_imm16(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+) {
+	assert(ctx);
+	assert(ins);
+	assert(node);
+	assert(node->type == ASM_NODE_EXPR);
+	assert(enc_ins);
+
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	enc_ins->imm_len = 2;
+	enc_ins->imm = result->value.u64 & 0xffff;
+}
+
+void ins_fill_imm32(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+) {
+	assert(ctx);
+	assert(ins);
+	assert(node);
+	assert(node->type == ASM_NODE_EXPR);
+	assert(enc_ins);
+
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	enc_ins->imm_len = 4;
+	enc_ins->imm = result->value.u64 & 0xffffffff;
+}
+
+void ins_fill_imm64(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+) {
+	assert(ctx);
+	assert(ins);
+	assert(node);
+	assert(node->type == ASM_NODE_EXPR);
+	assert(enc_ins);
+
+	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node);
+	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+	enc_ins->imm_len = 4;
+	enc_ins->imm = result->value.u64;
+}
 
 
 
