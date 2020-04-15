@@ -16,4 +16,14 @@ extern void ins_enc_XXX_Ev_Gv(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_XXX_Gb_Eb(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_XXX_Gv_Ev(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

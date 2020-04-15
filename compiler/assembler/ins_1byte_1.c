@@ -29,7 +29,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_b,
 			INS_AM_E | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gb_Eb
 	},
 	{
 		"ADD", INS_SS_NONE,
@@ -38,7 +38,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_v,
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gv_Ev
 	},
 	{
 		"ADD", INS_SS_NONE,
@@ -101,7 +101,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_b,
 			INS_AM_E | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gb_Eb
 	},
 	{
 		"ADC", INS_SS_NONE,
@@ -110,7 +110,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_v,
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gv_Ev
 	},
 	{
 		"ADC", INS_SS_NONE,
@@ -173,7 +173,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_b,
 			INS_AM_E | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gb_Eb
 	},
 	{
 		"AND", INS_SS_NONE,
@@ -182,7 +182,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_v,
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gv_Ev
 	},
 	{
 		"AND", INS_SS_NONE,
@@ -243,7 +243,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_b,
 			INS_AM_E | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gb_Eb
 	},
 	{
 		"XOR", INS_SS_NONE,
@@ -252,7 +252,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_v,
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gv_Ev
 	},
 	{
 		"XOR", INS_SS_NONE,
