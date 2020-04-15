@@ -675,13 +675,13 @@ void ins_check_operand_type(
 	size_t sz_a = _get_size(ctx, a);
 	size_t sz_b = _get_size(ctx, b);
 	if (sz_a != sz_b) {
-		ctx->syntax_error_msg(ctx, "operand type not matched.");
+		ctx->syntax_error_node_msg(ctx, a, "operand type not matched.");
 	}
 
 	if (c != NULL) {
 		size_t sz_c = _get_size(ctx, c);
 		if (sz_b != sz_c) {
-			ctx->syntax_error_msg(ctx, "operand type not matched.");
+			ctx->syntax_error_node_msg(ctx, c, "operand type not matched.");
 		}
 	}
 }
