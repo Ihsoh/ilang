@@ -547,6 +547,14 @@ typedef struct _Instruction {
 
 } Instruction;
 
+extern void ins_check_operand_type(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *a,
+	ParserASTNode *b,
+	ParserASTNode *c
+);
+
 extern void ins_enc_not_implemented(
 	Instruction *ins,
 	InstructionEncoderData *data

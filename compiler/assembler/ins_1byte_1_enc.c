@@ -30,6 +30,8 @@ void ins_enc_XXX_Eb_Gb(
 
 	ParserASTNode *gb_node = data->ins_node->childs[1];
 
+	ins_check_operand_type(data->ctx, ins, eb_node, gb_node, NULL);
+
 	EncoderInstruction enc_ins;
 	
 	ins_init(data->ctx, ins, ins_node, &enc_ins);
@@ -60,17 +62,19 @@ void ins_enc_XXX_Ev_Gv(
 
 	ParserASTNode *ins_node = data->ins_node;
 
-	ParserASTNode *eb_node = data->ins_node->childs[0];
+	ParserASTNode *ev_node = data->ins_node->childs[0];
 
-	ParserASTNode *gb_node = data->ins_node->childs[1];
+	ParserASTNode *gv_node = data->ins_node->childs[1];
+
+	ins_check_operand_type(data->ctx, ins, ev_node, gv_node, NULL);
 
 	EncoderInstruction enc_ins;
 	
 	ins_init(data->ctx, ins, ins_node, &enc_ins);
 
-	ins_fill_EX(data->ctx, ins, eb_node, &enc_ins);
+	ins_fill_EX(data->ctx, ins, ev_node, &enc_ins);
 
-	ins_fill_GX(data->ctx, ins, gb_node, &enc_ins);
+	ins_fill_GX(data->ctx, ins, gv_node, &enc_ins);
 
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));

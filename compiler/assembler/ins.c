@@ -458,8 +458,9 @@ void ins_fill_EX(
 		int sib_ss = ASM_MEM_AST_NODE_GET_SIB_SS(node);
 		uint32_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
 
-		if (false) {
-			// TODO: ....
+		if (mod == 0 && rm == 0x5) {
+			enc_ins->disp_len = 4;
+			enc_ins->disp = disp;
 		} else {
 			if (mod == 0) {
 				enc_ins->disp_len = 0;
@@ -527,8 +528,9 @@ void ins_fill_EX(
 		int sib_ss = ASM_MEM_AST_NODE_GET_SIB_SS(node);
 		uint32_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
 
-		if (false) {
-			// TODO: ....
+		if (mod == 0 && rm == 0x5) {
+			enc_ins->disp_len = 4;
+			enc_ins->disp = disp;
 		} else {
 			if (mod == 0) {
 				enc_ins->disp_len = 0;
@@ -601,6 +603,88 @@ void ins_fill_EX(
 
 
 
+
+size_t _get_size(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	if (node->type == ASM_NODE_REG) {
+		InsRegister *ins_reg = ASM_REG_AST_NODE_GET_REG(node);
+		assert(ins_reg);
+
+		switch (ins_reg->type) {
+			case INS_REGISTER_GENERAL_1BYTE: {
+				return 1;
+			}
+			case INS_REGISTER_GENERAL_2BYTE: {
+				return 2;
+			}
+			case INS_REGISTER_GENERAL_4BYTE: {
+				return 4;
+			}
+			case INS_REGISTER_GENERAL_8BYTE: {
+				return 8;
+			}
+			default: {
+				assert(0);
+				return 0;
+			}
+		}
+	} else if (node->type == ASM_NODE_MEM) {
+		int type = ASM_MEM_AST_NODE_GET_TYPE(node);
+
+		switch (type) {
+			case ASM_MEM_TYPE_BYTE: {
+				return 1;
+			}
+			case ASM_MEM_TYPE_WORD: {
+				return 2;
+			}
+			case ASM_MEM_TYPE_DWORD: {
+				return 4;
+			}
+			case ASM_MEM_TYPE_QWORD: {
+				return 8;
+			}
+			default: {
+				assert(0);
+				return 0;
+			}
+		}
+	} else {
+		assert(0);
+		return 0;
+	}
+}
+
+void ins_check_operand_type(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *a,
+	ParserASTNode *b,
+	ParserASTNode *c
+) {
+	assert(ctx);
+	assert(ins);
+	assert(a);
+	assert(b);
+
+	size_t sz_a = _get_size(ctx, a);
+	size_t sz_b = _get_size(ctx, b);
+	if (sz_a != sz_b) {
+		ctx->syntax_error_msg(ctx, "operand type not matched.");
+	}
+
+	if (c != NULL) {
+		size_t sz_c = _get_size(ctx, c);
+		if (sz_b != sz_c) {
+			ctx->syntax_error_msg(ctx, "operand type not matched.");
+		}
+	}
+}
 
 void ins_enc_not_implemented(
 	Instruction *ins,
