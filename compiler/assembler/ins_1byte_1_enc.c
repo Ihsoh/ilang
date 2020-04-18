@@ -212,11 +212,89 @@ void ins_enc_XXX_rAX_Iz(
 
 	int arch = ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx);
 
-	if (arch == ASM_ARCH_BIT16) {
-		ins_fill_imm16(data->ctx, ins, source, &enc_ins);
-	} else if (arch == ASM_ARCH_BIT32
-					|| arch == ASM_ARCH_BIT64) {
-		ins_fill_imm32(data->ctx, ins, source, &enc_ins);
+	InsRegister *target_reg = ASM_REG_AST_NODE_GET_REG(target);
+
+	switch (arch) {
+		case ASM_ARCH_BIT16: {
+			switch (target_reg->id) {
+				case INS_AM_AX: {
+					ins_fill_imm16(data->ctx, ins, source, &enc_ins);
+					break;
+				}
+				case INS_AM_EAX: {
+					enc_ins.legacy_prefix.operand_size_override = true;
+					ins_fill_imm32(data->ctx, ins, source, &enc_ins);
+					break;
+				}
+				case INS_AM_RAX: {
+					data->ctx->syntax_error_node_msg(
+						data->ctx,
+						ins_node,
+						"instruction not supported in 16-bit mode."
+					);
+					break;
+				}
+				default: {
+					assert(0);
+					break;
+				}
+			}
+			break;
+		}
+		case ASM_ARCH_BIT32: {
+			switch (target_reg->id) {
+				case INS_AM_AX: {
+					enc_ins.legacy_prefix.operand_size_override = true;
+					ins_fill_imm16(data->ctx, ins, source, &enc_ins);
+					break;
+				}
+				case INS_AM_EAX: {
+					ins_fill_imm32(data->ctx, ins, source, &enc_ins);
+					break;
+				}
+				case INS_AM_RAX: {
+					data->ctx->syntax_error_node_msg(
+						data->ctx,
+						ins_node,
+						"instruction not supported in 32-bit mode."
+					);
+					break;
+				}
+				default: {
+					assert(0);
+					break;
+				}
+			}
+			break;
+		}
+		case ASM_ARCH_BIT64: {
+			switch (target_reg->id) {
+				case INS_AM_AX: {
+					enc_ins.legacy_prefix.operand_size_override = true;
+					ins_fill_imm16(data->ctx, ins, source, &enc_ins);
+					break;
+				}
+				case INS_AM_EAX: {
+					ins_fill_imm32(data->ctx, ins, source, &enc_ins);
+					break;
+				}
+				case INS_AM_RAX: {
+					enc_ins.rex_prefix_used = true;
+					enc_ins.rex_prefix.w = 1;
+					ins_fill_imm32(data->ctx, ins, source, &enc_ins);
+					break;
+				}
+				default: {
+					assert(0);
+					break;
+				}
+			}
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
 	}
 
 	uint8_t buffer[32];
