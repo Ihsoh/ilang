@@ -39,4 +39,9 @@ extern void ins_enc_XXX_rAX_Iz(
 	InstructionEncoderData *data
 );
 
+void ins_enc_opcode(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

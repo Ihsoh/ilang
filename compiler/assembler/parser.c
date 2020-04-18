@@ -1553,6 +1553,17 @@ static bool _is_Iz_oprd(
 	return oprd_type == (INS_AM_I | INS_OT_z);
 }
 
+static bool _is_seg_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == INS_AM_CS
+			|| oprd_type == INS_AM_SS
+			|| oprd_type == INS_AM_DS
+			|| oprd_type == INS_AM_ES
+			|| oprd_type == INS_AM_FS
+			|| oprd_type == INS_AM_GS;
+}
+
 _RULE(ins)
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != ASM_TOKEN_KEYWORD_INSTRUCTION) {
@@ -1712,6 +1723,24 @@ _RULE(ins)
 								goto not_matched;
 							}
 							_RULE_ADD_CHILD(node_oprd)
+						} else if (_is_seg_oprd(ot)) {
+							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
+							if (node_reg == NULL) {
+								goto not_matched;
+							}
+
+							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
+							assert(reg);
+							if (reg->id == INS_AM_CS
+									|| reg->id == INS_AM_SS
+									|| reg->id == INS_AM_DS
+									|| reg->id == INS_AM_ES
+									|| reg->id == INS_AM_FS
+									|| reg->id == INS_AM_GS) {
+								_RULE_ADD_CHILD(node_reg)
+							} else {
+								goto not_matched;
+							}
 						} else {
 							goto not_matched;
 						}

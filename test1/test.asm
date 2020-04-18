@@ -1,4 +1,4 @@
 BIT64;
 
-
-ADD RAX, 0x1234;
+PUSH ES;
+POP ES;

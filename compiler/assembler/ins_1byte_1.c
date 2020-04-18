@@ -64,7 +64,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_ES
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"POP", INS_SS_i64,
@@ -72,7 +72,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_ES
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 
 	// 0x01, 0x00~0x07
