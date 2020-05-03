@@ -332,3 +332,5 @@ void ins_enc_opcode(
 
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
+
+

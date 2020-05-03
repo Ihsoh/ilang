@@ -25,6 +25,7 @@
 #define	ASM_NODE_LITERAL_STRING			0x0303
 
 #define	ASM_NODE_INSTRUCTION			0x0400
+#define	ASM_NODE_INSTRUCTION_BUNCH		0x0401
 
 #define	ASM_NODE_REG					0x0500
 
@@ -75,13 +76,22 @@
 
 
 
+#define	ASM_INS_AST_NODE_INS_SIZE		4
 typedef struct {
-	Instruction 	*ins;
+	size_t			count;
+	Instruction 	*ins[ASM_INS_AST_NODE_INS_SIZE];
 } AsmParserInsASTNodeData;
 
-#define	ASM_INS_AST_NODE_GET_INS(node)			(((AsmParserInsASTNodeData *)&((node)->data[0]))->ins)
-
-#define	ASM_INS_AST_NODE_SET_INS(node, v)		(((AsmParserInsASTNodeData *)&((node)->data[0]))->ins = (v))
+#define	ASM_INS_AST_NODE_DATA(node)				((AsmParserInsASTNodeData *)&((node)->data[0]))
+#define	ASM_INS_AST_NODE_GET_COUNT(node)		(ASM_INS_AST_NODE_DATA(node)->count)
+#define	ASM_INS_AST_NODE_ADD_INS(node, v)	\
+	(ASM_INS_AST_NODE_GET_COUNT(node) >= ASM_INS_AST_NODE_INS_SIZE ?	\
+		NULL :	\
+		(ASM_INS_AST_NODE_DATA(node)->ins[ASM_INS_AST_NODE_GET_COUNT(node)++] = (v)))
+#define	ASM_INS_AST_NODE_GET_INS(node, v)	\
+	((v) >= ASM_INS_AST_NODE_GET_COUNT(node) ?	\
+		NULL :	\
+		(ASM_INS_AST_NODE_DATA(node)->ins[(v)]))
 
 
 

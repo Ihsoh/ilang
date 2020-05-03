@@ -136,7 +136,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_SS
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"POP", INS_SS_i64,
@@ -144,7 +144,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_SS
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 
 	// 0x02, 0x00~0x07
@@ -214,7 +214,7 @@ Instruction ins_1byte_1[] = {
 		{1, 0x20 | 0x07},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 
 	// 0x03, 0x00~0x07
@@ -284,7 +284,7 @@ Instruction ins_1byte_1[] = {
 		{1, 0x30 | 0x07},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 
 	// 0x04, 0x00~0x07
@@ -294,7 +294,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_eAX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INC", INS_SS_i64,
@@ -302,7 +302,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_eCX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INC", INS_SS_i64,
@@ -310,7 +310,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_eDX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INC", INS_SS_i64,
@@ -318,7 +318,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_eBX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INC", INS_SS_i64,
@@ -326,7 +326,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_eSP
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INC", INS_SS_i64,
@@ -334,7 +334,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_eBP
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INC", INS_SS_i64,
@@ -342,7 +342,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_eSI
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INC", INS_SS_i64,
@@ -350,7 +350,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_eDI
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"REX", INS_SS_PREFIX,
@@ -416,7 +416,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSH", INS_SS_d64,
@@ -424,7 +424,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_rCX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSH", INS_SS_d64,
@@ -432,7 +432,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_rDX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSH", INS_SS_d64,
@@ -440,7 +440,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_rBX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSH", INS_SS_d64,
@@ -448,7 +448,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_rSP
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSH", INS_SS_d64,
@@ -456,7 +456,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_rBP
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSH", INS_SS_d64,
@@ -464,7 +464,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_rSI
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSH", INS_SS_d64,
@@ -472,7 +472,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_rDI
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSH", INS_SS_d64,

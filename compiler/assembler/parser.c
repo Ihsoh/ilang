@@ -28,7 +28,7 @@ static ParserASTNode * _new_node(
 
 	if (type == ASM_NODE_INSTRUCTION) {
 		AsmParserInsASTNodeData data;
-		data.ins = NULL;
+		memset(&data, 0, sizeof(data));
 
 		return parser_new_node(
 			ctx, type, type_name, token, sizeof(AsmParserInsASTNodeData), &data
@@ -42,7 +42,7 @@ static ParserASTNode * _new_node(
 		);
 	} else if (type == ASM_NODE_REG) {
 		AsmParserRegASTNodeData data;
-		data.reg = NULL;
+		memset(&data, 0, sizeof(data));
 
 		return parser_new_node(
 			ctx, type, type_name, token, sizeof(AsmParserRegASTNodeData), &data
@@ -1541,12 +1541,6 @@ static bool _is_Ib_oprd(
 	return oprd_type == (INS_AM_I | INS_OT_b);
 }
 
-static bool _is_rAX_oprd(
-	uint16_t oprd_type
-) {
-	return oprd_type == INS_AM_rAX;
-}
-
 static bool _is_Iz_oprd(
 	uint16_t oprd_type
 ) {
@@ -1572,6 +1566,14 @@ _RULE(ins)
 
 	LexerToken *token = _RULE_TOKEN;
 
+	LexerToken * last_pos = NULL;
+
+	bool new_node = false;
+	bool add_child = true;
+
+	#define	_INS_RULE_ADD_CHILD(v)	\
+		{ if (add_child) { _RULE_ADD_CHILD((v)); } }
+
 	InstructionIterator iter;
 	ins_iter_init(&iter);
 	for (Instruction *ins = ins_iter_next(&iter); ins != NULL; ins = ins_iter_next(&iter)) {
@@ -1581,7 +1583,10 @@ _RULE(ins)
 				&& strncmp(ins->mnemonic, token->content, token->len) == 0) {
 			_RULE_PUSH_LEXCTX
 			
-			_RULE_NODE(ASM_NODE_INSTRUCTION, token)
+			if (!new_node) {
+				_RULE_NODE(ASM_NODE_INSTRUCTION, token)
+				new_node = true;
+			}
 
 			uint16_t oprd_type[3] = {ins->oprd.o1, ins->oprd.o2, ins->oprd.o3};
 			for (int i = 0; i < 3; i++) {
@@ -1596,19 +1601,50 @@ _RULE(ins)
 						}
 					}
 
+					#define	_A(_a, _b) {	\
+						ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);	\
+						if (node_reg == NULL) {	\
+							goto not_matched;	\
+						}	\
+						InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);	\
+						assert(reg);	\
+						if (reg->id == (_a)	\
+								|| reg->id == (_b)) {	\
+							_INS_RULE_ADD_CHILD(node_reg)	\
+						} else {	\
+							goto not_matched;	\
+						}	\
+					}
+
+					#define	_B(_a, _b, _c) {	\
+						ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);	\
+						if (node_reg == NULL) {	\
+							goto not_matched;	\
+						}	\
+						InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);	\
+						assert(reg);	\
+						if (reg->id == (_a)	\
+								|| reg->id == (_b)	\
+								|| reg->id == (_c)) {	\
+							_INS_RULE_ADD_CHILD(node_reg)	\
+						} else {	\
+							goto not_matched;	\
+						}	\
+					}
+
 					if (ins->superscript & INS_SS_DIRECTIVE) {
 						if (_is_expr_oprd(ot)) {
 							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
 							if (node_oprd == NULL) {
 								goto not_matched;
 							}
-							_RULE_ADD_CHILD(node_oprd)
+							_INS_RULE_ADD_CHILD(node_oprd)
 						} else if (_is_id_oprd(ot)) {
 							ParserASTNode *node_oprd = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
 							if (node_oprd == NULL) {
 								goto not_matched;
 							}
-							_RULE_ADD_CHILD(node_oprd)
+							_INS_RULE_ADD_CHILD(node_oprd)
 						} else {
 							goto not_matched;
 						}
@@ -1621,7 +1657,7 @@ _RULE(ins)
 								if (reg->type != INS_REGISTER_GENERAL_1BYTE) {
 									goto not_matched;
 								}
-								_RULE_ADD_CHILD(node_reg)
+								_INS_RULE_ADD_CHILD(node_reg)
 							} else {
 								ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
 
@@ -1633,7 +1669,7 @@ _RULE(ins)
 									goto not_matched;
 								}
 
-								_RULE_ADD_CHILD(node_mem)
+								_INS_RULE_ADD_CHILD(node_mem)
 							}
 						} else if (_is_Gb_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
@@ -1647,7 +1683,7 @@ _RULE(ins)
 								goto not_matched;
 							}
 
-							_RULE_ADD_CHILD(node_reg)
+							_INS_RULE_ADD_CHILD(node_reg)
 						} else if (_is_Ev_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
 							if (node_reg != NULL) {
@@ -1658,7 +1694,7 @@ _RULE(ins)
 										&& reg->type != INS_REGISTER_GENERAL_8BYTE) {
 									goto not_matched;
 								}
-								_RULE_ADD_CHILD(node_reg)
+								_INS_RULE_ADD_CHILD(node_reg)
 							} else {
 								ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
 
@@ -1672,7 +1708,7 @@ _RULE(ins)
 									goto not_matched;
 								}
 
-								_RULE_ADD_CHILD(node_mem)
+								_INS_RULE_ADD_CHILD(node_mem)
 							}
 						} else if (_is_Gv_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
@@ -1688,7 +1724,7 @@ _RULE(ins)
 								goto not_matched;
 							}
 
-							_RULE_ADD_CHILD(node_reg)
+							_INS_RULE_ADD_CHILD(node_reg)
 						} else if (_is_AL_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
 							if (node_reg == NULL) {
@@ -1698,31 +1734,66 @@ _RULE(ins)
 							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
 							assert(reg);
 							if (reg->id == INS_AM_AL) {
-								_RULE_ADD_CHILD(node_reg)
+								_INS_RULE_ADD_CHILD(node_reg)
 							} else {
 								goto not_matched;
-							}
-						} else if (_is_rAX_oprd(ot)) {
-							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
-							if (node_reg == NULL) {
-								goto not_matched;
-							}
-
-							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
-							assert(reg);
-							if (reg->id == INS_AM_AX
-									|| reg->id == INS_AM_EAX
-									|| reg->id == INS_AM_RAX) {
-								_RULE_ADD_CHILD(node_reg)
-							} else {
-								goto not_matched;
-							}
+							}	
+						/* eAX ~ eDI */	
+						} else if (ot == INS_AM_eAX) {
+							_A(INS_AM_AX, INS_AM_EAX)
+						} else if (ot == INS_AM_eCX) {
+							_A(INS_AM_CX, INS_AM_ECX)
+						} else if (ot == INS_AM_eDX) {
+							_A(INS_AM_DX, INS_AM_EDX)
+						} else if (ot == INS_AM_eBX) {
+							_A(INS_AM_BX, INS_AM_EBX)
+						} else if (ot == INS_AM_eSP) {
+							_A(INS_AM_SP, INS_AM_ESP)
+						} else if (ot == INS_AM_eBP) {
+							_A(INS_AM_BP, INS_AM_EBP)
+						} else if (ot == INS_AM_eSI) {
+							_A(INS_AM_SI, INS_AM_ESI)
+						} else if (ot == INS_AM_eDI) {
+							_A(INS_AM_DI, INS_AM_EDI)
+						/* rAX ~ r15 */
+						} else if (ot == INS_AM_rAX) {
+							_B(INS_AM_AX, INS_AM_EAX, INS_AM_RAX)
+						} else if (ot == INS_AM_rCX) {
+							_B(INS_AM_CX, INS_AM_ECX, INS_AM_RCX)
+						} else if (ot == INS_AM_rDX) {
+							_B(INS_AM_DX, INS_AM_EDX, INS_AM_RDX)
+						} else if (ot == INS_AM_rBX) {
+							_B(INS_AM_BX, INS_AM_EBX, INS_AM_RBX)
+						} else if (ot == INS_AM_rSP) {
+							_B(INS_AM_SP, INS_AM_ESP, INS_AM_RSP)
+						} else if (ot == INS_AM_rBP) {
+							_B(INS_AM_BP, INS_AM_EBP, INS_AM_RBP)
+						} else if (ot == INS_AM_rSI) {
+							_B(INS_AM_SI, INS_AM_ESI, INS_AM_RSI)
+						} else if (ot == INS_AM_rDI) {
+							_B(INS_AM_DI, INS_AM_EDI, INS_AM_RDI)
+						} else if (ot == INS_AM_r8) {
+							_B(INS_AM_r8w, INS_AM_r8d, INS_AM_r8)
+						} else if (ot == INS_AM_r9) {
+							_B(INS_AM_r9w, INS_AM_r9d, INS_AM_r9)
+						} else if (ot == INS_AM_r10) {
+							_B(INS_AM_r10w, INS_AM_r10d, INS_AM_r10)
+						} else if (ot == INS_AM_r11) {
+							_B(INS_AM_r11w, INS_AM_r11d, INS_AM_r11)
+						} else if (ot == INS_AM_r12) {
+							_B(INS_AM_r12w, INS_AM_r12d, INS_AM_r12)
+						} else if (ot == INS_AM_r13) {
+							_B(INS_AM_r13w, INS_AM_r13d, INS_AM_r13)
+						} else if (ot == INS_AM_r14) {
+							_B(INS_AM_r14w, INS_AM_r14d, INS_AM_r14)
+						} else if (ot == INS_AM_r15) {
+							_B(INS_AM_r15w, INS_AM_r15d, INS_AM_r15)
 						} else if (_is_Ib_oprd(ot) || _is_Iz_oprd(ot)) {
 							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
 							if (node_oprd == NULL) {
 								goto not_matched;
 							}
-							_RULE_ADD_CHILD(node_oprd)
+							_INS_RULE_ADD_CHILD(node_oprd)
 						} else if (_is_seg_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
 							if (node_reg == NULL) {
@@ -1737,7 +1808,7 @@ _RULE(ins)
 									|| reg->id == INS_AM_ES
 									|| reg->id == INS_AM_FS
 									|| reg->id == INS_AM_GS) {
-								_RULE_ADD_CHILD(node_reg)
+								_INS_RULE_ADD_CHILD(node_reg)
 							} else {
 								goto not_matched;
 							}
@@ -1745,6 +1816,9 @@ _RULE(ins)
 							goto not_matched;
 						}
 					}
+
+					#undef	_A
+					#undef	_B
 				}
 			}
 
@@ -1753,15 +1827,19 @@ _RULE(ins)
 				goto not_matched;
 			}
 
-			ASM_INS_AST_NODE_SET_INS(_RULE_CURRENT_NODE, ins);
+			last_pos = _RULE_TOKEN->next;
 
-			_RULE_ABANDON_LEXCTX
-			break;
+			ASM_INS_AST_NODE_ADD_INS(_RULE_CURRENT_NODE, ins);
+
+			add_child = false;
+
 not_matched:
 			_RULE_POP_LEXCTX
 		}
 	}
 	ins_iter_free(&iter);
+
+	lexer_set_current_pos(_RULE_LEXER_CTX, last_pos);
 _RULE_END
 
 _RULE(module_item)

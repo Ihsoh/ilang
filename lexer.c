@@ -246,6 +246,15 @@ LexerToken * lexer_prev_token(LexerContext *ctx) {
 	return ctx->current;
 }
 
+void lexer_set_current_pos(
+	LexerContext *ctx,
+	LexerToken *pos
+) {
+	assert(ctx);
+
+	ctx->current = pos;
+}
+
 void lexer_init_token(LexerContext *ctx, LexerToken *token, int type) {
 	assert(ctx);
 	assert(token);

@@ -101,6 +101,10 @@ extern int lexer_peek_char(LexerContext *ctx, int n);
 extern void lexer_reset_token(LexerContext *ctx, int head);
 extern LexerToken * lexer_next_token(LexerContext *ctx);
 extern LexerToken * lexer_prev_token(LexerContext *ctx);
+extern void lexer_set_current_pos(
+	LexerContext *ctx,
+	LexerToken *pos
+);
 extern void lexer_init_token(LexerContext *ctx, LexerToken *token, int type);
 extern LexerToken * lexer_new_token(LexerContext *ctx, int type);
 extern LexerToken * lexer_clone_token(LexerContext *ctx, LexerToken *token);
