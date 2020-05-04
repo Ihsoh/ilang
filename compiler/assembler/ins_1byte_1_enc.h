@@ -39,7 +39,22 @@ extern void ins_enc_XXX_rAX_Iz(
 	InstructionEncoderData *data
 );
 
-void ins_enc_opcode(
+extern void ins_enc_opcode(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_eXX(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_rXX(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_bound_Gv_Ma(
 	Instruction *ins,
 	InstructionEncoderData *data
 );

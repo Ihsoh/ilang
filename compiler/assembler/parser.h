@@ -111,10 +111,11 @@ typedef struct {
 #define	ASM_MEM_ADDR_SIZE_32	2
 #define	ASM_MEM_ADDR_SIZE_64	3
 
-#define	ASM_MEM_TYPE_BYTE	1
-#define	ASM_MEM_TYPE_WORD	2
-#define	ASM_MEM_TYPE_DWORD	3
-#define	ASM_MEM_TYPE_QWORD	4
+#define	ASM_MEM_TYPE_UNKNOWN	0
+#define	ASM_MEM_TYPE_BYTE		1
+#define	ASM_MEM_TYPE_WORD		2
+#define	ASM_MEM_TYPE_DWORD		3
+#define	ASM_MEM_TYPE_QWORD		4
 
 typedef struct {
 	// ASM_MEM_ADDR_SIZE_*
@@ -229,6 +230,8 @@ typedef struct {
 	FILE			*out;
 	uint64_t		address_counter;
 	int				step;
+
+	bool			mem_without_oprd_size;
 } AsmParserContextData;
 
 #define	ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx)	\
@@ -241,6 +244,8 @@ typedef struct {
 	(((AsmParserContextData *)&((ctx)->data[0]))->address_counter)
 #define	ASM_PARSER_CONTEXT_DATA_GET_STEP(ctx)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->step)
+#define	ASM_PARSER_CONTEXT_DATA_GET_MEM_WITHOUT_OPRD_SIZE(ctx)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->mem_without_oprd_size)
 
 #define	ASM_PARSER_CONTEXT_DATA_SET_ARCH(ctx, v)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->arch = (v))
@@ -252,7 +257,8 @@ typedef struct {
 	(((AsmParserContextData *)&((ctx)->data[0]))->address_counter += (v))
 #define	ASM_PARSER_CONTEXT_DATA_SET_STEP(ctx, v)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->step = (v))
-
+#define	ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(ctx, v)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->mem_without_oprd_size = (v))
 
 
 

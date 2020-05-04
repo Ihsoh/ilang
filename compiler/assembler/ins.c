@@ -735,6 +735,16 @@ size_t _get_size(
 	}
 }
 
+size_t ins_get_oprd_size(
+	ParserContext *ctx,
+	ParserASTNode *node
+) {
+	assert(ctx);
+	assert(node);
+
+	return _get_size(ctx, node);
+}
+
 void ins_check_operand_type(
 	ParserContext *ctx,
 	Instruction *ins,

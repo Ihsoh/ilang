@@ -547,6 +547,11 @@ typedef struct _Instruction {
 
 } Instruction;
 
+extern size_t ins_get_oprd_size(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+
 extern void ins_check_operand_type(
 	ParserContext *ctx,
 	Instruction *ins,

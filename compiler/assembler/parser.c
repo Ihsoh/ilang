@@ -683,22 +683,24 @@ _RULE(mem16)
 	int type = 0;
 	int seg = 0;
 
-	_RULE_PUSH_LEXCTX
-	_RULE_NEXT_TOKEN
-	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_BYTE) {
-		type = ASM_MEM_TYPE_BYTE;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_WORD) {
-		type = ASM_MEM_TYPE_WORD;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_DWORD) {
-		type = ASM_MEM_TYPE_DWORD;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_QWORD) {
-		type = ASM_MEM_TYPE_QWORD;
-		_RULE_ABANDON_LEXCTX
-	} else {
-		_RULE_POP_LEXCTX
+	if (!ASM_PARSER_CONTEXT_DATA_GET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX)) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_BYTE) {
+			type = ASM_MEM_TYPE_BYTE;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_WORD) {
+			type = ASM_MEM_TYPE_WORD;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_DWORD) {
+			type = ASM_MEM_TYPE_DWORD;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_QWORD) {
+			type = ASM_MEM_TYPE_QWORD;
+			_RULE_ABANDON_LEXCTX
+		} else {
+			_RULE_POP_LEXCTX
+		}
 	}
 
 	_RULE_PUSH_LEXCTX
@@ -1009,22 +1011,24 @@ _RULE(mem32)
 	int type = 0;
 	int seg = 0;
 
-	_RULE_PUSH_LEXCTX
-	_RULE_NEXT_TOKEN
-	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_BYTE) {
-		type = ASM_MEM_TYPE_BYTE;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_WORD) {
-		type = ASM_MEM_TYPE_WORD;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_DWORD) {
-		type = ASM_MEM_TYPE_DWORD;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_QWORD) {
-		type = ASM_MEM_TYPE_QWORD;
-		_RULE_ABANDON_LEXCTX
-	} else {
-		_RULE_POP_LEXCTX
+	if (!ASM_PARSER_CONTEXT_DATA_GET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX)) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_BYTE) {
+			type = ASM_MEM_TYPE_BYTE;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_WORD) {
+			type = ASM_MEM_TYPE_WORD;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_DWORD) {
+			type = ASM_MEM_TYPE_DWORD;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_QWORD) {
+			type = ASM_MEM_TYPE_QWORD;
+			_RULE_ABANDON_LEXCTX
+		} else {
+			_RULE_POP_LEXCTX
+		}
 	}
 
 	_RULE_PUSH_LEXCTX
@@ -1403,22 +1407,24 @@ _RULE(mem64)
 	int type = 0;
 	int seg = 0;
 
-	_RULE_PUSH_LEXCTX
-	_RULE_NEXT_TOKEN
-	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_BYTE) {
-		type = ASM_MEM_TYPE_BYTE;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_WORD) {
-		type = ASM_MEM_TYPE_WORD;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_DWORD) {
-		type = ASM_MEM_TYPE_DWORD;
-		_RULE_ABANDON_LEXCTX
-	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_QWORD) {
-		type = ASM_MEM_TYPE_QWORD;
-		_RULE_ABANDON_LEXCTX
-	} else {
-		_RULE_POP_LEXCTX
+	if (!ASM_PARSER_CONTEXT_DATA_GET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX)) {
+		_RULE_PUSH_LEXCTX
+		_RULE_NEXT_TOKEN
+		if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_BYTE) {
+			type = ASM_MEM_TYPE_BYTE;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_WORD) {
+			type = ASM_MEM_TYPE_WORD;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_DWORD) {
+			type = ASM_MEM_TYPE_DWORD;
+			_RULE_ABANDON_LEXCTX
+		} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_QWORD) {
+			type = ASM_MEM_TYPE_QWORD;
+			_RULE_ABANDON_LEXCTX
+		} else {
+			_RULE_POP_LEXCTX
+		}
 	}
 
 	_RULE_PUSH_LEXCTX
@@ -1521,6 +1527,12 @@ static bool _is_Ev_oprd(
 	uint16_t oprd_type
 ) {
 	return oprd_type == (INS_AM_E | INS_OT_v);
+}
+
+static bool _is_M_oprd(
+	uint16_t oprd_type
+) {
+	return (oprd_type & INS_AM_M) == INS_AM_M;
 }
 
 static bool _is_Gv_oprd(
@@ -1710,6 +1722,16 @@ _RULE(ins)
 
 								_INS_RULE_ADD_CHILD(node_mem)
 							}
+						} else if (_is_M_oprd(ot)) {
+							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, true);
+							ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
+							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, false);
+
+							if (node_mem == NULL) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_mem)
 						} else if (_is_Gv_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
 							if (node_reg == NULL) {
@@ -1886,6 +1908,8 @@ ParserContext * asm_parser_new_context(
 	data.address_counter = 0;
 	data.step = ASM_STEP_SCAN;
 
+	data.mem_without_oprd_size = false;
+
 	ParserContext *ctx = parser_new_context_with_data(
 		lexctx, sizeof(data), &data
 	);
@@ -1994,6 +2018,10 @@ static void _print_ast(
 			}
 			case ASM_MEM_TYPE_QWORD: {
 				fputs("QWORD", file);
+				break;
+			}
+			case ASM_MEM_TYPE_UNKNOWN: {
+				fputs("UNKNOWN", file);
 				break;
 			}
 			default: {
