@@ -570,7 +570,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_E | INS_OT_w,
 			INS_AM_G | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_arpl_Ew_Gw
 	},
 	{
 		"FS", INS_SS_PREFIX,

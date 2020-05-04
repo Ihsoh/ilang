@@ -1523,6 +1523,18 @@ static bool _is_Gb_oprd(
 	return oprd_type == (INS_AM_G | INS_OT_b);
 }
 
+static bool _is_Ew_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_E | INS_OT_w);
+}
+
+static bool _is_Gw_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_G | INS_OT_w);
+}
+
 static bool _is_Ev_oprd(
 	uint16_t oprd_type
 ) {
@@ -1692,6 +1704,41 @@ _RULE(ins)
 							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
 							assert(reg);
 							if (reg->type != INS_REGISTER_GENERAL_1BYTE) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_reg)
+						} else if (_is_Ew_oprd(ot)) {
+							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
+							if (node_reg != NULL) {
+								InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
+								assert(reg);
+								if (reg->type != INS_REGISTER_GENERAL_2BYTE) {
+									goto not_matched;
+								}
+								_INS_RULE_ADD_CHILD(node_reg)
+							} else {
+								ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
+
+								if (node_mem == NULL) {
+									goto not_matched;
+								}
+								
+								if (ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_WORD) {
+									goto not_matched;
+								}
+
+								_INS_RULE_ADD_CHILD(node_mem)
+							}
+						} else if (_is_Gw_oprd(ot)) {
+							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
+							if (node_reg == NULL) {
+								goto not_matched;
+							}
+
+							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
+							assert(reg);
+							if (reg->type != INS_REGISTER_GENERAL_2BYTE) {
 								goto not_matched;
 							}
 

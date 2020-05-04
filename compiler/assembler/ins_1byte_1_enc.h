@@ -59,4 +59,9 @@ extern void ins_enc_bound_Gv_Ma(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_arpl_Ew_Gw(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
