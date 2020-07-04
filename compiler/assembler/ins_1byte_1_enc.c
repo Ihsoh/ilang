@@ -43,8 +43,8 @@ void ins_enc_XXX_Eb_Gb(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -79,8 +79,8 @@ void ins_enc_XXX_Ev_Gv(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -115,8 +115,8 @@ void ins_enc_XXX_Gb_Eb(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -151,8 +151,8 @@ void ins_enc_XXX_Gv_Ev(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -183,8 +183,8 @@ void ins_enc_XXX_AL_Ib(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -300,8 +300,8 @@ void ins_enc_XXX_rAX_Iz(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -325,8 +325,8 @@ void ins_enc_opcode(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -398,8 +398,8 @@ void ins_enc_opcode_eXX(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -512,8 +512,8 @@ void ins_enc_opcode_rXX(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -551,8 +551,8 @@ void ins_enc_bound_Gv_Ma(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 		return;
 	}
 
@@ -585,8 +585,149 @@ void ins_enc_arpl_Ew_Gw(
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_pushad_popad(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 0);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	int arch = ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx);
+
+	switch (arch) {
+		case ASM_ARCH_BIT16: {
+			enc_ins.legacy_prefix.operand_size_override = true;
+			break;
+		}
+		case ASM_ARCH_BIT32: {
+			break;
+		}
+		case ASM_ARCH_BIT64: {
+			data->ctx->syntax_error_node_msg(
+				data->ctx,
+				ins_node,
+				"instruction not supported in 64-bit mode."
+			);
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_movsxd(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *target = data->ins_node->childs[0];
+
+	ParserASTNode *source = data->ins_node->childs[1];
+
+	size_t target_size = ins_get_oprd_size(data->ctx, target);
+	if (target_size != 8) {
+		data->ctx->syntax_error_node_msg(
+			data->ctx,
+			target,
+			"operand type not matched."
+		);
+	}
+
+	size_t source_size = ins_get_oprd_size(data->ctx, source);
+	if (source_size != 4) {
+		data->ctx->syntax_error_node_msg(
+			data->ctx,
+			target,
+			"operand type not matched."
+		);
+	}
+
+	EncoderInstruction enc_ins;
+	
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_GX(data->ctx, ins, target, &enc_ins);
+
+	ins_fill_EX(data->ctx, ins, source, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_jcc(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *node_label = data->ins_node->childs[0];
+
+	uint64_t addr = asm_parser_get_symbol_by_token_key(data->ctx, node_label->token);
+
+	EncoderInstruction enc_ins;
+	
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	enc_ins.disp_len = 1;
+	enc_ins.disp = 0;
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	uint64_t ip = ASM_PARSER_CONTEXT_DATA_GET_ADDRESS_COUNTER(data->ctx) + len;
+	uint64_t offset = addr - ip;
+	enc_ins.disp = offset;
+
+	len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
 		return;
 	}
 

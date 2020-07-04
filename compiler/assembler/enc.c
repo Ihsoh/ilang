@@ -734,6 +734,8 @@ static void _encode(
 										break;
 									}
 								}
+							} else {
+								sib_ss = 0;
 							}
 
 							switch (reg1) {
@@ -1077,6 +1079,8 @@ static void _encode(
 										break;
 									}
 								}
+							} else {
+								sib_ss = 0;
 							}
 
 							switch (reg1) {
@@ -1255,5 +1259,8 @@ void enc_encode(
 	assert(ctx->ast);
 
 	_encode(ctx, ASM_STEP_SCAN);
+
+	ASM_PARSER_CONTEXT_DATA_SET_ADDRESS_COUNTER(ctx, 0);
+
 	_encode(ctx, ASM_STEP_ENCODE);
 }

@@ -51,8 +51,8 @@ void ins_enc_int8(
 	assert(data);
 	assert(data->ins_node->nchilds == 1);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 1);
 		return;
 	}
 
@@ -72,8 +72,8 @@ void ins_enc_int16(
 	assert(data);
 	assert(data->ins_node->nchilds == 1);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 2);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 2);
 		return;
 	}
 
@@ -93,8 +93,8 @@ void ins_enc_int32(
 	assert(data);
 	assert(data->ins_node->nchilds == 1);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 4);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 4);
 		return;
 	}
 
@@ -114,8 +114,8 @@ void ins_enc_int64(
 	assert(data);
 	assert(data->ins_node->nchilds == 1);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 8);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 8);
 		return;
 	}
 
@@ -135,8 +135,8 @@ void ins_enc_float(
 	assert(data);
 	assert(data->ins_node->nchilds == 1);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 4);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 4);
 		return;
 	}
 
@@ -158,8 +158,8 @@ void ins_enc_double(
 	assert(data);
 	assert(data->ins_node->nchilds == 1);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 8);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, 8);
 		return;
 	}
 
@@ -184,8 +184,8 @@ void ins_enc_string(
 	AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(child);
 	assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_STRING);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result->value.str.len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result->value.str.len);
 		return;
 	}
 
@@ -206,8 +206,8 @@ void ins_enc_int8s(
 	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
 	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 1);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 1);
 		return;
 	}
 
@@ -236,8 +236,8 @@ void ins_enc_int16s(
 	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
 	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 2);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 2);
 		return;
 	}
 
@@ -266,8 +266,8 @@ void ins_enc_int32s(
 	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
 	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 4);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 4);
 		return;
 	}
 
@@ -296,8 +296,8 @@ void ins_enc_int64s(
 	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
 	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 8);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 8);
 		return;
 	}
 
@@ -326,8 +326,8 @@ void ins_enc_floats(
 	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
 	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 4);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 4);
 		return;
 	}
 
@@ -358,8 +358,8 @@ void ins_enc_doubles(
 	AsmExprEvalResult *result_count = &ASM_EXPR_AST_NODE_GET_RESULT(node_count);
 	assert(result_count->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 8);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * 8);
 		return;
 	}
 
@@ -394,8 +394,8 @@ void ins_enc_strings(
 	AsmExprEvalResult *result_val = &ASM_EXPR_AST_NODE_GET_RESULT(node_val);
 	assert(result_val->type == ASM_EXPR_EVAL_RESULT_TYPE_STRING);
 
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * result_val->value.str.len);
 	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, result_count->value.u64 * result_val->value.str.len);
 		return;
 	}
 

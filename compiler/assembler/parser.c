@@ -1881,6 +1881,12 @@ _RULE(ins)
 							} else {
 								goto not_matched;
 							}
+						} else if (ot == INS_AM_LABEL) {
+							ParserASTNode *node_label = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+							if (node_label == NULL) {
+								goto not_matched;
+							}
+							_INS_RULE_ADD_CHILD(node_label)
 						} else {
 							goto not_matched;
 						}

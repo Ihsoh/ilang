@@ -1,7 +1,11 @@
-BIT16;
+BIT64;
 
-// BOUND CX, ADDR16 [BX];
+LABEL a;
 
-ARPL AX, BX;
+INT8S 10, 0;
 
-// ADD WORD ADDR16 [BX], CX;
+JO a;
+
+INT8S 10, 0;
+
+

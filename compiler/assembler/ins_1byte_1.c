@@ -605,14 +605,14 @@ Instruction ins_1byte_1[] = {
 		{1, 0x60 | 0x00},
 		{
 		},
-		ins_enc_opcode
+		ins_enc_pushad_popad
 	},
 	{
 		"POPAD", INS_SS_i64,
 		{1, 0x60 | 0x01},
 		{
 		},
-		ins_enc_opcode
+		ins_enc_pushad_popad
 	},
 	{
 		"MOVSXD", INS_SS_o64,
@@ -621,7 +621,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_v,
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_movsxd
 	},
 
 	// 0x07, 0x00~0x07
@@ -631,7 +631,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_jcc
 	},
 	{
 		"JNO", INS_SS_f64,
@@ -639,7 +639,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_jcc
 	},
 	{
 		"JB", INS_SS_f64,	// B/NAE/C
@@ -647,7 +647,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_jcc
 	},
 	{
 		"JNB", INS_SS_f64,	// NB/AE/NC
@@ -655,7 +655,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_jcc
 	},
 	{
 		"JZ", INS_SS_f64,	// Z/E
@@ -663,7 +663,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_jcc
 	},
 	{
 		"JNZ", INS_SS_f64,	// NZ/NE
@@ -671,7 +671,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_jcc
 	},
 	{
 		"JBE", INS_SS_f64,	// BE/NA
@@ -679,7 +679,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_jcc
 	},
 	{
 		"JNBE", INS_SS_f64,	// NBE/A
@@ -687,7 +687,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_jcc
 	},
 
 	// 0x08, 0x00~0x07

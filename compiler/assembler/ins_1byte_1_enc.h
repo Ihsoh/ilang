@@ -64,4 +64,19 @@ extern void ins_enc_arpl_Ew_Gw(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_pushad_popad(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_movsxd(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_jcc(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
