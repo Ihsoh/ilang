@@ -1908,8 +1908,13 @@ _RULE(ins)
 
 			add_child = false;
 
+			_RULE_POP_LEXCTX
+			continue;
 not_matched:
 			_RULE_POP_LEXCTX
+			if (add_child) {
+				_RULE_CURRENT_NODE->nchilds = 0;
+			}
 		}
 	}
 	ins_iter_free(&iter);

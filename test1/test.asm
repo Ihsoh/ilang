@@ -1,11 +1,4 @@
-BIT64;
+BIT32;
 
-LABEL a;
-
-INT8S 10, 0;
-
-JO a;
-
-INT8S 10, 0;
-
+ADD BYTE ADDR32 [0x12345678], 0xab;
 

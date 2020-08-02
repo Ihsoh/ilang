@@ -79,4 +79,9 @@ extern void ins_enc_jcc(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_opcode_ext_Eb_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
