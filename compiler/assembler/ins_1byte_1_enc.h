@@ -84,4 +84,14 @@ extern void ins_enc_opcode_ext_Eb_Ib(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_opcode_ext_Ev_Iz(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_ext_Ev_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
