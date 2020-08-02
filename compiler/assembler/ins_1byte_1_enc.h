@@ -94,4 +94,9 @@ extern void ins_enc_opcode_ext_Ev_Ib(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_pause(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

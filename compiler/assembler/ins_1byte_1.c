@@ -1162,7 +1162,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_E | INS_OT_b,
 			INS_AM_G | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Eb_Gb
 	},
 	{
 		"TEST", INS_SS_NONE,
@@ -1171,7 +1171,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_E | INS_OT_v,
 			INS_AM_G | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Ev_Gv
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1180,7 +1180,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_E | INS_OT_b,
 			INS_AM_G | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_XXX_Eb_Gb,
 		.oprd_reversible = true
 	},
 	{
@@ -1190,7 +1190,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_E | INS_OT_v,
 			INS_AM_G | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_XXX_Ev_Gv,
 		.oprd_reversible = true
 	},
 
@@ -1200,14 +1200,14 @@ Instruction ins_1byte_1[] = {
 		{1, 0x90 | 0x00},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PAUSE", INS_SS_NONE,
 		{1, 0x90 | 0x00},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_pause
 	},
 	{
 		"XCHG", INS_SS_NONE,
