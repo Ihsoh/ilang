@@ -595,11 +595,29 @@ void ins_iter_free(
 #define	INS_REGISTER_GENERAL_4BYTE		4
 #define	INS_REGISTER_GENERAL_8BYTE		5
 
+#define	INS_REGISTER_INDEX_AX			0
+#define	INS_REGISTER_INDEX_CX			1
+#define	INS_REGISTER_INDEX_DX			2
+#define	INS_REGISTER_INDEX_BX			3
+#define	INS_REGISTER_INDEX_SP			4
+#define	INS_REGISTER_INDEX_BP			5
+#define	INS_REGISTER_INDEX_SI			6
+#define	INS_REGISTER_INDEX_DI			7
+#define	INS_REGISTER_INDEX_R8			8
+#define	INS_REGISTER_INDEX_R9			9
+#define	INS_REGISTER_INDEX_R10			10
+#define	INS_REGISTER_INDEX_R11			11
+#define	INS_REGISTER_INDEX_R12			12
+#define	INS_REGISTER_INDEX_R13			13
+#define	INS_REGISTER_INDEX_R14			14
+#define	INS_REGISTER_INDEX_R15			15
+
 typedef struct {
 	char	*name;
 	int		id;
 	int		type;
 	int		index;
+	int		arch;
 } InsRegister;
 
 typedef struct {
@@ -621,6 +639,9 @@ extern InsRegister * ins_reg_get_by_name(
 extern InsRegister * ins_reg_get_by_id(
 	int id
 );
+
+
+
 
 extern void ins_init(
 	ParserContext *ctx,

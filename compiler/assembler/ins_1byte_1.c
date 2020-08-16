@@ -1216,7 +1216,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r8,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1226,7 +1226,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rCX,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1236,7 +1236,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r9,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1246,7 +1246,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rDX,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1256,7 +1256,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r10,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1266,7 +1266,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rBX,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1276,7 +1276,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r11,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1286,7 +1286,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rSP,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1296,7 +1296,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r12,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1306,7 +1306,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rBP,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1316,7 +1316,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r13,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1326,7 +1326,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rSI,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1336,7 +1336,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r14,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1346,7 +1346,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rDI,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 	{
@@ -1356,7 +1356,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r15,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xchg_rAX_XXX,
 		.oprd_reversible = true
 	},
 

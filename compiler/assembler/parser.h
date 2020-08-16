@@ -217,9 +217,9 @@ typedef struct {
 
 
 
-#define	ASM_ARCH_BIT16		1
-#define	ASM_ARCH_BIT32		2
-#define	ASM_ARCH_BIT64		3
+#define	ASM_ARCH_BIT16		0x01	// 0b0001
+#define	ASM_ARCH_BIT32		0x02	// 0b0010
+#define	ASM_ARCH_BIT64		0x04	// 0b0100
 
 #define	ASM_STEP_SCAN		1
 #define	ASM_STEP_ENCODE		2

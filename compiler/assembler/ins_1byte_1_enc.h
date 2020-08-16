@@ -99,4 +99,9 @@ extern void ins_enc_pause(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_xchg_rAX_XXX(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
