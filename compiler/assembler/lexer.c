@@ -180,6 +180,11 @@ LEXER_MATCHER(keyword)
 		_KEYWORD("ADDR16", ASM_TOKEN_KEYWORD_ADDR16),
 		_KEYWORD("ADDR32", ASM_TOKEN_KEYWORD_ADDR32),
 		_KEYWORD("ADDR64", ASM_TOKEN_KEYWORD_ADDR64),
+		_KEYWORD("HINT", ASM_TOKEN_KEYWORD_HINT),
+		_KEYWORD("opcode_o1", ASM_TOKEN_KEYWORD_OPCODE_O1),
+		_KEYWORD("opcode_o2", ASM_TOKEN_KEYWORD_OPCODE_O2),
+		_KEYWORD("opcode_o3", ASM_TOKEN_KEYWORD_OPCODE_O3),
+		_KEYWORD("opcode_len", ASM_TOKEN_KEYWORD_OPCODE_LEN),
 
 		{NULL, 0, ASM_TOKEN_INVALID}
 	};
@@ -251,6 +256,7 @@ LEXER_TEXT_MATCHER(pnct_brackets_right, "]", ASM_TOKEN_PNCT_BRACKETS_RIGHT, 0)
 LEXER_TEXT_MATCHER(pnct_or, "||", ASM_TOKEN_PNCT_OR, 0)
 LEXER_TEXT_MATCHER(pnct_and, "&&", ASM_TOKEN_PNCT_AND, 0)
 LEXER_TEXT_MATCHER(pnct_question_mark, "?", ASM_TOKEN_PNCT_QUESTION_MARK, 0)
+LEXER_TEXT_MATCHER(pnct_assign, "=", ASM_TOKEN_PNCT_ASSIGN, 0)
 
 
 
@@ -304,6 +310,7 @@ static LexerTokenMatcher _matchers[] = {
 	_MATCHER_LIST_ITEM(pnct_or),
 	_MATCHER_LIST_ITEM(pnct_and),
 	_MATCHER_LIST_ITEM(pnct_question_mark),
+	_MATCHER_LIST_ITEM(pnct_assign),
 
 	{NULL, NULL}
 };
@@ -328,4 +335,148 @@ void asm_lexer_free_context(
 	assert(ctx);
 
 	lexer_free_context(ctx);
+}
+
+uint32_t asm_lexer_get_uint32_val(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+
+	switch (token->type) {
+		case ASM_TOKEN_LITERAL_UINT_BIN: {
+			return util_get_uint32_bin_val(token->content, token->len);
+		}
+		case ASM_TOKEN_LITERAL_UINT_OCT: {
+			return util_get_uint32_oct_val(token->content, token->len);
+		}
+		case ASM_TOKEN_LITERAL_UINT_DEC: {
+			return util_get_uint32_dec_val(token->content, token->len);
+		}
+		case ASM_TOKEN_LITERAL_UINT_HEX: {
+			return util_get_uint32_hex_val(token->content, token->len);
+		}
+		default: {
+			assert(0);
+		}
+	}
+
+	return 0;
+}
+
+uint64_t asm_lexer_get_uint64_val(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+
+	switch (token->type) {
+		case ASM_TOKEN_LITERAL_UINT_BIN: {
+			return util_get_uint64_bin_val(token->content, token->len);
+		}
+		case ASM_TOKEN_LITERAL_UINT_OCT: {
+			return util_get_uint64_oct_val(token->content, token->len);
+		}
+		case ASM_TOKEN_LITERAL_UINT_DEC: {
+			return util_get_uint64_dec_val(token->content, token->len);
+		}
+		case ASM_TOKEN_LITERAL_UINT_HEX: {
+			return util_get_uint64_hex_val(token->content, token->len);
+		}
+		default: {
+			assert(0);
+		}
+	}
+
+	return 0;
+}
+
+float asm_lexer_get_float_val(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+
+	if (token->type == ASM_TOKEN_LITERAL_REAL) {
+		return util_get_float_val(token->content, token->len);
+	} else {
+		assert(0);
+	}
+	
+	return 0.0f;
+}
+
+double asm_lexer_get_double_val(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+
+	if (token->type == ASM_TOKEN_LITERAL_REAL) {
+		return util_get_double_val(token->content, token->len);
+	} else {
+		assert(0);
+	}
+	
+	return 0.0;
+}
+
+char asm_lexer_get_char_val(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+
+	if (token->type == ASM_TOKEN_LITERAL_CHAR) {
+		return util_get_char_val(token->content, token->len);
+	} else {
+		assert(0);
+	}
+
+	return '\0';
+}
+
+void asm_lexer_unescape_string(
+	LexerContext *ctx,
+	ResizableString *target,
+	const char *source,
+	size_t source_len
+) {
+	assert(ctx);
+	assert(target);
+	assert(source);
+
+	util_unescape_string(target, source, source_len);
+}
+
+bool asm_lexer_has_unsigned_mark(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+	assert(
+		token->type == ASM_TOKEN_LITERAL_UINT_BIN
+		|| token->type == ASM_TOKEN_LITERAL_UINT_OCT
+		|| token->type == ASM_TOKEN_LITERAL_UINT_DEC
+		|| token->type == ASM_TOKEN_LITERAL_UINT_HEX
+	);
+
+	return token->content[token->len - 1] == 'u';
+}
+
+bool asm_lexer_has_float_mark(
+	LexerContext *ctx,
+	LexerToken *token
+) {
+	assert(ctx);
+	assert(token);
+	assert(token->type == ASM_TOKEN_LITERAL_REAL);
+
+	return token->content[token->len - 1] == 'f';
 }

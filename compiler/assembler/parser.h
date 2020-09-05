@@ -80,6 +80,13 @@
 typedef struct {
 	size_t			count;
 	Instruction 	*ins[ASM_INS_AST_NODE_INS_SIZE];
+
+	struct {
+		uint8_t		len;		// Opcode的长度。值：1、2、3。
+		uint8_t		o1;
+		uint8_t		o2;
+		uint8_t		o3;
+	} opcode;
 } AsmParserInsASTNodeData;
 
 #define	ASM_INS_AST_NODE_DATA(node)				((AsmParserInsASTNodeData *)&((node)->data[0]))
@@ -92,6 +99,29 @@ typedef struct {
 	((v) >= ASM_INS_AST_NODE_GET_COUNT(node) ?	\
 		NULL :	\
 		(ASM_INS_AST_NODE_DATA(node)->ins[(v)]))
+
+#define	ASM_INS_AST_NODE_SET_OPCODE_LEN(node, v)	\
+	(ASM_INS_AST_NODE_DATA(node)->opcode.len = (v))
+#define	ASM_INS_AST_NODE_GET_OPCODE_LEN(node)	\
+	(ASM_INS_AST_NODE_DATA(node)->opcode.len)
+
+#define	ASM_INS_AST_NODE_SET_OPCODE_O1(node, v)	\
+	(ASM_INS_AST_NODE_DATA(node)->opcode.o1 = (v))
+#define	ASM_INS_AST_NODE_GET_OPCODE_O1(node)	\
+	(ASM_INS_AST_NODE_DATA(node)->opcode.o1)
+
+#define	ASM_INS_AST_NODE_SET_OPCODE_O2(node, v)	\
+	(ASM_INS_AST_NODE_DATA(node)->opcode.o2 = (v))
+#define	ASM_INS_AST_NODE_GET_OPCODE_O2(node)	\
+	(ASM_INS_AST_NODE_DATA(node)->opcode.o2)
+
+#define	ASM_INS_AST_NODE_SET_OPCODE_O3(node, v)	\
+	(ASM_INS_AST_NODE_DATA(node)->opcode.o3 = (v))
+#define	ASM_INS_AST_NODE_GET_OPCODE_O3(node)	\
+	(ASM_INS_AST_NODE_DATA(node)->opcode.o3)
+
+
+
 
 
 
@@ -296,6 +326,35 @@ extern uint64_t asm_parser_get_symbol_by_rstr_key(
 extern uint64_t asm_parser_get_symbol_by_token_key(
 	ParserContext *ctx,
 	LexerToken *key
+);
+
+extern uint32_t asm_parser_get_uint32_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern uint64_t asm_parser_get_uint64_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern float asm_parser_get_float_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern double asm_parser_get_double_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern char asm_parser_get_char_val(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern bool asm_parser_has_unsigned_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
+);
+extern bool asm_parser_has_float_mark(
+	ParserContext *ctx,
+	ParserASTNode *node
 );
 
 #endif

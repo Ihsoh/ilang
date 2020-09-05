@@ -456,6 +456,32 @@ static void _encode(
 			for (int j = 0; j < ASM_INS_AST_NODE_GET_COUNT(ins_node); j++) {
 				Instruction *ins = ASM_INS_AST_NODE_GET_INS(ins_node, j);
 				assert(ins);
+
+				uint8_t opcode_len = ASM_INS_AST_NODE_GET_OPCODE_LEN(ins_node);
+				if (opcode_len != 0) {
+					uint8_t opcode_o1 = ASM_INS_AST_NODE_GET_OPCODE_O1(ins_node);
+					uint8_t opcode_o2 = ASM_INS_AST_NODE_GET_OPCODE_O2(ins_node);
+					uint8_t opcode_o3 = ASM_INS_AST_NODE_GET_OPCODE_O3(ins_node);
+
+					if (opcode_len == 1) {
+						if (ins->opcode.o1 != opcode_o1) {
+							continue;
+						}
+					} else if (opcode_len == 2) {
+						if (ins->opcode.o1 != opcode_o1
+								|| ins->opcode.o2 != opcode_o2) {
+							continue;
+						}
+					} else if (opcode_len == 3) {
+						if (ins->opcode.o1 != opcode_o1
+								|| ins->opcode.o2 != opcode_o2
+								|| ins->opcode.o3 != opcode_o3) {
+							continue;
+						}
+					} else {
+						continue;
+					}
+				}
 				
 				if (arch == ASM_ARCH_BIT64) {
 					if (ins->superscript & INS_SS_i64) {
