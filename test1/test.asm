@@ -1,4 +1,5 @@
 BIT16;
+HINT(opcode_o1=0x91, opcode_len=1) XCHG AX, CX;
 HINT(opcode_o1=0x91, opcode_len=1) XCHG CX, AX;
 XCHG EAX, EAX;
 

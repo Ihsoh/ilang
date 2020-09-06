@@ -541,8 +541,6 @@ typedef struct _Instruction {
 		uint8_t		rm:3;
 	} opcode_ext;
 
-	bool oprd_reversible;			// 对于只有两个参数的指令，参数顺序任意。
-
 	bool defult_oprd_sz_64bits;		// 默认操作数长度为64位。
 
 } Instruction;

@@ -1180,8 +1180,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_E | INS_OT_b,
 			INS_AM_G | INS_OT_b
 		},
-		ins_enc_XXX_Eb_Gb,
-		.oprd_reversible = true
+		ins_enc_XXX_Eb_Gb
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x80 | 0x06},
+		{
+			INS_AM_G | INS_OT_b,
+			INS_AM_E | INS_OT_b
+		},
+		ins_enc_XXX_Gb_Eb
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1190,8 +1198,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_E | INS_OT_v,
 			INS_AM_G | INS_OT_v
 		},
-		ins_enc_XXX_Ev_Gv,
-		.oprd_reversible = true
+		ins_enc_XXX_Ev_Gv
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x80 | 0x07},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_XXX_Gv_Ev
 	},
 
 	// 0x09, 0x00~0x07
@@ -1216,8 +1232,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r8,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x00},
+		{
+			INS_AM_rAX,
+			INS_AM_r8
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1226,8 +1250,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rCX,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x01},
+		{
+			INS_AM_rAX,
+			INS_AM_rCX
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1236,8 +1268,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r9,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x01},
+		{
+			INS_AM_rAX,
+			INS_AM_r9
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1246,8 +1286,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rDX,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x02},
+		{
+			INS_AM_rAX,
+			INS_AM_rDX
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1256,8 +1304,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r10,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x02},
+		{
+			INS_AM_rAX,
+			INS_AM_r10
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1266,8 +1322,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rBX,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x03},
+		{
+			INS_AM_rAX,
+			INS_AM_rBX
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1276,8 +1340,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r11,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x03},
+		{
+			INS_AM_rAX,
+			INS_AM_r11
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1286,8 +1358,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rSP,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x04},
+		{
+			INS_AM_rAX,
+			INS_AM_rSP
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1296,8 +1376,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r12,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x04},
+		{
+			INS_AM_rAX,
+			INS_AM_r12
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1306,8 +1394,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rBP,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x05},
+		{
+			INS_AM_rAX,
+			INS_AM_rBP
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1316,8 +1412,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r13,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x05},
+		{
+			INS_AM_rAX,
+			INS_AM_r13
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1326,8 +1430,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rSI,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x06},
+		{
+			INS_AM_rAX,
+			INS_AM_rSI
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1336,8 +1448,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r14,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x06},
+		{
+			INS_AM_rAX,
+			INS_AM_r14
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1346,8 +1466,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rDI,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x07},
+		{
+			INS_AM_rAX,
+			INS_AM_rDI
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 	{
 		"XCHG", INS_SS_NONE,
@@ -1356,8 +1484,16 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r15,
 			INS_AM_rAX
 		},
-		ins_enc_xchg_rAX_XXX,
-		.oprd_reversible = true
+		ins_enc_xchg_rAX_XXX
+	},
+	{
+		"XCHG", INS_SS_NONE,
+		{1, 0x90 | 0x07},
+		{
+			INS_AM_rAX,
+			INS_AM_r15
+		},
+		ins_enc_xchg_rAX_XXX
 	},
 
 	// 0x0a, 0x00~0x07
