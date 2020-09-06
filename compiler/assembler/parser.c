@@ -1544,8 +1544,7 @@ static bool _is_Ev_oprd(
 static bool _is_M_oprd(
 	uint16_t oprd_type
 ) {
-	return (oprd_type & INS_AM_M) == INS_AM_M
-			&& (oprd_type & 0xff) != 0;
+	return (oprd_type & 0xff00) == INS_AM_M;
 }
 
 static bool _is_Gv_oprd(
