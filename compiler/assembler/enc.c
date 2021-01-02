@@ -859,7 +859,7 @@ static void _encode(
 							}
 						}
 						
-						uint32_t disp = 0;
+						uint64_t disp = 0;
 						ParserASTNode *node_disp = ASM_MEM_AST_NODE_GET_NODE_DISP(node_child);
 						if (node_disp != NULL) {
 							_eval_expr_wrapper(ctx, node_disp);
@@ -868,7 +868,7 @@ static void _encode(
 							assert(result);
 							assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
 
-							disp = (uint32_t) (result->value.u64 & 0xffffffff);
+							disp = result->value.u64;
 						}
 
 						int reg1 = ASM_MEM_AST_NODE_GET_REG1(node_child);

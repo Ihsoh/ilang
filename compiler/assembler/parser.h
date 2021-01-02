@@ -171,7 +171,7 @@ typedef struct {
 	uint8_t			scale;
 
 	ParserASTNode	*node_disp;
-	uint32_t		disp;
+	uint64_t		disp;
 
 	int				mod;		// 00B 01B 10B
 								// 0   1   2

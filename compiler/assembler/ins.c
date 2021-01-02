@@ -969,7 +969,7 @@ void ins_fill_EX(
 		int sib_base = ASM_MEM_AST_NODE_GET_SIB_BASE(node);
 		int sib_index = ASM_MEM_AST_NODE_GET_SIB_INDEX(node);
 		int sib_ss = ASM_MEM_AST_NODE_GET_SIB_SS(node);
-		uint32_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
+		uint64_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
 
 		if (mod == 0 && rm == 0x5) {
 			enc_ins->disp_len = 4;

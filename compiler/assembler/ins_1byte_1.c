@@ -1504,7 +1504,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_AL,
 			INS_AM_O | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_rAX_Ob
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1513,7 +1513,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_rAX,
 			INS_AM_O | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_rAX_Ob
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1522,7 +1522,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_O | INS_OT_b,
 			INS_AM_AL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_Ob_rAX
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1531,63 +1531,63 @@ Instruction ins_1byte_1[] = {
 			INS_AM_O | INS_OT_v,
 			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_Ob_rAX
 	},
 	{
 		"MOVSB", INS_SS_NONE,
 		{1, 0xa0 | 0x04},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"MOVSW", INS_SS_NONE,
 		{1, 0xa0 | 0x05},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXXsw
 	},
 	{
 		"MOVSD", INS_SS_NONE,
 		{1, 0xa0 | 0x05},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXXsd
 	},
 	{
 		"MOVSQ", INS_SS_NONE,
 		{1, 0xa0 | 0x05},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXXsq
 	},
 	{
 		"CMPSB", INS_SS_NONE,
 		{1, 0xa0 | 0x06},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"CMPSW", INS_SS_NONE,
 		{1, 0xa0 | 0x07},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXXsw
 	},
 	{
 		"CMPSD", INS_SS_NONE,
 		{1, 0xa0 | 0x07},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXXsd
 	},
 	{
 		"CMPSQ", INS_SS_NONE,
 		{1, 0xa0 | 0x07},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXXsq
 	},
 
 	// 0x0b, 0x00~0x07

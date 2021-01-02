@@ -79,6 +79,18 @@ static ParserASTNode * _new_node(
 		LexerToken *__token = NULL;	\
 		{
 
+#define	_RULE_FUNC_DECL_1P(name, p1)	\
+	static ParserASTNode * _RULE_NAME(name)(ParserContext *__ctx, p1)
+
+#define	_RULE_1P(name, p1)	\
+	_RULE_FUNC_DECL_1P(name, p1) {	\
+		assert(__ctx);	\
+		assert(__ctx->lexctx);	\
+		ParserASTNode *__node = NULL;	\
+		lexer_store_current(__ctx->lexctx);	\
+		LexerToken *__token = NULL;	\
+		{
+
 #define	_RULE_END	\
 		}	\
 		lexer_abandon_curstack_top(__ctx->lexctx);	\
@@ -679,7 +691,7 @@ _RULE(mem16_disp)
 	ASM_MEM_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
 _RULE_END
 
-_RULE(mem16)
+_RULE_1P(_mem16, bool only_disp)
 	int type = 0;
 	int seg = 0;
 
@@ -731,16 +743,18 @@ _RULE(mem16)
 
 	ParserASTNode *node = NULL;
 
-	if (node == NULL) {
-		node = _RULE_NAME(mem16_X_X_disp)(_RULE_PARSER_CTX);
-	}
-
-	if (node == NULL) {
-		node = _RULE_NAME(mem16_X_disp)(_RULE_PARSER_CTX);
-	}
-
-	if (node == NULL) {
+	if (only_disp) {
 		node = _RULE_NAME(mem16_disp)(_RULE_PARSER_CTX);
+	} else {
+		node = _RULE_NAME(mem16_X_X_disp)(_RULE_PARSER_CTX);
+
+		if (node == NULL) {
+			node = _RULE_NAME(mem16_X_disp)(_RULE_PARSER_CTX);
+		}
+
+		if (node == NULL) {
+			node = _RULE_NAME(mem16_disp)(_RULE_PARSER_CTX);
+		}
 	}
 
 	if (node != NULL) {
@@ -752,6 +766,14 @@ _RULE(mem16)
 	}
 
 	_RULE_RETURNED_NODE(node)
+_RULE_END
+
+_RULE(mem16)
+	_RULE_RETURNED_NODE(_RULE_NAME(_mem16)(_RULE_PARSER_CTX, false))
+_RULE_END
+
+_RULE(mem16_only_disp)
+	_RULE_RETURNED_NODE(_RULE_NAME(_mem16)(_RULE_PARSER_CTX, true))
 _RULE_END
 
 _RULE(mem32_disp)
@@ -1007,7 +1029,7 @@ _RULE(mem32_base_index_scale_disp)
 	ASM_MEM_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
 _RULE_END
 
-_RULE(mem32)
+_RULE_1P(_mem32, bool only_disp)
 	int type = 0;
 	int seg = 0;
 
@@ -1059,20 +1081,22 @@ _RULE(mem32)
 
 	ParserASTNode *node = NULL;
 
-	if (node == NULL) {
+	if (only_disp) {
 		node = _RULE_NAME(mem32_disp)(_RULE_PARSER_CTX);
-	}
+	} else {
+		node = _RULE_NAME(mem32_disp)(_RULE_PARSER_CTX);
 
-	if (node == NULL) {
-		node = _RULE_NAME(mem32_base_disp)(_RULE_PARSER_CTX);
-	}
+		if (node == NULL) {
+			node = _RULE_NAME(mem32_base_disp)(_RULE_PARSER_CTX);
+		}
 
-	if (node == NULL) {
-		node = _RULE_NAME(mem32_index_scale_disp)(_RULE_PARSER_CTX);
-	}
+		if (node == NULL) {
+			node = _RULE_NAME(mem32_index_scale_disp)(_RULE_PARSER_CTX);
+		}
 
-	if (node == NULL) {
-		node = _RULE_NAME(mem32_base_index_scale_disp)(_RULE_PARSER_CTX);
+		if (node == NULL) {
+			node = _RULE_NAME(mem32_base_index_scale_disp)(_RULE_PARSER_CTX);
+		}
 	}
 
 	if (node != NULL) {
@@ -1084,6 +1108,14 @@ _RULE(mem32)
 	}
 
 	_RULE_RETURNED_NODE(node)
+_RULE_END
+
+_RULE(mem32)
+	_RULE_RETURNED_NODE(_RULE_NAME(_mem32)(_RULE_PARSER_CTX, false))
+_RULE_END
+
+_RULE(mem32_only_disp)
+	_RULE_RETURNED_NODE(_RULE_NAME(_mem32)(_RULE_PARSER_CTX, true))
 _RULE_END
 
 _RULE(mem64_disp)
@@ -1403,7 +1435,7 @@ _RULE(mem64_base_index_scale_disp)
 	ASM_MEM_AST_NODE_SET_NODE_DISP(_RULE_CURRENT_NODE, node_disp);
 _RULE_END
 
-_RULE(mem64)
+_RULE_1P(_mem64, bool only_disp)
 	int type = 0;
 	int seg = 0;
 
@@ -1455,20 +1487,22 @@ _RULE(mem64)
 
 	ParserASTNode *node = NULL;
 
-	if (node == NULL) {
+	if (only_disp) {
 		node = _RULE_NAME(mem64_disp)(_RULE_PARSER_CTX);
-	}
+	} else {
+		node = _RULE_NAME(mem64_disp)(_RULE_PARSER_CTX);
 
-	if (node == NULL) {
-		node = _RULE_NAME(mem64_base_disp)(_RULE_PARSER_CTX);
-	}
+		if (node == NULL) {
+			node = _RULE_NAME(mem64_base_disp)(_RULE_PARSER_CTX);
+		}
 
-	if (node == NULL) {
-		node = _RULE_NAME(mem64_index_scale_disp)(_RULE_PARSER_CTX);
-	}
+		if (node == NULL) {
+			node = _RULE_NAME(mem64_index_scale_disp)(_RULE_PARSER_CTX);
+		}
 
-	if (node == NULL) {
-		node = _RULE_NAME(mem64_base_index_scale_disp)(_RULE_PARSER_CTX);
+		if (node == NULL) {
+			node = _RULE_NAME(mem64_base_index_scale_disp)(_RULE_PARSER_CTX);
+		}
 	}
 
 	if (node != NULL) {
@@ -1482,6 +1516,14 @@ _RULE(mem64)
 	_RULE_RETURNED_NODE(node)
 _RULE_END
 
+_RULE(mem64)
+	_RULE_RETURNED_NODE(_RULE_NAME(_mem64)(_RULE_PARSER_CTX, false))
+_RULE_END
+
+_RULE(mem64_only_disp)
+	_RULE_RETURNED_NODE(_RULE_NAME(_mem64)(_RULE_PARSER_CTX, true))
+_RULE_END
+
 _RULE(mem)
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(mem16)(_RULE_PARSER_CTX))
@@ -1493,6 +1535,20 @@ _RULE(mem)
 
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(mem64)(_RULE_PARSER_CTX))
+	}
+_RULE_END
+
+_RULE(mem_only_disp)
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(mem16_only_disp)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(mem32_only_disp)(_RULE_PARSER_CTX))
+	}
+
+	if (_RULE_CURRENT_NODE == NULL) {
+		_RULE_RETURNED_NODE(_RULE_NAME(mem64_only_disp)(_RULE_PARSER_CTX))
 	}
 _RULE_END
 
@@ -1580,6 +1636,18 @@ static bool _is_seg_oprd(
 			|| oprd_type == INS_AM_ES
 			|| oprd_type == INS_AM_FS
 			|| oprd_type == INS_AM_GS;
+}
+
+static bool _is_Ob_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_O | INS_OT_b);
+}
+
+static bool _is_Ov_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_O | INS_OT_v);
 }
 
 _RULE(ins)
@@ -1795,6 +1863,32 @@ _RULE(ins)
 							}
 
 							_INS_RULE_ADD_CHILD(node_reg)
+						} else if (_is_Ob_oprd(ot)) {
+							ParserASTNode *node_mem = _RULE_NAME(mem_only_disp)(_RULE_PARSER_CTX);
+
+							if (node_mem == NULL) {
+								goto not_matched;
+							}
+							
+							if (ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_BYTE) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_mem)
+						} else if (_is_Ov_oprd(ot)) {
+							ParserASTNode *node_mem = _RULE_NAME(mem_only_disp)(_RULE_PARSER_CTX);
+
+							if (node_mem == NULL) {
+								goto not_matched;
+							}
+							
+							if (ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_WORD
+									&& ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_DWORD
+									&& ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_QWORD) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_mem)
 						} else if (_is_AL_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
 							if (node_reg == NULL) {

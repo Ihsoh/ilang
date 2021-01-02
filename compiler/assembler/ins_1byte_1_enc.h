@@ -104,4 +104,29 @@ extern void ins_enc_xchg_rAX_XXX(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_mov_rAX_Ob(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_mov_Ob_rAX(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_XXXsw(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_XXXsd(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_XXXsq(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

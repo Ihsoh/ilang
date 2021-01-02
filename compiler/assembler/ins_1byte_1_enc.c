@@ -1011,3 +1011,225 @@ void ins_enc_xchg_rAX_XXX(
 
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
+
+void ins_enc_mov_rAX_Ob(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *target = data->ins_node->childs[0];
+
+	ParserASTNode *source = data->ins_node->childs[1];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_EX(data->ctx, ins, source, &enc_ins);
+
+	int arch = ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx);
+	if (arch == ASM_ARCH_BIT64) {
+		enc_ins.disp_len = 8;
+	}
+
+	enc_ins.mod_rm_used = false;
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_mov_Ob_rAX(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *target = data->ins_node->childs[0];
+
+	ParserASTNode *source = data->ins_node->childs[1];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_EX(data->ctx, ins, target, &enc_ins);
+
+	int arch = ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx);
+	if (arch == ASM_ARCH_BIT64) {
+		enc_ins.disp_len = 8;
+	}
+
+	enc_ins.mod_rm_used = false;
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_XXXsw(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 0);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	int arch = ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx);
+	switch (arch) {
+		case ASM_ARCH_BIT16: {
+			break;
+		}
+		case ASM_ARCH_BIT32: {
+			enc_ins.legacy_prefix.operand_size_override = true;
+			break;
+		}
+		case ASM_ARCH_BIT64: {
+			enc_ins.legacy_prefix.operand_size_override = true;
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_XXXsd(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 0);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	int arch = ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx);
+	switch (arch) {
+		case ASM_ARCH_BIT16: {
+			enc_ins.legacy_prefix.operand_size_override = true;
+			break;
+		}
+		case ASM_ARCH_BIT32: {
+			break;
+		}
+		case ASM_ARCH_BIT64: {
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_XXXsq(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 0);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	int arch = ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx);
+	switch (arch) {
+		case ASM_ARCH_BIT16: {
+			data->ctx->syntax_error_node_msg(
+				data->ctx,
+				ins_node,
+				"instruction not supported in 16-bit mode."
+			);
+			break;
+		}
+		case ASM_ARCH_BIT32: {
+			data->ctx->syntax_error_node_msg(
+				data->ctx,
+				ins_node,
+				"instruction not supported in 32-bit mode."
+			);
+			break;
+		}
+		case ASM_ARCH_BIT64: {
+			enc_ins.rex_prefix_used = true;
+			enc_ins.rex_prefix.w = true;
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
