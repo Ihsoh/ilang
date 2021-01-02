@@ -129,4 +129,14 @@ extern void ins_enc_XXXsq(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_mov_xL_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_mov_RxL_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

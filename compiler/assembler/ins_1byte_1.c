@@ -1599,7 +1599,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_AL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_xL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1608,7 +1608,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r8l,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_RxL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1617,7 +1617,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_CL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_xL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1626,7 +1626,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r9l,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_RxL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1635,7 +1635,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_DL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_xL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1644,7 +1644,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r10l,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_RxL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1653,7 +1653,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_BL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_xL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1662,7 +1662,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r11l,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_RxL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1671,7 +1671,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_AH,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_xL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1680,7 +1680,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r12l,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_RxL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1689,7 +1689,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_CH,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_xL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1698,7 +1698,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r13l,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_RxL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1707,7 +1707,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_DH,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_xL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1716,7 +1716,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r14l,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_RxL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1725,7 +1725,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_BH,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_xL_Ib
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -1734,7 +1734,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_r15l,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_mov_RxL_Ib
 	},
 
 	// 0x0c, 0x00~0x07

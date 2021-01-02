@@ -1725,6 +1725,20 @@ _RULE(ins)
 						}	\
 					}
 
+					#define	_C(_a) {	\
+						ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);	\
+						if (node_reg == NULL) {	\
+							goto not_matched;	\
+						}	\
+						InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);	\
+						assert(reg);	\
+						if (reg->id == (_a)) {	\
+							_INS_RULE_ADD_CHILD(node_reg)	\
+						} else {	\
+							goto not_matched;	\
+						}	\
+					}
+
 					if (ins->superscript & INS_SS_DIRECTIVE) {
 						if (_is_expr_oprd(ot)) {
 							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
@@ -1889,19 +1903,39 @@ _RULE(ins)
 							}
 
 							_INS_RULE_ADD_CHILD(node_mem)
-						} else if (_is_AL_oprd(ot)) {
-							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
-							if (node_reg == NULL) {
-								goto not_matched;
-							}
-
-							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
-							assert(reg);
-							if (reg->id == INS_AM_AL) {
-								_INS_RULE_ADD_CHILD(node_reg)
-							} else {
-								goto not_matched;
-							}	
+						/* AL ~ r8l */	
+						} else if (ot == INS_AM_AL) {
+							_C(INS_AM_AL)
+						} else if (ot == INS_AM_CL) {
+							_C(INS_AM_CL)
+						} else if (ot == INS_AM_DL) {
+							_C(INS_AM_DL)
+						} else if (ot == INS_AM_BL) {
+							_C(INS_AM_BL)
+						} else if (ot == INS_AM_AH) {
+							_C(INS_AM_AH)
+						} else if (ot == INS_AM_CH) {
+							_C(INS_AM_CH)
+						} else if (ot == INS_AM_DH) {
+							_C(INS_AM_DH)
+						} else if (ot == INS_AM_BH) {
+							_C(INS_AM_BH)
+						} else if (ot == INS_AM_r8l) {
+							_C(INS_AM_r8l)
+						} else if (ot == INS_AM_r9l) {
+							_C(INS_AM_r9l)
+						} else if (ot == INS_AM_r10l) {
+							_C(INS_AM_r10l)
+						} else if (ot == INS_AM_r11l) {
+							_C(INS_AM_r11l)
+						} else if (ot == INS_AM_r12l) {
+							_C(INS_AM_r12l)
+						} else if (ot == INS_AM_r13l) {
+							_C(INS_AM_r13l)
+						} else if (ot == INS_AM_r14l) {
+							_C(INS_AM_r14l)
+						} else if (ot == INS_AM_r15l) {
+							_C(INS_AM_r15l)
 						/* eAX ~ eDI */	
 						} else if (ot == INS_AM_eAX) {
 							_A(INS_AM_AX, INS_AM_EAX)
