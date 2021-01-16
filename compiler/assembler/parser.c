@@ -1609,6 +1609,12 @@ static bool _is_Gv_oprd(
 	return oprd_type == (INS_AM_G | INS_OT_v);
 }
 
+static bool _is_Gz_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_G | INS_OT_z);
+}
+
 static bool _is_AL_oprd(
 	uint16_t oprd_type
 ) {
@@ -1625,6 +1631,12 @@ static bool _is_Iz_oprd(
 	uint16_t oprd_type
 ) {
 	return oprd_type == (INS_AM_I | INS_OT_z);
+}
+
+static bool _is_Iw_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_I | INS_OT_w);
 }
 
 static bool _is_seg_oprd(
@@ -1877,6 +1889,20 @@ _RULE(ins)
 							}
 
 							_INS_RULE_ADD_CHILD(node_reg)
+						} else if (_is_Gz_oprd(ot)) {
+							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
+							if (node_reg == NULL) {
+								goto not_matched;
+							}
+
+							InsRegister *reg = ASM_REG_AST_NODE_GET_REG(node_reg);
+							assert(reg);
+							if (reg->type != INS_REGISTER_GENERAL_2BYTE
+									&& reg->type != INS_REGISTER_GENERAL_4BYTE) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_reg)
 						} else if (_is_Ob_oprd(ot)) {
 							ParserASTNode *node_mem = _RULE_NAME(mem_only_disp)(_RULE_PARSER_CTX);
 
@@ -1986,7 +2012,7 @@ _RULE(ins)
 							_B(INS_AM_r14w, INS_AM_r14d, INS_AM_r14)
 						} else if (ot == INS_AM_r15) {
 							_B(INS_AM_r15w, INS_AM_r15d, INS_AM_r15)
-						} else if (_is_Ib_oprd(ot) || _is_Iz_oprd(ot)) {
+						} else if (_is_Ib_oprd(ot) || _is_Iz_oprd(ot) || _is_Iw_oprd(ot)) {
 							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
 							if (node_oprd == NULL) {
 								goto not_matched;

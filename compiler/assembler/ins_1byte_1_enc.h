@@ -139,4 +139,14 @@ extern void ins_enc_mov_RxL_Ib(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_ret_Iw(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_les_lds(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

@@ -1983,18 +1983,16 @@ Instruction ins_1byte_1[] = {
 		"RET", INS_SS_f64,
 		{1, 0xc0 | 0x02},
 		{
-			INS_AM_NEAR,
 			INS_AM_I | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_ret_Iw
 	},
 	{
 		"RET", INS_SS_f64,
 		{1, 0xc0 | 0x03},
 		{
-			INS_AM_NEAR
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"LES", INS_SS_i64,
@@ -2003,7 +2001,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_z,
 			INS_AM_M | INS_OT_p
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_les_lds
 	},
 	{
 		"LDS", INS_SS_i64,
@@ -2012,7 +2010,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_G | INS_OT_z,
 			INS_AM_M | INS_OT_p
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_les_lds
 	},
 
 	// Grp 11 - MOV
