@@ -41,8 +41,6 @@ MOV	EAX, DWORD ADDR32 [0x1234];
 */
 
 BIT32;
-LES AX, ADDR32 [0xabcd];
-LES EAX, ADDR32 [0xabcd];
-
-LDS AX, ADDR32 [0xabcd];
-LDS EAX, ADDR32 [0xabcd];
+HINT(opcode_o1=0xc6, opcode_len=1)MOV BL, 1;
+MOV BX, 2;
+MOV EBX, 3;

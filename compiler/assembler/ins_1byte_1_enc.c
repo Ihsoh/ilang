@@ -797,13 +797,14 @@ void ins_enc_opcode_ext_Ev_Iz(
 
 	ins_fill_EX(data->ctx, ins, target, &enc_ins);
 
-	switch (arch) {
-		case ASM_ARCH_BIT16: {
+	size_t target_size = ins_get_oprd_size(data->ctx, target);
+	switch (target_size) {
+		case 2: {
 			ins_fill_imm16(data->ctx, ins, source, &enc_ins);
 			break;
 		}
-		case ASM_ARCH_BIT32:
-		case ASM_ARCH_BIT64: {
+		case 4:
+		case 8: {
 			ins_fill_imm32(data->ctx, ins, source, &enc_ins);
 			break;
 		}
