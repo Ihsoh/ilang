@@ -629,65 +629,65 @@ Instruction ins_1byte_1[] = {
 		"JO", INS_SS_f64,
 		{1, 0x70 | 0x00},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		ins_enc_jcc
+		ins_enc_Jb
 	},
 	{
 		"JNO", INS_SS_f64,
 		{1, 0x70 | 0x01},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		ins_enc_jcc
+		ins_enc_Jb
 	},
 	{
 		"JB", INS_SS_f64,	// B/NAE/C
 		{1, 0x70 | 0x02},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		ins_enc_jcc
+		ins_enc_Jb
 	},
 	{
 		"JNB", INS_SS_f64,	// NB/AE/NC
 		{1, 0x70 | 0x03},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		ins_enc_jcc
+		ins_enc_Jb
 	},
 	{
 		"JZ", INS_SS_f64,	// Z/E
 		{1, 0x70 | 0x04},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		ins_enc_jcc
+		ins_enc_Jb
 	},
 	{
 		"JNZ", INS_SS_f64,	// NZ/NE
 		{1, 0x70 | 0x05},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		ins_enc_jcc
+		ins_enc_Jb
 	},
 	{
 		"JBE", INS_SS_f64,	// BE/NA
 		{1, 0x70 | 0x06},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		ins_enc_jcc
+		ins_enc_Jb
 	},
 	{
 		"JNBE", INS_SS_f64,	// NBE/A
 		{1, 0x70 | 0x07},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		ins_enc_jcc
+		ins_enc_Jb
 	},
 
 	// 0x08, 0x00~0x07
@@ -2574,7 +2574,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"LOOPNZ", INS_SS_f64,
@@ -2582,7 +2582,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"LOOPE", INS_SS_f64,
@@ -2590,7 +2590,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"LOOPZ", INS_SS_f64,
@@ -2598,7 +2598,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"LOOP", INS_SS_f64,
@@ -2606,7 +2606,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JCXZ", INS_SS_NONE,
@@ -2614,7 +2614,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JECXZ", INS_SS_NONE,
@@ -2622,7 +2622,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JRCXZ", INS_SS_NONE,
@@ -2630,7 +2630,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"IN", INS_SS_NONE,
@@ -2639,7 +2639,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_AL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_IN_AL_Ib
 	},
 	{
 		"IN", INS_SS_NONE,
@@ -2648,7 +2648,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_eAX,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_IN_eAX_Ib
 	},
 	{
 		"OUT", INS_SS_NONE,
@@ -2657,7 +2657,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_I | INS_OT_b,
 			INS_AM_AL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_OUT_Ib_AL
 	},
 	{
 		"OUT", INS_SS_NONE,
@@ -2666,7 +2666,7 @@ Instruction ins_1byte_1[] = {
 			INS_AM_I | INS_OT_b,
 			INS_AM_eAX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_OUT_Ib_eAX
 	},
 
 	// 0x0f, 0x00~0x07

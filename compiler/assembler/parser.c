@@ -1662,6 +1662,12 @@ static bool _is_Ov_oprd(
 	return oprd_type == (INS_AM_O | INS_OT_v);
 }
 
+static bool _is_Jb_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_J | INS_OT_b);
+}
+
 _RULE(ins)
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != ASM_TOKEN_KEYWORD_INSTRUCTION) {
@@ -2050,6 +2056,12 @@ _RULE(ins)
 								goto not_matched;
 							}
 						} else if (ot == INS_AM_LABEL) {
+							ParserASTNode *node_label = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
+							if (node_label == NULL) {
+								goto not_matched;
+							}
+							_INS_RULE_ADD_CHILD(node_label)
+						} else if (_is_Jb_oprd(ot)) {
 							ParserASTNode *node_label = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
 							if (node_label == NULL) {
 								goto not_matched;

@@ -695,7 +695,7 @@ void ins_enc_movsxd(
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
 
-void ins_enc_jcc(
+void ins_enc_Jb(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
@@ -1508,6 +1508,218 @@ void ins_enc_opcode_Ib(
 	ins_init(data->ctx, ins, ins_node, &enc_ins);
 
 	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_IN_AL_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *source = ins_node->childs[1];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_IN_eAX_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *target = ins_node->childs[0];
+
+	ParserASTNode *source = ins_node->childs[1];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	InsRegister *target_reg = ASM_REG_AST_NODE_GET_REG(target);
+
+	switch (ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx)) {
+		case ASM_ARCH_BIT16: {
+			switch (target_reg->type) {
+				case INS_REGISTER_GENERAL_2BYTE: {
+					// 无需操作数大小前缀。
+					break;
+				}
+				case INS_REGISTER_GENERAL_4BYTE: {
+					enc_ins.legacy_prefix.operand_size_override = true;
+					break;
+				}
+				default: {
+					assert(0);
+					break;
+				}
+			}
+			break;
+		}
+		case ASM_ARCH_BIT32:
+		case ASM_ARCH_BIT64: {
+			switch (target_reg->type) {
+				case INS_REGISTER_GENERAL_2BYTE: {
+					enc_ins.legacy_prefix.operand_size_override = true;
+					break;
+				}
+				case INS_REGISTER_GENERAL_4BYTE: {
+					// 无需操作数大小前缀。
+					break;
+				}
+				default: {
+					assert(0);
+					break;
+				}
+			}
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_OUT_Ib_AL(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *target = ins_node->childs[0];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_imm8(data->ctx, ins, target, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_OUT_Ib_eAX(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *target = ins_node->childs[0];
+
+	ParserASTNode *source = ins_node->childs[1];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	InsRegister *source_reg = ASM_REG_AST_NODE_GET_REG(source);
+
+	switch (ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx)) {
+		case ASM_ARCH_BIT16: {
+			switch (source_reg->type) {
+				case INS_REGISTER_GENERAL_2BYTE: {
+					// 无需操作数大小前缀。
+					break;
+				}
+				case INS_REGISTER_GENERAL_4BYTE: {
+					enc_ins.legacy_prefix.operand_size_override = true;
+					break;
+				}
+				default: {
+					assert(0);
+					break;
+				}
+			}
+			break;
+		}
+		case ASM_ARCH_BIT32:
+		case ASM_ARCH_BIT64: {
+			switch (source_reg->type) {
+				case INS_REGISTER_GENERAL_2BYTE: {
+					enc_ins.legacy_prefix.operand_size_override = true;
+					break;
+				}
+				case INS_REGISTER_GENERAL_4BYTE: {
+					// 无需操作数大小前缀。
+					break;
+				}
+				default: {
+					assert(0);
+					break;
+				}
+			}
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	ins_fill_imm8(data->ctx, ins, target, &enc_ins);
 
 	uint8_t buffer[32];
 	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));

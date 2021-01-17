@@ -74,7 +74,7 @@ extern void ins_enc_movsxd(
 	InstructionEncoderData *data
 );
 
-extern void ins_enc_jcc(
+extern void ins_enc_Jb(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
@@ -165,6 +165,26 @@ extern void int_enc_shift(
 );
 
 extern void ins_enc_opcode_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_IN_AL_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_IN_eAX_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_OUT_Ib_AL(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_OUT_Ib_eAX(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
