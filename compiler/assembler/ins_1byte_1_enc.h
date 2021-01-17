@@ -159,4 +159,14 @@ extern void ins_enc_xbegin(
 	InstructionEncoderData *data
 );
 
+extern void int_enc_shift(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

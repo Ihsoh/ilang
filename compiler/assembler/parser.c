@@ -2018,6 +2018,19 @@ _RULE(ins)
 								goto not_matched;
 							}
 							_INS_RULE_ADD_CHILD(node_oprd)
+						} else if (ot == INS_AM_CONST_1) {
+							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+							if (node_oprd == NULL) {
+								goto not_matched;
+							}
+
+							AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_oprd);
+							if (result->type != ASM_EXPR_EVAL_RESULT_TYPE_UINT64
+									|| result->value.u64 != 1) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_oprd)
 						} else if (_is_seg_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
 							if (node_reg == NULL) {
