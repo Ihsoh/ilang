@@ -41,6 +41,13 @@ MOV	EAX, DWORD ADDR32 [0x1234];
 */
 
 BIT32;
-HINT(opcode_o1=0xc6, opcode_len=1)MOV BL, 1;
-MOV BX, 2;
-MOV EBX, 3;
+XABORT 0x12;
+
+XBEGIN a;
+INT8 0x0;
+LABEL a;
+
+LABEL b;
+INT8 0x0;
+XBEGIN b;
+

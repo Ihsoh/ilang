@@ -149,4 +149,14 @@ extern void ins_enc_les_lds(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_xabort(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_xbegin(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

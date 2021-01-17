@@ -1365,3 +1365,94 @@ void ins_enc_les_lds(
 
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
+
+void ins_enc_xabort(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *source = ins_node->childs[0];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	enc_ins.mod_rm_used = true;
+	enc_ins.mod_rm.mod = 0x3;
+	enc_ins.mod_rm.reg = ins->opcode_ext.reg;
+
+	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_xbegin(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *node_label = ins_node->childs[0];
+
+	uint64_t addr = asm_parser_get_symbol_by_token_key(data->ctx, node_label->token);
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	enc_ins.mod_rm_used = true;
+	enc_ins.mod_rm.mod = 0x3;
+	enc_ins.mod_rm.reg = ins->opcode_ext.reg;
+
+	switch (ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx)) {
+		case ASM_ARCH_BIT16: {
+			enc_ins.disp_len = 2;
+			break;
+		}
+		case ASM_ARCH_BIT32:
+		case ASM_ARCH_BIT64: {
+			enc_ins.disp_len = 4;
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+	enc_ins.disp = 0;
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	uint64_t ip = ASM_PARSER_CONTEXT_DATA_GET_ADDRESS_COUNTER(data->ctx) + len;
+	uint64_t offset = addr - ip;
+	enc_ins.disp = offset;
+
+	len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}

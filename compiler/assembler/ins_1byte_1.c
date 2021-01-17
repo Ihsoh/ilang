@@ -2049,7 +2049,7 @@ Instruction ins_1byte_1[] = {
 		{
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xabort,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
 			.mod = INS_OPCODE_EXT_MOD_11B,
@@ -2061,9 +2061,9 @@ Instruction ins_1byte_1[] = {
 		"XBEGIN", INS_SS_1A,
 		{1, 0xc0 | 0x07},
 		{
-			INS_AM_J | INS_OT_z
+			INS_AM_LABEL
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_xbegin,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG | INS_OPCODE_EXT_MASK_RM,
 			.mod = INS_OPCODE_EXT_MOD_11B,
