@@ -189,4 +189,19 @@ extern void ins_enc_OUT_Ib_eAX(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_opcode_ext_Eb(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_ext_Ev(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_ext_Ev(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
