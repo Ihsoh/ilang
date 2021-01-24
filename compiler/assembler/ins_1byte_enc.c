@@ -1,4 +1,4 @@
-#include "ins_1byte_1_enc.h"
+#include "ins_1byte_enc.h"
 
 #include <stdio.h>
 #include <string.h>
