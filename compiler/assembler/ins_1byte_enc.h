@@ -204,4 +204,34 @@ extern void ins_enc_opcode_ext_Ev(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_XXX_Iz(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_IMUL_Gv_Ev_Iz(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_XXX_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_IMUL_Gv_Ev_Ib(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_INS_OUTS_W(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_INS_OUTS_D(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

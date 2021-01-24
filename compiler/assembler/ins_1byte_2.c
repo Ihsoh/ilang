@@ -539,7 +539,7 @@ Instruction ins_1byte_2[] = {
 		{
 			INS_AM_I | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Iz
 	},
 	{
 		"IMUL", INS_SS_NONE,
@@ -549,7 +549,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_E | INS_OT_v,
 			INS_AM_I | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_IMUL_Gv_Ev_Iz
 	},
 	{
 		"PUSH", INS_SS_d64,
@@ -557,7 +557,7 @@ Instruction ins_1byte_2[] = {
 		{
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Ib
 	},
 	{
 		"IMUL", INS_SS_NONE,
@@ -567,97 +567,49 @@ Instruction ins_1byte_2[] = {
 			INS_AM_E | INS_OT_v,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"INS", INS_SS_NONE,
-		{1, 0x60 | 0x0c},
-		{
-			INS_AM_Y | INS_OT_b,
-			INS_AM_DX
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_IMUL_Gv_Ev_Ib
 	},
 	{
 		"INSB", INS_SS_NONE,
 		{1, 0x60 | 0x0c},
 		{
-			INS_AM_Y | INS_OT_b,
-			INS_AM_DX
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"INS", INS_SS_NONE,
-		{1, 0x60 | 0x0d},
-		{
-			INS_AM_Y | INS_OT_z,
-			INS_AM_DX
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INSW", INS_SS_NONE,
 		{1, 0x60 | 0x0d},
 		{
-			INS_AM_Y | INS_OT_z,
-			INS_AM_DX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_INS_OUTS_W
 	},
 	{
 		"INSD", INS_SS_NONE,
 		{1, 0x60 | 0x0d},
 		{
-			INS_AM_Y | INS_OT_z,
-			INS_AM_DX
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"OUTS", INS_SS_NONE,
-		{1, 0x60 | 0x0e},
-		{
-			INS_AM_DX,
-			INS_AM_X | INS_OT_b
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_INS_OUTS_D
 	},
 	{
 		"OUTSB", INS_SS_NONE,
 		{1, 0x60 | 0x0e},
 		{
-			INS_AM_DX,
-			INS_AM_X | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"OUTS", INS_SS_NONE,
-		{1, 0x60 | 0x0f},
-		{
-			INS_AM_DX,
-			INS_AM_X | INS_OT_z
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"OUTSW", INS_SS_NONE,
 		{1, 0x60 | 0x0f},
 		{
-			INS_AM_DX,
-			INS_AM_X | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_INS_OUTS_W
 	},
 	{
 		"OUTSD", INS_SS_NONE,
 		{1, 0x60 | 0x0f},
 		{
-			INS_AM_DX,
-			INS_AM_X | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_INS_OUTS_D
 	},
 
 	// 0x07, 0x08~0x0f
@@ -665,65 +617,65 @@ Instruction ins_1byte_2[] = {
 		"JS", INS_SS_f64,
 		{1, 0x70 | 0x08},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JNS", INS_SS_f64,
 		{1, 0x70 | 0x09},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JP", INS_SS_f64,	// P/PE
 		{1, 0x70 | 0x0a},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JNP", INS_SS_f64,	// NP/PO
 		{1, 0x70 | 0x0b},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JL", INS_SS_f64,	// L/NGE
 		{1, 0x70 | 0x0c},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JNL", INS_SS_f64,	// NL/GE
 		{1, 0x70 | 0x0d},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JLE", INS_SS_f64,	// LE/NG
 		{1, 0x70 | 0x0e},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"JNLE", INS_SS_f64,	// NLE/G
 		{1, 0x70 | 0x0f},
 		{
-			INS_AM_LABEL
+			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 
 	// 0x08, 0x08~0x0f
