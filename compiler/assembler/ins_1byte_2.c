@@ -686,7 +686,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_E | INS_OT_b,
 			INS_AM_G | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Eb_Gb
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -695,7 +695,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_E | INS_OT_v,
 			INS_AM_G | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Ev_Gv
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -704,7 +704,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_G | INS_OT_b,
 			INS_AM_E | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gb_Eb
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -713,7 +713,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_G | INS_OT_v,
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_Gv_Ev
 	},
 	{
 		"MOV", INS_SS_NONE,
