@@ -722,7 +722,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_E | INS_OT_v,
 			INS_AM_S | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_MOV_Ev_Sw
 	},
 	{
 		"LEA", INS_SS_NONE,

@@ -234,4 +234,9 @@ extern void ins_enc_INS_OUTS_D(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_MOV_Ev_Sw(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
