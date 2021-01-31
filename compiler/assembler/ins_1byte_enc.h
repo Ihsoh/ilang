@@ -239,4 +239,34 @@ extern void ins_enc_MOV_Ev_Sw(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_LEA_Gv_M(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_MOV_Sw_Ew(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_POP_Ev(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_implicit_oprd16(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_implicit_oprd32(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_implicit_oprd64(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

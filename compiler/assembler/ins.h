@@ -540,9 +540,6 @@ typedef struct _Instruction {
 
 		uint8_t		rm:3;
 	} opcode_ext;
-
-	bool defult_oprd_sz_64bits;		// 默认操作数长度为64位。
-
 } Instruction;
 
 extern size_t ins_get_oprd_size(

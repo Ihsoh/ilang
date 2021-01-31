@@ -885,8 +885,8 @@ static void _encode(
 								&& node_scale == NULL
 								&& node_disp != NULL) {
 							// [disp32]
-							mod = 0;
-							rm = 5;
+							mod = -1;
+							rm = -1;
 						} else if (reg1 != INS_OPRD_NONE
 										&& reg2 == INS_OPRD_NONE
 										&& node_scale == NULL) {

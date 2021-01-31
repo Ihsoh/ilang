@@ -731,7 +731,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_G | INS_OT_v,
 			INS_AM_M
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_LEA_Gv_M
 	},
 	{
 		"MOV", INS_SS_NONE,
@@ -740,7 +740,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_S | INS_OT_w,
 			INS_AM_E | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_MOV_Sw_Ew
 	},
 
 	// Grp 1A
@@ -751,7 +751,7 @@ Instruction ins_1byte_2[] = {
 		{
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_POP_Ev,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
@@ -765,42 +765,42 @@ Instruction ins_1byte_2[] = {
 		{1, 0x90 | 0x08},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd16
 	},
 	{
 		"CWDE", INS_SS_NONE,
 		{1, 0x90 | 0x08},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd32
 	},
 	{
 		"CDQE", INS_SS_NONE,
 		{1, 0x90 | 0x08},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd64
 	},
 	{
 		"CWD", INS_SS_NONE,
 		{1, 0x90 | 0x09},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd16
 	},
 	{
 		"CDQ", INS_SS_NONE,
 		{1, 0x90 | 0x09},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd32
 	},
 	{
 		"CQO", INS_SS_NONE,
 		{1, 0x90 | 0x09},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd64
 	},
 	{
 		"CALL", INS_SS_i64,

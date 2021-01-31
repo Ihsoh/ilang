@@ -745,7 +745,7 @@ void ins_fill_GX(
 		}
 	} else if (arch == ASM_ARCH_BIT64) {
 		// Operand size
-		if (ins->defult_oprd_sz_64bits) {
+		if (ins->superscript | INS_SS_d64) {
 			if (ins_reg->type == INS_REGISTER_GENERAL_2BYTE) {
 				enc_ins->legacy_prefix.operand_size_override = true;
 			}
@@ -828,7 +828,7 @@ void ins_fill_EX(
 			}
 		} else if (arch == ASM_ARCH_BIT64) {
 			// Operand size
-			if (ins->defult_oprd_sz_64bits) {
+			if (ins->superscript | INS_SS_d64) {
 				if (ins_reg->type == INS_REGISTER_GENERAL_2BYTE) {
 					enc_ins->legacy_prefix.operand_size_override = true;
 				}
@@ -945,7 +945,7 @@ void ins_fill_EX(
 			// None
 		} else if (arch == ASM_ARCH_BIT64) {
 			// Operand size
-			if (ins->defult_oprd_sz_64bits) {
+			if (ins->superscript | INS_SS_d64) {
 				if (type == ASM_MEM_TYPE_WORD) {
 					enc_ins->legacy_prefix.operand_size_override = true;
 				}
@@ -971,7 +971,17 @@ void ins_fill_EX(
 		int sib_ss = ASM_MEM_AST_NODE_GET_SIB_SS(node);
 		uint64_t disp = ASM_MEM_AST_NODE_GET_DISP(node);
 
-		if (mod == 0 && rm == 0x5) {
+		if (mod == -1 && rm == -1) {
+			mod = 0x0;
+			rm = 0x4;
+
+			sib_base = 0x5;
+			sib_index = 0x4;
+			sib_ss = 0x0;
+
+			enc_ins->disp_len = 4;
+			enc_ins->disp = disp;
+		} else if (mod == 0 && rm == 0x5) {
 			enc_ins->disp_len = 4;
 			enc_ins->disp = disp;
 		} else {
@@ -1018,7 +1028,7 @@ void ins_fill_EX(
 			assert(0);
 		} else if (arch == ASM_ARCH_BIT64) {
 			// Operand size
-			if (ins->defult_oprd_sz_64bits) {
+			if (ins->superscript | INS_SS_d64) {
 				if (type == ASM_MEM_TYPE_WORD) {
 					enc_ins->legacy_prefix.operand_size_override = true;
 				}
