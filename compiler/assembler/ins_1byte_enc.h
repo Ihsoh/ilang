@@ -274,4 +274,14 @@ extern void ins_enc_CALLF_Ap(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_pushfd_popfd(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_pushfq_popfq(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

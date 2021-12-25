@@ -815,70 +815,70 @@ Instruction ins_1byte_2[] = {
 		{1, 0x90 | 0x0b},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"WAIT", INS_SS_NONE,
 		{1, 0x90 | 0x0b},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSHF", INS_SS_NONE,
 		{1, 0x90 | 0x0c},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"PUSHFD", INS_SS_NONE,
 		{1, 0x90 | 0x0c},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_pushfd_popfd
 	},
 	{
 		"PUSHFQ", INS_SS_d64,
 		{1, 0x90 | 0x0c},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_pushfq_popfq
 	},
 	{
 		"POPF", INS_SS_NONE,
 		{1, 0x90 | 0x0d},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"POPFD", INS_SS_NONE,
 		{1, 0x90 | 0x0d},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_pushfd_popfd
 	},
 	{
 		"POPFQ", INS_SS_d64,
 		{1, 0x90 | 0x0d},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_pushfq_popfq
 	},
 	{
 		"SAHF", INS_SS_NONE,
 		{1, 0x90 | 0x0e},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"LAHF", INS_SS_NONE,
 		{1, 0x90 | 0x0f},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 
 	// 0x0a, 0x08~0x0f
