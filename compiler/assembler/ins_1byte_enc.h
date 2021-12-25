@@ -30,10 +30,6 @@ extern void ins_enc_XXX_AL_Ib(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
-extern void ins_enc_XXX_AL_Ib(
-	Instruction *ins,
-	InstructionEncoderData *data
-);
 extern void ins_enc_XXX_rAX_Iz(
 	Instruction *ins,
 	InstructionEncoderData *data

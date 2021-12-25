@@ -889,7 +889,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_AL,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_AL_Ib
 	},
 	{
 		"TEST", INS_SS_NONE,
@@ -898,7 +898,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_rAX,
 			INS_AM_I | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_XXX_rAX_Iz
 	},
 	{
 		"STOS", INS_SS_NONE,

@@ -40,7 +40,13 @@ MOV	AX, WORD ADDR32 [0x1234];
 MOV	EAX, DWORD ADDR32 [0x1234];
 */
 
-BIT16;
+BIT64;
 
-SAHF;
-LAHF;
+/*HINT(opcode_o1=0xa8, opcode_len=1) TEST AL, 1;
+HINT(opcode_o1=0xa9, opcode_len=1) TEST AX, 2;
+HINT(opcode_o1=0xa9, opcode_len=1) TEST EAX, 3;*/
+
+HINT(opcode_o1=0xa8, opcode_len=1) TEST AL, 1;
+HINT(opcode_o1=0xa9, opcode_len=1) TEST AX, 2;
+HINT(opcode_o1=0xa9, opcode_len=1) TEST EAX, 3;
+HINT(opcode_o1=0xa9, opcode_len=1) TEST RAX, 4;
