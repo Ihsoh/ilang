@@ -682,4 +682,34 @@ extern void ins_fill_imm64(
 );
 
 
+
+
+extern void ins_add_uint8_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	uint8_t value
+);
+
+extern void ins_add_uint16_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	uint16_t value
+);
+
+extern void ins_add_uint32_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	uint32_t value
+);
+
+extern void ins_add_uint64_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	uint64_t value
+);
+
 #endif

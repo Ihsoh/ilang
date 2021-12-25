@@ -54,6 +54,13 @@ static ParserASTNode * _new_node(
 		return parser_new_node(
 			ctx, type, type_name, token, sizeof(AsmParserMemASTNodeData), &data
 		);
+	} else if (type == ASM_NODE_DIRECT_ADDRESS) {
+		AsmParserDirectAddressASTNodeData data;
+		memset(&data, 0, sizeof(data));
+
+		return parser_new_node(
+			ctx, type, type_name, token, sizeof(AsmParserDirectAddressASTNodeData), &data
+		);
 	} else {
 		return parser_new_node(
 			ctx, type, type_name, token, 0, NULL
@@ -1538,6 +1545,42 @@ _RULE(mem)
 	}
 _RULE_END
 
+_RULE(direct_address)
+	int addr_size = ASM_MEM_ADDR_SIZE_UNKNOWN;
+
+	_RULE_PUSH_LEXCTX
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_ADDR16) {
+		addr_size = ASM_MEM_ADDR_SIZE_16;
+		_RULE_ABANDON_LEXCTX
+	} else if (_RULE_TOKEN_TYPE == ASM_TOKEN_KEYWORD_ADDR32) {
+		addr_size = ASM_MEM_ADDR_SIZE_32;
+		_RULE_ABANDON_LEXCTX
+	} else {
+		_RULE_POP_LEXCTX
+	}
+
+	ParserASTNode *node_base = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+	if (node_base == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NEXT_TOKEN
+	if (_RULE_TOKEN_TYPE != ASM_TOKEN_PNCT_COLON) {
+		_RULE_NOT_MATCHED
+	}
+
+	ParserASTNode *node_offset = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+	if (node_offset == NULL) {
+		_RULE_NOT_MATCHED
+	}
+
+	_RULE_NODE(ASM_NODE_DIRECT_ADDRESS, NULL)
+	ASM_DIRECT_ADDRESS_AST_NODE_SET_ADDR_SIZE(_RULE_CURRENT_NODE, addr_size);
+	ASM_DIRECT_ADDRESS_AST_NODE_SET_NODE_BASE(_RULE_CURRENT_NODE, node_base);
+	ASM_DIRECT_ADDRESS_AST_NODE_SET_NODE_OFFSET(_RULE_CURRENT_NODE, node_offset);
+_RULE_END
+
 _RULE(mem_only_disp)
 	if (_RULE_CURRENT_NODE == NULL) {
 		_RULE_RETURNED_NODE(_RULE_NAME(mem16_only_disp)(_RULE_PARSER_CTX))
@@ -1672,6 +1715,12 @@ static bool _is_Sw_oprd(
 	uint16_t oprd_type
 ) {
 	return oprd_type == (INS_AM_S | INS_OT_w);
+}
+
+static bool _is_Ap_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_A | INS_OT_p);
 }
 
 _RULE(ins)
@@ -2026,6 +2075,12 @@ _RULE(ins)
 							_B(INS_AM_r15w, INS_AM_r15d, INS_AM_r15)
 						} else if (_is_Ib_oprd(ot) || _is_Iz_oprd(ot) || _is_Iw_oprd(ot)) {
 							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
+							if (node_oprd == NULL) {
+								goto not_matched;
+							}
+							_INS_RULE_ADD_CHILD(node_oprd)
+						} else if (_is_Ap_oprd(ot)) {
+							ParserASTNode *node_oprd = _RULE_NAME(direct_address)(_RULE_PARSER_CTX);
 							if (node_oprd == NULL) {
 								goto not_matched;
 							}

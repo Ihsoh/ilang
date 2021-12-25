@@ -2349,3 +2349,125 @@ void ins_enc_opcode_implicit_oprd64(
 
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
+
+void ins_enc_CALLF_Ap(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *oprd = ins_node->childs[0];
+
+	EncoderInstruction enc_ins;
+	
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	int addr_size = ASM_DIRECT_ADDRESS_AST_NODE_GET_ADDR_SIZE(oprd);
+
+	uint64_t base = ASM_DIRECT_ADDRESS_AST_NODE_GET_BASE(oprd);
+	uint64_t offset = ASM_DIRECT_ADDRESS_AST_NODE_GET_OFFSET(oprd);
+
+	switch (ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx)) {
+		case ASM_ARCH_BIT16: {
+			if (addr_size == ASM_MEM_ADDR_SIZE_UNKNOWN
+					|| addr_size == ASM_MEM_ADDR_SIZE_16) {
+				ins_add_uint16_to_ext(
+					data->ctx,
+					ins,
+					&enc_ins,
+					(uint16_t) offset
+				);
+
+				ins_add_uint16_to_ext(
+					data->ctx,
+					ins,
+					&enc_ins,
+					(uint16_t) base
+				);
+			} else if (addr_size == ASM_MEM_ADDR_SIZE_32) {
+				enc_ins.legacy_prefix.operand_size_override = true;
+
+				ins_add_uint32_to_ext(
+					data->ctx,
+					ins,
+					&enc_ins,
+					(uint32_t) offset
+				);
+
+				ins_add_uint16_to_ext(
+					data->ctx,
+					ins,
+					&enc_ins,
+					(uint16_t) base
+				);
+			} else {
+				assert(0);
+			}
+			break;
+		}
+		case ASM_ARCH_BIT32: {
+			if (addr_size == ASM_MEM_ADDR_SIZE_16) {
+				enc_ins.legacy_prefix.operand_size_override = true;
+
+				ins_add_uint16_to_ext(
+					data->ctx,
+					ins,
+					&enc_ins,
+					(uint16_t) offset
+				);
+
+				ins_add_uint16_to_ext(
+					data->ctx,
+					ins,
+					&enc_ins,
+					(uint16_t) base
+				);
+			} else if (addr_size == ASM_MEM_ADDR_SIZE_32
+					|| addr_size == ASM_MEM_ADDR_SIZE_UNKNOWN) {
+				ins_add_uint32_to_ext(
+					data->ctx,
+					ins,
+					&enc_ins,
+					(uint32_t) offset
+				);
+
+				ins_add_uint16_to_ext(
+					data->ctx,
+					ins,
+					&enc_ins,
+					(uint16_t) base
+				);
+			} else {
+				assert(0);
+			}
+			break;
+		}
+		case ASM_ARCH_BIT64: {
+			data->ctx->syntax_error_node_msg(
+				data->ctx,
+				ins_node,
+				"instruction not supported in 64-bit mode."
+			);
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}

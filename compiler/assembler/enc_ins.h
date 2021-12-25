@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#define	ENCODER_INSTRUCTION_EXT_MAX_LEN		32
+
 typedef struct {
 	struct {
 		// Legacy Prefix总共分为4组，每组只能使用一项。
@@ -144,6 +146,11 @@ typedef struct {
 	// imm字段包含Immediate的值。
 	uint8_t imm_len;
 	uint64_t imm;
+
+	// ext_len字段指定ext的长度，当ext_len字段为0时，表示不会输出扩展字段。
+	// ext字段用于储存一些字节，这些字段会添加到指令的末尾。
+	uint8_t ext_len;
+	uint8_t ext[ENCODER_INSTRUCTION_EXT_MAX_LEN];
 } EncoderInstruction;
 
 extern size_t enc_ins_encode(

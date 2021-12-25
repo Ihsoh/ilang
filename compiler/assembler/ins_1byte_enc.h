@@ -269,4 +269,9 @@ extern void ins_enc_opcode_implicit_oprd64(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_CALLF_Ap(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif

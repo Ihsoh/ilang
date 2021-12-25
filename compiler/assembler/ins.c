@@ -1128,6 +1128,76 @@ void ins_fill_imm64(
 
 
 
+void ins_add_uint8_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	uint8_t value
+) {
+	assert(ctx);
+	assert(ins);
+	assert(enc_ins);
+
+	if (enc_ins->ext_len + 1 > ENCODER_INSTRUCTION_EXT_MAX_LEN) {
+		assert(0);
+	}
+
+	enc_ins->ext[enc_ins->ext_len++] = value;
+}
+
+void ins_add_uint16_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	uint16_t value
+) {
+	for (int i = 0; i < 2; i++) {
+		ins_add_uint8_to_ext(
+			ctx,
+			ins,
+			enc_ins,
+			(uint8_t) value
+		);
+
+		value >>= 8;
+	}
+}
+
+void ins_add_uint32_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	uint32_t value
+) {
+	for (int i = 0; i < 4; i++) {
+		ins_add_uint8_to_ext(
+			ctx,
+			ins,
+			enc_ins,
+			(uint8_t) value
+		);
+
+		value >>= 8;
+	}
+}
+
+void ins_add_uint64_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	uint64_t value
+) {
+	for (int i = 0; i < 8; i++) {
+		ins_add_uint8_to_ext(
+			ctx,
+			ins,
+			enc_ins,
+			(uint8_t) value
+		);
+
+		value >>= 8;
+	}
+}
 
 
 

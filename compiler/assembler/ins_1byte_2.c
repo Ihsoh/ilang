@@ -803,13 +803,12 @@ Instruction ins_1byte_2[] = {
 		ins_enc_opcode_implicit_oprd64
 	},
 	{
-		"CALL", INS_SS_i64,
+		"CALLF", INS_SS_i64,
 		{1, 0x90 | 0x0a},
 		{
-			INS_AM_FAR,
 			INS_AM_A | INS_OT_p
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_CALLF_Ap
 	},
 	{
 		"FWAIT", INS_SS_NONE,

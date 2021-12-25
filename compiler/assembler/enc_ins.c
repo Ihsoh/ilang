@@ -254,6 +254,14 @@ size_t enc_ins_encode(
 		}
 	}
 
+	// 扩展字段
+	if (ins->ext_len > ENCODER_INSTRUCTION_EXT_MAX_LEN) {
+		assert(0);
+	}
+	for (int i = 0; i < ins->ext_len; i++) {
+		_OUT_BYTE(ins->ext[i]);
+	}
+
 	#undef	_BYTE
 	#undef	_OUT_BYTE
 	#undef	_OUT_2BYTE

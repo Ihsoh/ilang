@@ -1251,6 +1251,37 @@ static void _encode(
 						ASM_MEM_AST_NODE_SET_SIB_BASE(node_child, sib_base);
 						ASM_MEM_AST_NODE_SET_SIB_INDEX(node_child, sib_index);
 						ASM_MEM_AST_NODE_SET_SIB_SS(node_child, sib_ss);
+					} else if (node_child->type == ASM_NODE_DIRECT_ADDRESS) {
+						uint64_t base = 0;
+						ParserASTNode *node_base = ASM_DIRECT_ADDRESS_AST_NODE_GET_NODE_BASE(node_child);
+						if (node_base != NULL) {
+							_eval_expr_wrapper(ctx, node_base);
+
+							AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_base);
+							assert(result);
+							assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+							base = result->value.u64;
+						} else {
+							assert(0);
+						}
+
+						uint64_t offset = 0;
+						ParserASTNode *node_offset = ASM_DIRECT_ADDRESS_AST_NODE_GET_NODE_OFFSET(node_child);
+						if (node_offset != NULL) {
+							_eval_expr_wrapper(ctx, node_offset);
+
+							AsmExprEvalResult *result = &ASM_EXPR_AST_NODE_GET_RESULT(node_offset);
+							assert(result);
+							assert(result->type == ASM_EXPR_EVAL_RESULT_TYPE_UINT64);
+
+							offset = result->value.u64;
+						} else {
+							assert(0);
+						}
+
+						ASM_DIRECT_ADDRESS_AST_NODE_SET_BASE(node_child, base);
+						ASM_DIRECT_ADDRESS_AST_NODE_SET_OFFSET(node_child, offset);
 					}
 				}
 				

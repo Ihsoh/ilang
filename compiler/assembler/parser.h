@@ -31,6 +31,8 @@
 
 #define	ASM_NODE_MEM					0x0600
 
+#define	ASM_NODE_DIRECT_ADDRESS			0x0700
+
 
 
 
@@ -136,10 +138,10 @@ typedef struct {
 
 
 
-
-#define	ASM_MEM_ADDR_SIZE_16	1
-#define	ASM_MEM_ADDR_SIZE_32	2
-#define	ASM_MEM_ADDR_SIZE_64	3
+#define ASM_MEM_ADDR_SIZE_UNKNOWN	0
+#define	ASM_MEM_ADDR_SIZE_16		1
+#define	ASM_MEM_ADDR_SIZE_32		2
+#define	ASM_MEM_ADDR_SIZE_64		3
 
 #define	ASM_MEM_TYPE_UNKNOWN	0
 #define	ASM_MEM_TYPE_BYTE		1
@@ -215,7 +217,41 @@ typedef struct {
 
 
 
+typedef struct {
+	// ASM_MEM_ADDR_SIZE_*
+	int				addr_size;
 
+	ParserASTNode	*node_base;
+	uint64_t		base;
+
+	ParserASTNode	*node_offset;
+	uint64_t		offset;
+} AsmParserDirectAddressASTNodeData;
+
+#define	ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)	\
+	((AsmParserDirectAddressASTNodeData *)&((node)->data[0]))
+
+#define	ASM_DIRECT_ADDRESS_AST_NODE_GET_ADDR_SIZE(node)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->addr_size)
+#define	ASM_DIRECT_ADDRESS_AST_NODE_GET_NODE_BASE(node)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->node_base)
+#define	ASM_DIRECT_ADDRESS_AST_NODE_GET_BASE(node)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->base)
+#define	ASM_DIRECT_ADDRESS_AST_NODE_GET_NODE_OFFSET(node)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->node_offset)
+#define	ASM_DIRECT_ADDRESS_AST_NODE_GET_OFFSET(node)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->offset)
+
+#define	ASM_DIRECT_ADDRESS_AST_NODE_SET_ADDR_SIZE(node, v)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->addr_size = (v))
+#define	ASM_DIRECT_ADDRESS_AST_NODE_SET_NODE_BASE(node, v)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->node_base = (v))
+#define	ASM_DIRECT_ADDRESS_AST_NODE_SET_BASE(node, v)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->base = (v))
+#define	ASM_DIRECT_ADDRESS_AST_NODE_SET_NODE_OFFSET(node, v)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->node_offset = (v))
+#define	ASM_DIRECT_ADDRESS_AST_NODE_SET_OFFSET(node, v)	\
+	(ASM_DIRECT_ADDRESS_AST_NODE_DATA(node)->offset = (v))
 
 
 
