@@ -901,166 +901,88 @@ Instruction ins_1byte_2[] = {
 		ins_enc_XXX_rAX_Iz
 	},
 	{
-		"STOS", INS_SS_NONE,
-		{1, 0xa0 | 0x0a},
-		{
-			INS_AM_Y | INS_OT_b,
-			INS_AM_AL
-		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
 		"STOSB", INS_SS_NONE,
 		{1, 0xa0 | 0x0a},
 		{
-			INS_AM_Y | INS_OT_b,
-			INS_AM_AL
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"STOS", INS_SS_NONE,
-		{1, 0xa0 | 0x0b},
-		{
-			INS_AM_Y | INS_OT_v,
-			INS_AM_rAX
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"STOSW", INS_SS_NONE,
 		{1, 0xa0 | 0x0b},
 		{
-			INS_AM_Y | INS_OT_v,
-			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd16
 	},
 	{
 		"STOSD", INS_SS_NONE,
 		{1, 0xa0 | 0x0b},
 		{
-			INS_AM_Y | INS_OT_v,
-			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd32
 	},
 	{
 		"STOSQ", INS_SS_NONE,
 		{1, 0xa0 | 0x0b},
 		{
-			INS_AM_Y | INS_OT_v,
-			INS_AM_rAX
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"LODS", INS_SS_NONE,
-		{1, 0xa0 | 0x0c},
-		{
-			INS_AM_AL,
-			INS_AM_X | INS_OT_b
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd64
 	},
 	{
 		"LODSB", INS_SS_NONE,
 		{1, 0xa0 | 0x0c},
 		{
-			INS_AM_AL,
-			INS_AM_X | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"LODS", INS_SS_NONE,
-		{1, 0xa0 | 0x0d},
-		{
-			INS_AM_rAX,
-			INS_AM_X | INS_OT_v
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"LODSW", INS_SS_NONE,
 		{1, 0xa0 | 0x0d},
 		{
-			INS_AM_rAX,
-			INS_AM_X | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd16
 	},
 	{
 		"LODSD", INS_SS_NONE,
 		{1, 0xa0 | 0x0d},
 		{
-			INS_AM_rAX,
-			INS_AM_X | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd32
 	},
 	{
 		"LODSQ", INS_SS_NONE,
 		{1, 0xa0 | 0x0d},
 		{
-			INS_AM_rAX,
-			INS_AM_X | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"SCAS", INS_SS_NONE,
-		{1, 0xa0 | 0x0e},
-		{
-			INS_AM_AL,
-			INS_AM_Y | INS_OT_b
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd64
 	},
 	{
 		"SCASB", INS_SS_NONE,
 		{1, 0xa0 | 0x0e},
 		{
-			INS_AM_AL,
-			INS_AM_Y | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
-	},
-	{
-		"SCAS", INS_SS_NONE,
-		{1, 0xa0 | 0x0f},
-		{
-			INS_AM_rAX,
-			INS_AM_Y | INS_OT_v
-		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"SCASW", INS_SS_NONE,
 		{1, 0xa0 | 0x0f},
 		{
-			INS_AM_rAX,
-			INS_AM_Y | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd16
 	},
 	{
 		"SCASD", INS_SS_NONE,
 		{1, 0xa0 | 0x0f},
 		{
-			INS_AM_rAX,
-			INS_AM_Y | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd32
 	},
 	{
 		"SCASQ", INS_SS_NONE,
 		{1, 0xa0 | 0x0f},
 		{
-			INS_AM_rAX,
-			INS_AM_Y | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_implicit_oprd64
 	},
 
 	// 0x0b, 0x08~0x0f

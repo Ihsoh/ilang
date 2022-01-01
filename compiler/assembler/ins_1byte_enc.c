@@ -2321,11 +2321,19 @@ void ins_enc_opcode_implicit_oprd64(
 
 	switch (ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx)) {
 		case ASM_ARCH_BIT16: {
-			enc_ins.legacy_prefix.operand_size_override = true;
+			data->ctx->syntax_error_node_msg(
+				data->ctx,
+				ins_node,
+				"instruction not supported in 16-bit mode."
+			);
 			break;
 		}
 		case ASM_ARCH_BIT32: {
-
+			data->ctx->syntax_error_node_msg(
+				data->ctx,
+				ins_node,
+				"instruction not supported in 32-bit mode."
+			);
 			break;
 		}
 		case ASM_ARCH_BIT64: {
