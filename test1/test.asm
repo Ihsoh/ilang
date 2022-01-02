@@ -42,6 +42,5 @@ MOV	EAX, DWORD ADDR32 [0x1234];
 
 BIT64;
 
-HINT(opcode_o1=0xb8, opcode_len=1) MOV RAX, 1;
-HINT(opcode_o1=0xb8, opcode_len=1) MOV R8, 1;
+IRETQ;
 

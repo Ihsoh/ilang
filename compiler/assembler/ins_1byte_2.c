@@ -1135,79 +1135,77 @@ Instruction ins_1byte_2[] = {
 	// 0x0c, 0x08~0x0f
 	{
 		"ENTER", INS_SS_NONE,
-		{1, 0xb0 | 0x08},
+		{1, 0xc0 | 0x08},
 		{
 			INS_AM_I | INS_OT_w,
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_enter
 	},
 	{
 		"LEAVE", INS_SS_d64,
-		{1, 0xb0 | 0x09},
+		{1, 0xc0 | 0x09},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
-		"RET", INS_SS_NONE,
-		{1, 0xb0 | 0x0a},
+		"RETF", INS_SS_NONE,
+		{1, 0xc0 | 0x0a},
 		{
-			INS_AM_FAR,
 			INS_AM_I | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_Iw
 	},
 	{
-		"RET", INS_SS_NONE,
-		{1, 0xb0 | 0x0b},
+		"RETF", INS_SS_NONE,
+		{1, 0xc0 | 0x0b},
 		{
-			INS_AM_FAR
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INT3", INS_SS_NONE,
-		{1, 0xb0 | 0x0c},
+		{1, 0xc0 | 0x0c},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"INT", INS_SS_NONE,
-		{1, 0xb0 | 0x0d},
+		{1, 0xc0 | 0x0d},
 		{
 			INS_AM_I | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode_Ib
 	},
 	{
 		"INTO", INS_SS_i64,
-		{1, 0xb0 | 0x0e},
+		{1, 0xc0 | 0x0e},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"IRET", INS_SS_NONE,
-		{1, 0xb0 | 0x0f},
+		{1, 0xc0 | 0x0f},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"IRETD", INS_SS_NONE,
-		{1, 0xb0 | 0x0f},
+		{1, 0xc0 | 0x0f},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_iretd
 	},
 	{
 		"IRETQ", INS_SS_NONE,
-		{1, 0xb0 | 0x0f},
+		{1, 0xc0 | 0x0f},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_iretq
 	},
 
 	// 0x0d, 0x08~0x0f

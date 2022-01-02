@@ -1765,6 +1765,36 @@ void ins_enc_opcode_Ib(
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
 
+void ins_enc_opcode_Iw(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *source = ins_node->childs[0];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_imm16(data->ctx, ins, source, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
 void ins_enc_IN_AL_Ib(
 	Instruction *ins,
 	InstructionEncoderData *data
@@ -2808,6 +2838,144 @@ void ins_enc_pushfq_popfq(
 		}
 		case ASM_ARCH_BIT64: {
 			
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_enter(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 2);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *oprd_iw = ins_node->childs[0];
+	ParserASTNode *oprd_ib = ins_node->childs[1];
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_add_uint16_expr_to_ext(
+		data->ctx,
+		ins,
+		&enc_ins,
+		oprd_iw
+	);
+	ins_add_uint8_expr_to_ext(
+		data->ctx,
+		ins,
+		&enc_ins,
+		oprd_ib
+	);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_iretd(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 0);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	switch (ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx)) {
+		case ASM_ARCH_BIT16: {
+			enc_ins.legacy_prefix.operand_size_override = true;
+			break;
+		}
+		case ASM_ARCH_BIT32:
+		case ASM_ARCH_BIT64: {
+			
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_iretq(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 0);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	EncoderInstruction enc_ins;
+
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	switch (ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx)) {
+		case ASM_ARCH_BIT16: {
+			data->ctx->syntax_error_node_msg(
+				data->ctx,
+				ins_node,
+				"instruction not supported in 16-bit mode."
+			);
+			break;
+		}
+		case ASM_ARCH_BIT32: {
+			data->ctx->syntax_error_node_msg(
+				data->ctx,
+				ins_node,
+				"instruction not supported in 32-bit mode."
+			);
+			break;
+		}
+		case ASM_ARCH_BIT64: {
+			enc_ins.rex_prefix_used = true;
+			enc_ins.rex_prefix.w = true;
 			break;
 		}
 		default: {

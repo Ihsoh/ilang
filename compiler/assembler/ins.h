@@ -712,4 +712,32 @@ extern void ins_add_uint64_to_ext(
 	uint64_t value
 );
 
+extern void ins_add_uint8_expr_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	ParserASTNode *node_expr
+);
+
+extern void ins_add_uint16_expr_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	ParserASTNode *node_expr
+);
+
+extern void ins_add_uint32_expr_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	ParserASTNode *node_expr
+);
+
+extern void ins_add_uint64_expr_to_ext(
+	ParserContext *ctx,
+	Instruction *ins,
+	EncoderInstruction *enc_ins,
+	ParserASTNode *node_expr
+);
+
 #endif

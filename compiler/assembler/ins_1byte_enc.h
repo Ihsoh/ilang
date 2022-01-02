@@ -175,6 +175,11 @@ extern void ins_enc_opcode_Ib(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_opcode_Iw(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 extern void ins_enc_IN_AL_Ib(
 	Instruction *ins,
 	InstructionEncoderData *data
@@ -286,6 +291,21 @@ extern void ins_enc_pushfd_popfd(
 );
 
 extern void ins_enc_pushfq_popfq(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_enter(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_iretd(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_iretq(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
