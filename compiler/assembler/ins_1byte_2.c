@@ -1216,10 +1216,9 @@ Instruction ins_1byte_2[] = {
 		"CALL", INS_SS_f64,
 		{1, 0xe0 | 0x08},
 		{
-			INS_AM_NEAR,
 			INS_AM_J | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jz
 	},
 	{
 		"JMP", INS_SS_f64,

@@ -1717,6 +1717,12 @@ static bool _is_Jb_oprd(
 	return oprd_type == (INS_AM_J | INS_OT_b);
 }
 
+static bool _is_Jz_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_J | INS_OT_z);
+}
+
 static bool _is_Sw_oprd(
 	uint16_t oprd_type
 ) {
@@ -2128,7 +2134,7 @@ _RULE(ins)
 								goto not_matched;
 							}
 							_INS_RULE_ADD_CHILD(node_label)
-						} else if (_is_Jb_oprd(ot)) {
+						} else if (_is_Jb_oprd(ot) || _is_Jz_oprd(ot)) {
 							ParserASTNode *node_label = _RULE_NAME(identifier)(_RULE_PARSER_CTX);
 							if (node_label == NULL) {
 								goto not_matched;

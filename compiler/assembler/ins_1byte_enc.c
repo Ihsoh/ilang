@@ -2994,3 +2994,57 @@ void ins_enc_iretq(
 
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
+
+void ins_enc_Jz(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *node_label = data->ins_node->childs[0];
+
+	uint64_t addr = asm_parser_get_symbol_by_token_key(data->ctx, node_label->token);
+
+	EncoderInstruction enc_ins;
+	
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	switch (ASM_PARSER_CONTEXT_DATA_GET_ARCH(data->ctx)) {
+		case ASM_ARCH_BIT16: {
+			enc_ins.disp_len = 2;
+			break;
+		}
+		case ASM_ARCH_BIT32:
+		case ASM_ARCH_BIT64: {
+			enc_ins.disp_len = 4;
+			break;
+		}
+		default: {
+			assert(0);
+			break;
+		}
+	}
+
+	enc_ins.disp = 0;
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	uint64_t ip = ASM_PARSER_CONTEXT_DATA_GET_ADDRESS_COUNTER(data->ctx) + len;
+	uint64_t offset = addr - ip;
+	enc_ins.disp = offset;
+
+	len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}

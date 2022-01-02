@@ -310,4 +310,9 @@ extern void ins_enc_iretq(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_Jz(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
