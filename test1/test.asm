@@ -40,8 +40,8 @@ MOV	AX, WORD ADDR32 [0x1234];
 MOV	EAX, DWORD ADDR32 [0x1234];
 */
 
-BIT16;
+BIT64;
 
-STOSB;
-STOSW;
-STOSD;
+HINT(opcode_o1=0xb8, opcode_len=1) MOV RAX, 1;
+HINT(opcode_o1=0xb8, opcode_len=1) MOV R8, 1;
+

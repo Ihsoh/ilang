@@ -1670,6 +1670,12 @@ static bool _is_Ib_oprd(
 	return oprd_type == (INS_AM_I | INS_OT_b);
 }
 
+static bool _is_Iv_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_I | INS_OT_v);
+}
+
 static bool _is_Iz_oprd(
 	uint16_t oprd_type
 ) {
@@ -2073,7 +2079,7 @@ _RULE(ins)
 							_B(INS_AM_r14w, INS_AM_r14d, INS_AM_r14)
 						} else if (ot == INS_AM_r15) {
 							_B(INS_AM_r15w, INS_AM_r15d, INS_AM_r15)
-						} else if (_is_Ib_oprd(ot) || _is_Iz_oprd(ot) || _is_Iw_oprd(ot)) {
+						} else if (_is_Ib_oprd(ot) || _is_Iz_oprd(ot) || _is_Iw_oprd(ot) || _is_Iv_oprd(ot)) {
 							ParserASTNode *node_oprd = _RULE_NAME(expr_wrapper)(_RULE_PARSER_CTX);
 							if (node_oprd == NULL) {
 								goto not_matched;
