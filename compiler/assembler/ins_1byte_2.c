@@ -1287,42 +1287,42 @@ Instruction ins_1byte_2[] = {
 		{1, 0xf0 | 0x08},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"STC", INS_SS_NONE,
 		{1, 0xf0 | 0x09},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"CLI", INS_SS_NONE,
 		{1, 0xf0 | 0x0a},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"STI", INS_SS_NONE,
 		{1, 0xf0 | 0x0b},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"CLD", INS_SS_NONE,
 		{1, 0xf0 | 0x0c},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"STD", INS_SS_NONE,
 		{1, 0xf0 | 0x0d},
 		{
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	
 	// INC/DEC Grp 4
