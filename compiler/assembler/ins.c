@@ -945,7 +945,7 @@ void ins_fill_EX(
 			// None
 		} else if (arch == ASM_ARCH_BIT64) {
 			// Operand size
-			if (ins->superscript | INS_SS_d64) {
+			if (ins->superscript & INS_SS_d64) {
 				if (type == ASM_MEM_TYPE_WORD) {
 					enc_ins->legacy_prefix.operand_size_override = true;
 				}
@@ -1028,7 +1028,7 @@ void ins_fill_EX(
 			assert(0);
 		} else if (arch == ASM_ARCH_BIT64) {
 			// Operand size
-			if (ins->superscript | INS_SS_d64) {
+			if (ins->superscript & INS_SS_d64) {
 				if (type == ASM_MEM_TYPE_WORD) {
 					enc_ins->legacy_prefix.operand_size_override = true;
 				}
