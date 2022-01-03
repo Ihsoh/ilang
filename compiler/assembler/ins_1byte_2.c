@@ -1251,7 +1251,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_AL,
 			INS_AM_DX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"IN", INS_SS_NONE,
@@ -1260,7 +1260,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_eAX,
 			INS_AM_DX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_IN_eAX_DX
 	},
 	{
 		"OUT", INS_SS_NONE,
@@ -1269,7 +1269,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_DX,
 			INS_AM_AL
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_opcode
 	},
 	{
 		"OUT", INS_SS_NONE,
@@ -1278,7 +1278,7 @@ Instruction ins_1byte_2[] = {
 			INS_AM_DX,
 			INS_AM_eAX
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_OUT_DX_eAX
 	},
 
 	// 0x0f, 0x08~0x0f

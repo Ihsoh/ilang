@@ -2035,6 +2035,39 @@ _RULE(ins)
 							_C(INS_AM_r14l)
 						} else if (ot == INS_AM_r15l) {
 							_C(INS_AM_r15l)
+						/* AX ~ R15W */
+						} else if (ot == INS_AM_AX) {
+							_C(INS_AM_AX)
+						} else if (ot == INS_AM_CX) {
+							_C(INS_AM_CX)
+						} else if (ot == INS_AM_DX) {
+							_C(INS_AM_DX)
+						} else if (ot == INS_AM_BX) {
+							_C(INS_AM_BX)
+						} else if (ot == INS_AM_SP) {
+							_C(INS_AM_SP)
+						} else if (ot == INS_AM_BP) {
+							_C(INS_AM_BP)
+						} else if (ot == INS_AM_SI) {
+							_C(INS_AM_SI)
+						} else if (ot == INS_AM_DI) {
+							_C(INS_AM_DI)
+						} else if (ot == INS_AM_r8w) {
+							_C(INS_AM_r8w)
+						} else if (ot == INS_AM_r9w) {
+							_C(INS_AM_r9w)
+						} else if (ot == INS_AM_r10w) {
+							_C(INS_AM_r10w)
+						} else if (ot == INS_AM_r11w) {
+							_C(INS_AM_r11w)
+						} else if (ot == INS_AM_r12w) {
+							_C(INS_AM_r12w)
+						} else if (ot == INS_AM_r13w) {
+							_C(INS_AM_r13w)
+						} else if (ot == INS_AM_r14w) {
+							_C(INS_AM_r14w)
+						} else if (ot == INS_AM_r15w) {
+							_C(INS_AM_r15w)
 						/* eAX ~ eDI */	
 						} else if (ot == INS_AM_eAX) {
 							_A(INS_AM_AX, INS_AM_EAX)

@@ -315,4 +315,14 @@ extern void ins_enc_Jz(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_IN_eAX_DX(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_OUT_DX_eAX(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
