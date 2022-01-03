@@ -808,7 +808,7 @@ Instruction ins_1byte_2[] = {
 		{
 			INS_AM_A | INS_OT_p
 		},
-		ins_enc_CALLF_Ap
+		ins_enc_Ap
 	},
 	{
 		"FWAIT", INS_SS_NONE,
@@ -1224,28 +1224,25 @@ Instruction ins_1byte_2[] = {
 		"JMP", INS_SS_f64,
 		{1, 0xe0 | 0x09},
 		{
-			INS_AM_NEAR,
 			INS_AM_J | INS_OT_z
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jz
 	},
 	{
-		"JMP", INS_SS_i64,
+		"JMPF", INS_SS_i64,
 		{1, 0xe0 | 0x0a},
 		{
-			INS_AM_FAR,
 			INS_AM_A | INS_OT_p
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Ap
 	},
 	{
 		"JMP", INS_SS_f64,
 		{1, 0xe0 | 0x0b},
 		{
-			INS_AM_SHORT,
 			INS_AM_J | INS_OT_b
 		},
-		INS_ENC_NOT_IMPLEMENTED
+		ins_enc_Jb
 	},
 	{
 		"IN", INS_SS_NONE,

@@ -2633,7 +2633,7 @@ void ins_enc_opcode_implicit_oprd64(
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
 
-void ins_enc_CALLF_Ap(
+void ins_enc_Ap(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
