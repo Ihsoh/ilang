@@ -298,6 +298,7 @@ typedef struct {
 	int				step;
 
 	bool			mem_without_oprd_size;
+	bool			default_oprd_size;
 } AsmParserContextData;
 
 #define	ASM_PARSER_CONTEXT_DATA_GET_SYMTABLE(ctx)	\
@@ -312,6 +313,8 @@ typedef struct {
 	(((AsmParserContextData *)&((ctx)->data[0]))->step)
 #define	ASM_PARSER_CONTEXT_DATA_GET_MEM_WITHOUT_OPRD_SIZE(ctx)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->mem_without_oprd_size)
+#define	ASM_PARSER_CONTEXT_DATA_GET_DEFAULT_OPRD_SIZE(ctx)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->default_oprd_size)
 
 #define	ASM_PARSER_CONTEXT_DATA_SET_ARCH(ctx, v)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->arch = (v))
@@ -325,6 +328,8 @@ typedef struct {
 	(((AsmParserContextData *)&((ctx)->data[0]))->step = (v))
 #define	ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(ctx, v)	\
 	(((AsmParserContextData *)&((ctx)->data[0]))->mem_without_oprd_size = (v))
+#define	ASM_PARSER_CONTEXT_DATA_SET_DEFAULT_OPRD_SIZE(ctx, v)	\
+	(((AsmParserContextData *)&((ctx)->data[0]))->default_oprd_size = (v))
 
 
 

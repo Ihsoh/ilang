@@ -1384,24 +1384,23 @@ Instruction ins_1byte_2[] = {
 		"CALL", INS_SS_1A | INS_SS_f64,
 		{1, 0xf0 | 0x0f},
 		{
-			INS_AM_NEAR,
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_Ev,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
 			.reg = 0x2
 		}
 	},
+
 	{
-		"CALL", INS_SS_1A,
+		"CALLF", INS_SS_1A,
 		{1, 0xf0 | 0x0f},
 		{
-			INS_AM_FAR,
 			INS_AM_E | INS_OT_p
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_Ev,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
@@ -1412,10 +1411,9 @@ Instruction ins_1byte_2[] = {
 		"JMP", INS_SS_1A | INS_SS_f64,
 		{1, 0xf0 | 0x0f},
 		{
-			INS_AM_NEAR,
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_Ev,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
@@ -1423,13 +1421,12 @@ Instruction ins_1byte_2[] = {
 		}
 	},
 	{
-		"JMP", INS_SS_1A,
+		"JMPF", INS_SS_1A,
 		{1, 0xf0 | 0x0f},
 		{
-			INS_AM_FAR,
 			INS_AM_M | INS_OT_p
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_Ev,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
@@ -1442,7 +1439,7 @@ Instruction ins_1byte_2[] = {
 		{
 			INS_AM_E | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_Ev,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
