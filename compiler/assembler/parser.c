@@ -1664,6 +1664,12 @@ static bool _is_Gv_oprd(
 	return oprd_type == (INS_AM_G | INS_OT_v);
 }
 
+static bool _is_Rv_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_R | INS_OT_v);
+}
+
 static bool _is_Gz_oprd(
 	uint16_t oprd_type
 ) {
@@ -1757,6 +1763,12 @@ static bool _is_Mp_oprd(
 	uint16_t oprd_type
 ) {
 	return oprd_type == (INS_AM_M | INS_OT_p);
+}
+
+static bool _is_Mw_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_M | INS_OT_w);
 }
 
 _RULE(ins)
@@ -1961,16 +1973,6 @@ _RULE(ins)
 
 								_INS_RULE_ADD_CHILD(node_mem)
 							}
-						} else if (_is_M_oprd(ot)) {
-							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, true);
-							ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
-							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, false);
-
-							if (node_mem == NULL) {
-								goto not_matched;
-							}
-
-							_INS_RULE_ADD_CHILD(node_mem)
 						} else if (_is_Ep_oprd(ot) || _is_Mp_oprd(ot)) {
 							ASM_PARSER_CONTEXT_DATA_SET_DEFAULT_OPRD_SIZE(_RULE_PARSER_CTX, true);
 							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, true);
@@ -1986,7 +1988,29 @@ _RULE(ins)
 							}
 
 							_INS_RULE_ADD_CHILD(node_mem)
-						} else if (_is_Gv_oprd(ot)) {
+						} else if (_is_Mw_oprd(ot)) {
+							ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
+
+							if (node_mem == NULL) {
+								goto not_matched;
+							}
+
+							if (ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_WORD) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_mem)
+						} else if (_is_M_oprd(ot)) {
+							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, true);
+							ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
+							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, false);
+
+							if (node_mem == NULL) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_mem)
+						} else if (_is_Gv_oprd(ot) || _is_Rv_oprd(ot)) {
 							ParserASTNode *node_reg = _RULE_NAME(reg)(_RULE_PARSER_CTX);
 							if (node_reg == NULL) {
 								goto not_matched;

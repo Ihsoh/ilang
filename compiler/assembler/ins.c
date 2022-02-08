@@ -1049,6 +1049,52 @@ void ins_fill_EX(
 	}
 }
 
+void ins_fill_RX(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+) {
+	assert(ctx);
+	assert(ins);
+	assert(node);
+	assert(enc_ins);
+
+	if (node->type != ASM_NODE_REG) {
+		assert(0);
+	}
+
+	ins_fill_EX(
+		ctx,
+		ins,
+		node,
+		enc_ins
+	);
+}
+
+void ins_fill_MX(
+	ParserContext *ctx,
+	Instruction *ins,
+	ParserASTNode *node,
+	EncoderInstruction *enc_ins
+) {
+	assert(ctx);
+	assert(ins);
+	assert(node);
+	assert(enc_ins);
+
+	if (node->type != ASM_NODE_MEM) {
+		assert(0);
+	}
+
+	ins_fill_EX(
+		ctx,
+		ins,
+		node,
+		enc_ins
+	);
+}
+
 void ins_fill_imm8(
 	ParserContext *ctx,
 	Instruction *ins,

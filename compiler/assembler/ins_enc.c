@@ -3192,3 +3192,95 @@ void ins_enc_OUT_DX_eAX(
 
 	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
 }
+
+void ins_enc_XXX_Rv(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *rv_node = data->ins_node->childs[0];
+
+	EncoderInstruction enc_ins;
+	
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_RX(data->ctx, ins, rv_node, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_XXX_Mv(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *mv_node = data->ins_node->childs[0];
+
+	EncoderInstruction enc_ins;
+	
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_MX(data->ctx, ins, mv_node, &enc_ins);
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
+void ins_enc_XXX_Mw(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	assert(ins);
+	assert(data);
+	assert(data->ins_node);
+	assert(data->ins_node->nchilds == 1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *mv_node = data->ins_node->childs[0];
+
+	EncoderInstruction enc_ins;
+	
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	ins_fill_MX(data->ctx, ins, mv_node, &enc_ins);
+
+	enc_ins.legacy_prefix.operand_size_override = false;
+
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}

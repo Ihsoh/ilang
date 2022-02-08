@@ -1,5 +1,7 @@
 #include "ins.h"
 
+#include "ins_enc.h"
+
 Instruction ins_2byte_1[] = {
 	// 0x0f | 0x00, 0x00~0x07
 	// Grp 6
@@ -9,7 +11,7 @@ Instruction ins_2byte_1[] = {
 		{
 			INS_AM_R | INS_OT_v
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_XXX_Rv,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
@@ -22,7 +24,7 @@ Instruction ins_2byte_1[] = {
 		{
 			INS_AM_M | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_XXX_Mw,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,

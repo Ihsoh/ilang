@@ -325,4 +325,19 @@ extern void ins_enc_OUT_DX_eAX(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_XXX_Rv(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_XXX_Mv(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_XXX_Mw(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
