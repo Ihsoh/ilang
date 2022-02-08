@@ -1,6 +1,6 @@
 #include "ins.h"
 
-#include "ins_1byte_enc.h"
+#include "ins_enc.h"
 
 Instruction ins_1byte_2[] = {
 	// 0x00, 0x08~0x0f

@@ -47,3 +47,5 @@ HINT(opcode_o1=0xff, opcode_len=1) CALLF [RBX];
 JMP QWORD ADDR64 [RBX];
 
 JMPF [RBX];
+
+JMPF [RCX];
