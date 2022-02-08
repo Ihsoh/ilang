@@ -15,6 +15,21 @@
 #include "ins.h"
 #include "enc_ins.h"
 
+void _output(
+	InstructionEncoderData *data,
+	EncoderInstruction *enc_ins
+) {
+	uint8_t buffer[32];
+	size_t len = enc_ins_encode(enc_ins, buffer, sizeof(buffer));
+
+	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
+	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
+		return;
+	}
+
+	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+}
+
 void ins_enc_XXX_Eb_Gb(
 	Instruction *ins,
 	InstructionEncoderData *data
@@ -40,15 +55,7 @@ void ins_enc_XXX_Eb_Gb(
 
 	ins_fill_GX(data->ctx, ins, gb_node, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_Ev_Gv(
@@ -76,15 +83,7 @@ void ins_enc_XXX_Ev_Gv(
 
 	ins_fill_GX(data->ctx, ins, gv_node, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_Gb_Eb(
@@ -112,15 +111,7 @@ void ins_enc_XXX_Gb_Eb(
 
 	ins_fill_EX(data->ctx, ins, eb_node, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_Gv_Ev(
@@ -148,15 +139,7 @@ void ins_enc_XXX_Gv_Ev(
 
 	ins_fill_EX(data->ctx, ins, ev_node, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_AL_Ib(
@@ -180,15 +163,7 @@ void ins_enc_XXX_AL_Ib(
 
 	ins_fill_imm8(data->ctx, ins, ib_node, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_rAX_Iz(
@@ -297,15 +272,7 @@ void ins_enc_XXX_rAX_Iz(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode(
@@ -322,15 +289,7 @@ void ins_enc_opcode(
 
 	ins_init(data->ctx, ins, ins_node, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_eXX(
@@ -395,15 +354,7 @@ void ins_enc_opcode_eXX(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_rXX(
@@ -509,15 +460,7 @@ void ins_enc_opcode_rXX(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_bound_Gv_Ma(
@@ -548,15 +491,7 @@ void ins_enc_bound_Gv_Ma(
 
 	ins_fill_EX(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_arpl_Ew_Gw(
@@ -582,15 +517,7 @@ void ins_enc_arpl_Ew_Gw(
 
 	ins_fill_GX(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_pushad_popad(
@@ -632,15 +559,7 @@ void ins_enc_pushad_popad(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_movsxd(
@@ -684,15 +603,7 @@ void ins_enc_movsxd(
 
 	ins_fill_EX(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_Jb(
@@ -760,15 +671,7 @@ void ins_enc_opcode_ext_Eb_Ib(
 
 	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_ext_Ev_Iz(
@@ -814,15 +717,7 @@ void ins_enc_opcode_ext_Ev_Iz(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_ext_Ev_Ib(
@@ -851,15 +746,7 @@ void ins_enc_opcode_ext_Ev_Ib(
 
 	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_pause(
@@ -879,15 +766,7 @@ void ins_enc_pause(
 
 	enc_ins.legacy_prefix.rep = true;
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_xchg_rAX_XXX(
@@ -1002,15 +881,7 @@ void ins_enc_xchg_rAX_XXX(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_mov_rAX_Ob(
@@ -1041,15 +912,7 @@ void ins_enc_mov_rAX_Ob(
 
 	enc_ins.mod_rm_used = false;
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_mov_Ob_rAX(
@@ -1080,15 +943,7 @@ void ins_enc_mov_Ob_rAX(
 
 	enc_ins.mod_rm_used = false;
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXXsw(
@@ -1125,15 +980,7 @@ void ins_enc_XXXsw(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXXsd(
@@ -1169,15 +1016,7 @@ void ins_enc_XXXsd(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXXsq(
@@ -1224,15 +1063,7 @@ void ins_enc_XXXsq(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_mov_xL_Ib(
@@ -1256,15 +1087,7 @@ void ins_enc_mov_xL_Ib(
 	
 	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_mov_RxL_Ib(
@@ -1291,15 +1114,7 @@ void ins_enc_mov_RxL_Ib(
 	enc_ins.rex_prefix_used = true;
 	enc_ins.rex_prefix.b = true;
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_mov_rxX_Ib(
@@ -1408,15 +1223,7 @@ void ins_enc_mov_rxX_Ib(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_mov_Rx_Ib(
@@ -1528,15 +1335,7 @@ void ins_enc_mov_Rx_Ib(
 	enc_ins.rex_prefix_used = true;
 	enc_ins.rex_prefix.b = true;
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 
@@ -1566,15 +1365,7 @@ void ins_enc_ret_Iw(
 
 	ins_fill_imm16(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_les_lds(
@@ -1600,15 +1391,7 @@ void ins_enc_les_lds(
 
 	ins_fill_EX(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_xabort(
@@ -1634,15 +1417,7 @@ void ins_enc_xabort(
 
 	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_xbegin(
@@ -1724,15 +1499,7 @@ void int_enc_shift(
 
 	ins_fill_EX(data->ctx, ins, target, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_Ib(
@@ -1754,15 +1521,7 @@ void ins_enc_opcode_Ib(
 
 	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_Iw(
@@ -1784,15 +1543,7 @@ void ins_enc_opcode_Iw(
 
 	ins_fill_imm16(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_IN_AL_Ib(
@@ -1814,15 +1565,7 @@ void ins_enc_IN_AL_Ib(
 
 	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_IN_eAX_Ib(
@@ -1890,15 +1633,7 @@ void ins_enc_IN_eAX_Ib(
 
 	ins_fill_imm8(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_OUT_Ib_AL(
@@ -1920,15 +1655,7 @@ void ins_enc_OUT_Ib_AL(
 
 	ins_fill_imm8(data->ctx, ins, target, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_OUT_Ib_eAX(
@@ -1996,15 +1723,7 @@ void ins_enc_OUT_Ib_eAX(
 
 	ins_fill_imm8(data->ctx, ins, target, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_ext_Eb(
@@ -2029,15 +1748,7 @@ void ins_enc_opcode_ext_Eb(
 
 	ins_fill_EX(data->ctx, ins, oprd, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_ext_Ev(
@@ -2062,15 +1773,7 @@ void ins_enc_opcode_ext_Ev(
 
 	ins_fill_EX(data->ctx, ins, oprd, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_Iz(
@@ -2106,15 +1809,7 @@ void ins_enc_XXX_Iz(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_IMUL_Gv_Ev_Iz(
@@ -2160,15 +1855,7 @@ void ins_enc_IMUL_Gv_Ev_Iz(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_Ib(
@@ -2190,15 +1877,7 @@ void ins_enc_XXX_Ib(
 
 	ins_fill_imm8(data->ctx, ins, oprd, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_IMUL_Gv_Ev_Ib(
@@ -2230,15 +1909,7 @@ void ins_enc_IMUL_Gv_Ev_Ib(
 
 	ins_fill_imm8(data->ctx, ins, source2, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_INS_OUTS_W(
@@ -2267,15 +1938,7 @@ void ins_enc_INS_OUTS_W(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_INS_OUTS_D(
@@ -2304,15 +1967,7 @@ void ins_enc_INS_OUTS_D(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_MOV_Ev_Sw(
@@ -2338,15 +1993,7 @@ void ins_enc_MOV_Ev_Sw(
 
 	ins_fill_GX(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_LEA_Gv_M(
@@ -2372,15 +2019,7 @@ void ins_enc_LEA_Gv_M(
 
 	ins_fill_EX(data->ctx, ins, source, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_MOV_Sw_Ew(
@@ -2408,15 +2047,7 @@ void ins_enc_MOV_Sw_Ew(
 
 	enc_ins.legacy_prefix.operand_size_override = false;
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_POP_Ev(
@@ -2484,15 +2115,7 @@ void ins_enc_POP_Ev(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_implicit_oprd16(
@@ -2526,15 +2149,7 @@ void ins_enc_opcode_implicit_oprd16(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_implicit_oprd32(
@@ -2568,15 +2183,7 @@ void ins_enc_opcode_implicit_oprd32(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_opcode_implicit_oprd64(
@@ -2622,15 +2229,7 @@ void ins_enc_opcode_implicit_oprd64(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_Ap(
@@ -2744,15 +2343,7 @@ void ins_enc_Ap(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_pushfd_popfd(
@@ -2793,15 +2384,7 @@ void ins_enc_pushfd_popfd(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_pushfq_popfq(
@@ -2846,15 +2429,7 @@ void ins_enc_pushfq_popfq(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_enter(
@@ -2888,15 +2463,7 @@ void ins_enc_enter(
 		oprd_ib
 	);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_iretd(
@@ -2930,15 +2497,7 @@ void ins_enc_iretd(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_iretq(
@@ -2984,15 +2543,7 @@ void ins_enc_iretq(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_Jz(
@@ -3110,15 +2661,7 @@ void ins_enc_IN_eAX_DX(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_OUT_DX_eAX(
@@ -3182,15 +2725,7 @@ void ins_enc_OUT_DX_eAX(
 		}
 	}
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_Rv(
@@ -3212,15 +2747,7 @@ void ins_enc_XXX_Rv(
 
 	ins_fill_RX(data->ctx, ins, rv_node, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_Mv(
@@ -3242,15 +2769,7 @@ void ins_enc_XXX_Mv(
 
 	ins_fill_MX(data->ctx, ins, mv_node, &enc_ins);
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
 
 void ins_enc_XXX_Mw(
@@ -3274,13 +2793,5 @@ void ins_enc_XXX_Mw(
 
 	enc_ins.legacy_prefix.operand_size_override = false;
 
-	uint8_t buffer[32];
-	size_t len = enc_ins_encode(&enc_ins, buffer, sizeof(buffer));
-
-	ASM_PARSER_CONTEXT_DATA_INC_ADDRESS_COUNTER(data->ctx, len);
-	if (ASM_PARSER_CONTEXT_DATA_GET_STEP(data->ctx) == ASM_STEP_SCAN) {
-		return;
-	}
-
-	fwrite(buffer, len, 1, ASM_PARSER_CONTEXT_DATA_GET_OUT(data->ctx));
+	_output(data, &enc_ins);
 }
