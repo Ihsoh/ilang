@@ -1,5 +1,5 @@
-#ifndef __COMPILER_ASSEMBLERINS_H__
-#define __COMPILER_ASSEMBLERINS_H__
+#ifndef __COMPILER_ASSEMBLER_INS_H__
+#define __COMPILER_ASSEMBLER_INS_H__
 
 
 #include <stdio.h>
