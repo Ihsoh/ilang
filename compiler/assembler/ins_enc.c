@@ -2553,7 +2553,7 @@ void ins_enc_OUT_DX_eAX(
 	_output(data, &enc_ins);
 }
 
-void ins_enc_XXX_Rv(
+void ins_enc_opcode_ext_XXX_Rv(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
@@ -2567,12 +2567,15 @@ void ins_enc_XXX_Rv(
 	
 	ins_init(data->ctx, ins, ins_node, &enc_ins);
 
+	enc_ins.mod_rm_used = true;
+	enc_ins.mod_rm.reg = ins->opcode_ext.reg;
+
 	ins_fill_RX(data->ctx, ins, rv_node, &enc_ins);
 
 	_output(data, &enc_ins);
 }
 
-void ins_enc_XXX_Mv(
+void ins_enc_opcode_ext_XXX_Mv(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
@@ -2585,13 +2588,16 @@ void ins_enc_XXX_Mv(
 	EncoderInstruction enc_ins;
 	
 	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	enc_ins.mod_rm_used = true;
+	enc_ins.mod_rm.reg = ins->opcode_ext.reg;
 
 	ins_fill_MX(data->ctx, ins, mv_node, &enc_ins);
 
 	_output(data, &enc_ins);
 }
 
-void ins_enc_XXX_Mw(
+void ins_enc_opcode_ext_XXX_Mw(
 	Instruction *ins,
 	InstructionEncoderData *data
 ) {
@@ -2604,6 +2610,9 @@ void ins_enc_XXX_Mw(
 	EncoderInstruction enc_ins;
 	
 	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	enc_ins.mod_rm_used = true;
+	enc_ins.mod_rm.reg = ins->opcode_ext.reg;
 
 	ins_fill_MX(data->ctx, ins, mv_node, &enc_ins);
 
