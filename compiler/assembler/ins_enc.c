@@ -2620,3 +2620,27 @@ void ins_enc_opcode_ext_XXX_Mw(
 
 	_output(data, &enc_ins);
 }
+
+void ins_enc_opcode_ext_XXX_Ew(
+	Instruction *ins,
+	InstructionEncoderData *data
+) {
+	_CHECK_PARAMS(1);
+
+	ParserASTNode *ins_node = data->ins_node;
+
+	ParserASTNode *ew_node = data->ins_node->childs[0];
+
+	EncoderInstruction enc_ins;
+	
+	ins_init(data->ctx, ins, ins_node, &enc_ins);
+
+	enc_ins.mod_rm_used = true;
+	enc_ins.mod_rm.reg = ins->opcode_ext.reg;
+
+	ins_fill_EX(data->ctx, ins, ew_node, &enc_ins);
+
+	enc_ins.legacy_prefix.operand_size_override = false;
+
+	_output(data, &enc_ins);
+}

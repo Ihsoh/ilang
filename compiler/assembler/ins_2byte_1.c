@@ -63,7 +63,7 @@ Instruction ins_2byte_1[] = {
 		{
 			INS_AM_E | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_XXX_Ew,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
@@ -76,7 +76,7 @@ Instruction ins_2byte_1[] = {
 		{
 			INS_AM_E | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_XXX_Ew,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
@@ -89,7 +89,7 @@ Instruction ins_2byte_1[] = {
 		{
 			INS_AM_E | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_XXX_Ew,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,
@@ -102,7 +102,7 @@ Instruction ins_2byte_1[] = {
 		{
 			INS_AM_E | INS_OT_w
 		},
-		INS_ENC_NOT_IMPLEMENTED,
+		ins_enc_opcode_ext_XXX_Ew,
 		.opcode_ext = {
 			.mask = INS_OPCODE_EXT_MASK_MOD | INS_OPCODE_EXT_MASK_REG,
 			.mod = INS_OPCODE_EXT_MOD_MEM | INS_OPCODE_EXT_MOD_11B,

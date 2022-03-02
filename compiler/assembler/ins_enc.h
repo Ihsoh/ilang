@@ -340,4 +340,9 @@ extern void ins_enc_opcode_ext_XXX_Mw(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_opcode_ext_XXX_Ew(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 #endif
