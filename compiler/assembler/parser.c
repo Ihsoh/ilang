@@ -1771,6 +1771,18 @@ static bool _is_Mw_oprd(
 	return oprd_type == (INS_AM_M | INS_OT_w);
 }
 
+static bool _is_Mb_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_M | INS_OT_b);
+}
+
+static bool _is_Ms_oprd(
+	uint16_t oprd_type
+) {
+	return oprd_type == (INS_AM_M | INS_OT_s);
+}
+
 _RULE(ins)
 	_RULE_NEXT_TOKEN
 	if (_RULE_TOKEN_TYPE != ASM_TOKEN_KEYWORD_INSTRUCTION) {
@@ -2000,7 +2012,19 @@ _RULE(ins)
 							}
 
 							_INS_RULE_ADD_CHILD(node_mem)
-						} else if (_is_M_oprd(ot)) {
+						} else if (_is_Mb_oprd(ot)) {
+							ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
+
+							if (node_mem == NULL) {
+								goto not_matched;
+							}
+
+							if (ASM_MEM_AST_NODE_GET_TYPE(node_mem) != ASM_MEM_TYPE_BYTE) {
+								goto not_matched;
+							}
+
+							_INS_RULE_ADD_CHILD(node_mem)
+						} else if (_is_Ms_oprd(ot) || _is_M_oprd(ot)) {
 							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, true);
 							ParserASTNode *node_mem = _RULE_NAME(mem)(_RULE_PARSER_CTX);
 							ASM_PARSER_CONTEXT_DATA_SET_MEM_WITHOUT_OPRD_SIZE(_RULE_PARSER_CTX, false);

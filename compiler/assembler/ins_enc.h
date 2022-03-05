@@ -26,6 +26,11 @@ extern void ins_enc_XXX_Gv_Ev(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_XXX_Gv_Ew(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 extern void ins_enc_XXX_AL_Ib(
 	Instruction *ins,
 	InstructionEncoderData *data
@@ -340,7 +345,22 @@ extern void ins_enc_opcode_ext_XXX_Mw(
 	InstructionEncoderData *data
 );
 
+extern void ins_enc_opcode_ext_XXX_Mb(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
 extern void ins_enc_opcode_ext_XXX_Ew(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_ext_XXX_Ms(
+	Instruction *ins,
+	InstructionEncoderData *data
+);
+
+extern void ins_enc_opcode_ext_rm(
 	Instruction *ins,
 	InstructionEncoderData *data
 );
