@@ -493,14 +493,275 @@ Instruction ins_2byte_1[] = {
 
 
 
-
-
-	
-
-
-
-
+	// Table A-3. Two-byte Opcode Map: 00H — 77H (First Byte is 0FH) *
 	// 0x0f | 0x01, 0x00~0x07
+	// TODO: 暂不实现。
+
+
+
+
+	// 0x0f | 0x02, 0x00~0x07
+	{
+		"MOV", INS_SS_NONE,
+		{2, 0x0f, 0x20 | 0x00},
+		{
+			INS_AM_R | INS_OT_d,
+			INS_AM_C | INS_OT_d
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"MOV", INS_SS_NONE,
+		{2, 0x0f, 0x20 | 0x01},
+		{
+			INS_AM_R | INS_OT_d,
+			INS_AM_D | INS_OT_d
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"MOV", INS_SS_NONE,
+		{2, 0x0f, 0x20 | 0x02},
+		{
+			INS_AM_C | INS_OT_d,
+			INS_AM_R | INS_OT_d
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"MOV", INS_SS_NONE,
+		{2, 0x0f, 0x20 | 0x03},
+		{
+			INS_AM_D | INS_OT_d,
+			INS_AM_R | INS_OT_d
+		},
+		ins_enc_not_implemented
+	},
+
+	// 0x0f | 0x03, 0x00~0x07
+	{
+		"WRMSR", INS_SS_NONE,
+		{2, 0x0f, 0x30 | 0x00},
+		{
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"RDTSC", INS_SS_NONE,
+		{2, 0x0f, 0x30 | 0x01},
+		{
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"RDMSR", INS_SS_NONE,
+		{2, 0x0f, 0x30 | 0x02},
+		{
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"RDPMC", INS_SS_NONE,
+		{2, 0x0f, 0x30 | 0x03},
+		{
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"SYSENTER", INS_SS_NONE,
+		{2, 0x0f, 0x30 | 0x04},
+		{
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"SYSEXIT", INS_SS_NONE,
+		{2, 0x0f, 0x30 | 0x05},
+		{
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"GETSEC", INS_SS_NONE,
+		{2, 0x0f, 0x30 | 0x07},
+		{
+		},
+		ins_enc_not_implemented
+	},
+
+	// 0x0f | 0x04, 0x00~0x07
+	{
+		"CMOVO", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x00},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CMOVNO", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x01},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CMOVB", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x02},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"CMOVC", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x02},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"CMOVNAE", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x02},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CMOVAE", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x03},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"CMOVNB", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x03},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"CMOVNC", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x03},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CMOVE", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x04},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"CMOVZ", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x04},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CMOVNE", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x05},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"CMOVNZ", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x05},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CMOVBE", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x06},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"CMOVNA", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x06},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CMOVA", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x07},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+	{
+		"CMOVNBE", INS_SS_NONE,
+		{2, 0x0f, 0x40 | 0x07},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+
+
+
+	// Table A-3. Two-byte Opcode Map: 00H — 77H (First Byte is 0FH) *
+	// 0x0f | 0x05, 0x00~0x07
+	// TODO: 暂不实现。
+
+
+
+
+	// Table A-3. Two-byte Opcode Map: 00H — 77H (First Byte is 0FH) *
+	// 0x0f | 0x06, 0x00~0x07
+	// TODO: 暂不实现。
+
+
+
+
+	// Table A-3. Two-byte Opcode Map: 00H — 77H (First Byte is 0FH) *
+	// 0x0f | 0x07, 0x00~0x07
+	// TODO: 暂不实现。
 
 
 
