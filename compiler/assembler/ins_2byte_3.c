@@ -279,20 +279,172 @@ Instruction ins_2byte_3[] = {
 	},
 
 	// 0x0f | 0x0a, 0x00~0x07
+	{
+		"PUSH", INS_SS_d64,
+		{2, 0x0f, 0xa0 | 0x00},
+		{
+			INS_AM_FS
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"POP", INS_SS_d64,
+		{2, 0x0f, 0xa0 | 0x01},
+		{
+			INS_AM_FS
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CPUID", INS_SS_NONE,
+		{2, 0x0f, 0xa0 | 0x02},
+		{
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"BT", INS_SS_NONE,
+		{2, 0x0f, 0xa0 | 0x03},
+		{
+			INS_AM_E | INS_OT_v,
+			INS_AM_G | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"SHLD", INS_SS_NONE,
+		{2, 0x0f, 0xa0 | 0x04},
+		{
+			INS_AM_E | INS_OT_v,
+			INS_AM_G | INS_OT_v,
+			INS_AM_I | INS_OT_b
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"SHLD", INS_SS_NONE,
+		{2, 0x0f, 0xa0 | 0x05},
+		{
+			INS_AM_E | INS_OT_v,
+			INS_AM_G | INS_OT_v,
+			INS_AM_CL
+		},
+		ins_enc_not_implemented
+	},
+
+	// 0x0f | 0x0b, 0x00~0x07
+	{
+		"CMPXCHG", INS_SS_NONE,
+		{2, 0x0f, 0xb0 | 0x00},
+		{
+			INS_AM_E | INS_OT_b,
+			INS_AM_G | INS_OT_b
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"CMPXCHG", INS_SS_NONE,
+		{2, 0x0f, 0xb0 | 0x01},
+		{
+			INS_AM_E | INS_OT_v,
+			INS_AM_G | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"LSS", INS_SS_NONE,
+		{2, 0x0f, 0xb0 | 0x02},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_M | INS_OT_p
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"BTR", INS_SS_NONE,
+		{2, 0x0f, 0xb0 | 0x03},
+		{
+			INS_AM_E | INS_OT_v,
+			INS_AM_G | INS_OT_v
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"LFS", INS_SS_NONE,
+		{2, 0x0f, 0xb0 | 0x04},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_M | INS_OT_p
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"LGS", INS_SS_NONE,
+		{2, 0x0f, 0xb0 | 0x05},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_M | INS_OT_p
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"MOVZX", INS_SS_NONE,
+		{2, 0x0f, 0xb0 | 0x06},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_b
+		},
+		ins_enc_not_implemented
+	},
+
+	{
+		"MOVZX", INS_SS_NONE,
+		{2, 0x0f, 0xb0 | 0x07},
+		{
+			INS_AM_G | INS_OT_v,
+			INS_AM_E | INS_OT_w
+		},
+		ins_enc_not_implemented
+	},
 
 
 
 
+	// Table A-3. Two-byte Opcode Map: 80H — F7H (First Byte is 0FH) *
+	// 0x0f | 0x0c, 0x00~0x07
+	// TODO: 暂不实现。
 
 
 
 
+	// Table A-3. Two-byte Opcode Map: 80H — F7H (First Byte is 0FH) *
+	// 0x0f | 0x0d, 0x00~0x07
+	// TODO: 暂不实现。
 
 
 
 
+	// Table A-3. Two-byte Opcode Map: 80H — F7H (First Byte is 0FH) *
+	// 0x0f | 0x0e, 0x00~0x07
+	// TODO: 暂不实现。
 
 
+
+
+	// Table A-3. Two-byte Opcode Map: 80H — F7H (First Byte is 0FH) *
+	// 0x0f | 0x0f, 0x00~0x07
+	// TODO: 暂不实现。
 
 
 
