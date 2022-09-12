@@ -634,6 +634,7 @@ extern Instruction ins_1byte_2[];
 extern Instruction ins_2byte_1[];
 extern Instruction ins_2byte_2[];
 extern Instruction ins_2byte_3[];
+extern Instruction ins_2byte_4[];
 static Instruction *ins_table[] = {
 	ins_directive,
 	ins_1byte_1,
@@ -641,6 +642,7 @@ static Instruction *ins_table[] = {
 	ins_2byte_1,
 	ins_2byte_2,
 	ins_2byte_3,
+	ins_2byte_4,
 	NULL
 };
 
